@@ -1,9 +1,6 @@
-package utils
+package baan
 
 import (
-	"math/rand"
-
-	"github.com/bxcodec/faker/v4"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	baanProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/baan/v1"
 )
@@ -32,27 +29,4 @@ func ProtoToDtoList(in []*baanProto.Baan) []*dto.Baan {
 		out = append(out, ProtoToDto(b))
 	}
 	return out
-}
-
-func MockBaansProto() []*baanProto.Baan {
-	var baans []*baanProto.Baan
-	for i := 0; i < 10; i++ {
-		baan := &baanProto.Baan{
-			Id:            faker.UUIDHyphenated(),
-			NameTH:        faker.Name(),
-			DescriptionTH: faker.Sentence(),
-			NameEN:        faker.Name(),
-			DescriptionEN: faker.Sentence(),
-			Size:          baanProto.BaanSize(rand.Intn(6)),
-			Facebook:      faker.URL(),
-			FacebookUrl:   faker.URL(),
-			Instagram:     faker.URL(),
-			InstagramUrl:  faker.URL(),
-			Line:          faker.URL(),
-			LineUrl:       faker.URL(),
-			ImageUrl:      faker.URL(),
-		}
-		baans = append(baans, baan)
-	}
-	return baans
 }
