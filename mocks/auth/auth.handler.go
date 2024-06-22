@@ -7,8 +7,8 @@ package mock_auth
 import (
 	reflect "reflect"
 
-	gin "github.com/gin-gonic/gin"
 	gomock "github.com/golang/mock/gomock"
+	router "github.com/isd-sgcu/rpkm67-gateway/internal/router"
 )
 
 // MockHandler is a mock of Handler interface.
@@ -35,7 +35,7 @@ func (m *MockHandler) EXPECT() *MockHandlerMockRecorder {
 }
 
 // ForgotPassword mocks base method.
-func (m *MockHandler) ForgotPassword(c *gin.Context) {
+func (m *MockHandler) ForgotPassword(c router.Context) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "ForgotPassword", c)
 }
@@ -47,7 +47,7 @@ func (mr *MockHandlerMockRecorder) ForgotPassword(c interface{}) *gomock.Call {
 }
 
 // RefreshToken mocks base method.
-func (m *MockHandler) RefreshToken(c *gin.Context) {
+func (m *MockHandler) RefreshToken(c router.Context) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "RefreshToken", c)
 }
@@ -59,7 +59,7 @@ func (mr *MockHandlerMockRecorder) RefreshToken(c interface{}) *gomock.Call {
 }
 
 // ResetPassword mocks base method.
-func (m *MockHandler) ResetPassword(c *gin.Context) {
+func (m *MockHandler) ResetPassword(c router.Context) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "ResetPassword", c)
 }
@@ -71,7 +71,7 @@ func (mr *MockHandlerMockRecorder) ResetPassword(c interface{}) *gomock.Call {
 }
 
 // SignIn mocks base method.
-func (m *MockHandler) SignIn(c *gin.Context) {
+func (m *MockHandler) SignIn(c router.Context) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SignIn", c)
 }
@@ -83,7 +83,7 @@ func (mr *MockHandlerMockRecorder) SignIn(c interface{}) *gomock.Call {
 }
 
 // SignOut mocks base method.
-func (m *MockHandler) SignOut(c *gin.Context) {
+func (m *MockHandler) SignOut(c router.Context) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SignOut", c)
 }
@@ -95,7 +95,7 @@ func (mr *MockHandlerMockRecorder) SignOut(c interface{}) *gomock.Call {
 }
 
 // SignUp mocks base method.
-func (m *MockHandler) SignUp(c *gin.Context) {
+func (m *MockHandler) SignUp(c router.Context) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SignUp", c)
 }
@@ -107,7 +107,7 @@ func (mr *MockHandlerMockRecorder) SignUp(c interface{}) *gomock.Call {
 }
 
 // Validate mocks base method.
-func (m *MockHandler) Validate(c *gin.Context) {
+func (m *MockHandler) Validate(c router.Context) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "Validate", c)
 }

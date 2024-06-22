@@ -6,10 +6,13 @@ server:
 
 watch: 
 	air
-
 mock-gen:
 	mockgen -source ./internal/auth/auth.handler.go -destination ./mocks/auth/auth.handler.go
 	mockgen -source ./internal/auth/auth.service.go -destination ./mocks/auth/auth.service.go
+	mockgen -source ./internal/baan/baan.handler.go -destination ./mocks/baan/baan.handler.go
+	mockgen -source ./internal/baan/baan.service.go -destination ./mocks/baan/baan.service.go
+	mockgen -source ./internal/router/context.go -destination ./mocks/router/context.mock.go
+	mockgen -source ./internal/validator/validator.go -destination ./mocks/validator/validator.mock.go
 
 test:
 	go vet ./...
