@@ -49,7 +49,7 @@ func (t *BaanHandlerTest) SetupTest() {
 	t.ParamMock = t.Baan.Id
 }
 
-func (t *BaanHandlerTest) TestFindAllBaan() {
+func (t *BaanHandlerTest) TestFindAllBaanSuccess() {
 	expectedResp := &dto.FindAllBaanResponse{
 		Baans: t.Baans,
 	}
@@ -67,7 +67,7 @@ func (t *BaanHandlerTest) TestFindAllBaan() {
 	handler.FindAllBaan(context)
 }
 
-func (t *BaanHandlerTest) TestFindOneBaan() {
+func (t *BaanHandlerTest) TestFindOneBaanSuccess() {
 	expectedResp := &dto.FindOneBaanResponse{
 		Baan: t.Baan,
 	}
