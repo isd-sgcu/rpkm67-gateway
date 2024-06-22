@@ -44,7 +44,7 @@ func (s *serviceImpl) SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperror
 	defer cancel()
 
 	res, err := s.client.SignUp(ctx, &authProto.SignUpRequest{
-		StudentId: req.StudentId,
+		Email:     req.Email,
 		Password:  req.Password,
 		Firstname: req.Firstname,
 		Lastname:  req.Lastname,
@@ -78,8 +78,8 @@ func (s *serviceImpl) SignIn(req *dto.SignInRequest) (*dto.Credential, *apperror
 	defer cancel()
 
 	res, err := s.client.SignIn(ctx, &authProto.SignInRequest{
-		StudentId: req.StudentId,
-		Password:  req.Password,
+		Email:    req.Email,
+		Password: req.Password,
 	})
 	if err != nil {
 		st, ok := status.FromError(err)

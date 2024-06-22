@@ -7,11 +7,11 @@ type Credential struct {
 }
 
 type SignInRequest struct {
-	StudentId string `json:"student_id" validate:"required"`
-	Password  string `json:"password" validate:"required,gte=6,lte=30"`
+	Email    string `json:"email" validate:"required"`
+	Password string `json:"password" validate:"required,gte=6,lte=30"`
 }
 type SignUpRequest struct {
-	StudentId string `json:"student_id" validate:"required"`
+	Email     string `json:"email" validate:"required"`
 	Password  string `json:"password" validate:"required,gte=6,lte=30"`
 	Firstname string `json:"firstname" validate:"required"`
 	Lastname  string `json:"lastname" validate:"required"`
