@@ -11,12 +11,17 @@ type AppConfig struct {
 	Env  string
 }
 
+type ServiceConfig struct {
+	Auth string
+}
+
 type CorsConfig struct {
 	AllowOrigins string
 }
 
 type Config struct {
 	App  AppConfig
+	Svc  ServiceConfig
 	Cors CorsConfig
 }
 
@@ -33,12 +38,17 @@ func LoadConfig() (*Config, error) {
 		Env:  os.Getenv("APP_ENV"),
 	}
 
+	serviceConfig := ServiceConfig{
+		Auth: os.Getenv("SERVICE_AUTH"),
+	}
+
 	corsConfig := CorsConfig{
 		AllowOrigins: os.Getenv("CORS_ORIGINS"),
 	}
 
 	return &Config{
 		App:  appConfig,
+		Svc:  serviceConfig,
 		Cors: corsConfig,
 	}, nil
 }
