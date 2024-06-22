@@ -59,7 +59,7 @@ func (s *serviceImpl) SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperror
 		case codes.AlreadyExists:
 			return nil, apperrors.BadRequestError("User already exists")
 		case codes.Internal:
-			return nil, apperrors.InternalServer
+			return nil, apperrors.InternalServerError(err.Error())
 		default:
 			return nil, apperrors.ServiceUnavailable
 		}
