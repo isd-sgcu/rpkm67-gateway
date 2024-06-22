@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"go.uber.org/zap"
 )
 
@@ -16,15 +17,16 @@ type Handler interface {
 }
 
 type handlerImpl struct {
-	svc Service
-	// validate           validator.DtoValidator
-	log *zap.Logger
+	svc      Service
+	validate validator.DtoValidator
+	log      *zap.Logger
 }
 
-func NewHandler(svc Service, log *zap.Logger) Handler {
+func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
-		svc: svc,
-		log: log,
+		svc:      svc,
+		validate: validate,
+		log:      log,
 	}
 }
 

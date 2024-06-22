@@ -6,6 +6,7 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/config"
 	auth "github.com/isd-sgcu/rpkm67-gateway/internal/auth"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"github.com/isd-sgcu/rpkm67-gateway/logger"
 	"github.com/isd-sgcu/rpkm67-gateway/middleware"
 	authProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/auth/v1"
@@ -23,6 +24,11 @@ func main() {
 	corsHandler := config.MakeCorsConfig(conf)
 	authMiddleware := middleware.NewAuthMiddleware(&conf.App)
 
+	validate, err := validator.NewDtoValidator()
+	if err != nil {
+		panic(fmt.Sprintf("Failed to create dto validator: %v", err))
+	}
+
 	authConn, err := grpc.NewClient(conf.Svc.Auth, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		logger.Sugar().Fatalf("cannot connect to auth service", err)
@@ -30,7 +36,7 @@ func main() {
 
 	authClient := authProto.NewAuthServiceClient(authConn)
 	authSvc := auth.NewService(authClient, logger)
-	authHdr := auth.NewHandler(authSvc, logger)
+	authHdr := auth.NewHandler(authSvc, validate, logger)
 
 	r := router.New(conf, corsHandler, authMiddleware)
 
