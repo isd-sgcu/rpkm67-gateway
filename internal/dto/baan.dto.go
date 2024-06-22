@@ -51,5 +51,5 @@ type FindOneBaanRequest struct {
 }
 
 type FindOneBaanResponse struct {
-	Baan Baan `json:"baan"`
+	Baan *Baan `json:"baan"`
 }

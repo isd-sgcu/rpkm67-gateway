@@ -78,6 +78,6 @@ func (s *serviceImpl) FindOneBaan(req *dto.FindOneBaanRequest) (*dto.FindOneBaan
 	}
 
 	return &dto.FindOneBaanResponse{
-		Baan: *utils.ProtoToDto(res.Baan),
+		Baan: utils.ProtoToDto(res.Baan),
 	}, nil
 }
