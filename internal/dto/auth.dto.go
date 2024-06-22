@@ -6,16 +6,21 @@ type Credential struct {
 	ExpiresIn    int    `json:"expires_in" example:"3600"`
 }
 
-type TokenPayloadAuth struct {
-	UserId string `json:"user_id"`
-	Role   string `json:"role"`
+type SignInRequest struct {
+	StudentId string `json:"student_id" validate:"required"`
+	Password  string `json:"password" validate:"required,gte=6,lte=30"`
 }
-
-type SignupRequest struct {
-	Email     string `json:"email" validate:"required,email"`
+type SignUpRequest struct {
+	StudentId string `json:"student_id" validate:"required"`
 	Password  string `json:"password" validate:"required,gte=6,lte=30"`
 	Firstname string `json:"firstname" validate:"required"`
 	Lastname  string `json:"lastname" validate:"required"`
+	Tel       string `json:"tel" validate:"required"`
+}
+
+type TokenPayloadAuth struct {
+	UserId string `json:"user_id"`
+	Role   string `json:"role"`
 }
 
 type SignupResponse struct {
@@ -23,11 +28,6 @@ type SignupResponse struct {
 	Email     string `json:"email"`
 	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`
-}
-
-type SignInRequest struct {
-	StudentId string `json:"student_id" validate:"required"`
-	Password  string `json:"password" validate:"required,gte=6,lte=30"`
 }
 
 type SignOutResponse struct {
