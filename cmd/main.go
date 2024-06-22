@@ -40,8 +40,8 @@ func main() {
 
 	r := router.New(conf, corsHandler, authMiddleware)
 
-	r.V1.GET("/auth/signin", authHdr.SignIn)
-	r.V1.GET("/auth/signup", authHdr.SignUp)
+	r.V1Get("/auth/signin", authHdr.SignIn)
+	r.V1Post("/auth/signup", authHdr.SignUp)
 
 	if err := r.Run(fmt.Sprintf(":%v", conf.App.Port)); err != nil {
 		logger.Fatal("unable to start server")

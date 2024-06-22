@@ -15,7 +15,6 @@ type SignUpRequest struct {
 	Password  string `json:"password" validate:"required,gte=6,lte=30"`
 	Firstname string `json:"firstname" validate:"required"`
 	Lastname  string `json:"lastname" validate:"required"`
-	Tel       string `json:"tel" validate:"required"`
 }
 
 type TokenPayloadAuth struct {

@@ -48,7 +48,6 @@ func (s *serviceImpl) SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperror
 		Password:  req.Password,
 		Firstname: req.Firstname,
 		Lastname:  req.Lastname,
-		Tel:       req.Tel,
 		Role:      "student",
 	})
 	if err != nil {

@@ -10,7 +10,7 @@ import (
 
 type Router struct {
 	*gin.Engine
-	V1 *gin.RouterGroup
+	v1 *gin.RouterGroup
 }
 
 func New(conf *config.Config, corsHandler config.CorsHandler, authMiddleware middleware.AuthMiddleware) *Router {

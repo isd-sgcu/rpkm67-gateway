@@ -1,19 +1,22 @@
 package auth
 
 import (
-	"github.com/gin-gonic/gin"
+	"strings"
+
+	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"go.uber.org/zap"
 )
 
 type Handler interface {
-	Validate(c *gin.Context)
-	RefreshToken(c *gin.Context)
-	SignUp(c *gin.Context)
-	SignIn(c *gin.Context)
-	SignOut(c *gin.Context)
-	ForgotPassword(c *gin.Context)
-	ResetPassword(c *gin.Context)
+	Validate(c router.Context)
+	RefreshToken(c router.Context)
+	SignUp(c router.Context)
+	SignIn(c router.Context)
+	SignOut(c router.Context)
+	ForgotPassword(c router.Context)
+	ResetPassword(c router.Context)
 }
 
 type handlerImpl struct {
@@ -30,23 +33,50 @@ func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) H
 	}
 }
 
-func (h *handlerImpl) Validate(c *gin.Context) {
+func (h *handlerImpl) Validate(c router.Context) {
 }
 
-func (h *handlerImpl) RefreshToken(c *gin.Context) {
+func (h *handlerImpl) RefreshToken(c router.Context) {
 }
 
-func (h *handlerImpl) SignUp(c *gin.Context) {
+func (h *handlerImpl) SignUp(c router.Context) {
+	body := &dto.SignUpRequest{}
+	if err := c.Bind(body); err != nil {
+		h.log.Named("auth hdr").Error("failed to bind request body", zap.Error(err))
+		c.BadRequestError(err.Error())
+		return
+	}
+
+	if errorList := h.validate.Validate(body); errorList != nil {
+		h.log.Named("auth hdr").Error("validation error", zap.Strings("errorList", errorList))
+		c.BadRequestError(strings.Join(errorList, ", "))
+		return
+	}
+
+	req := &dto.SignUpRequest{
+		Email:     body.Email,
+		Password:  body.Password,
+		Firstname: body.Firstname,
+		Lastname:  body.Lastname,
+	}
+
+	credential, appErr := h.svc.SignUp(req)
+	if appErr != nil {
+		c.ResponseError(appErr)
+		return
+	}
+
+	c.JSON(201, credential)
 }
 
-func (h *handlerImpl) SignIn(c *gin.Context) {
+func (h *handlerImpl) SignIn(c router.Context) {
 }
 
-func (h *handlerImpl) SignOut(c *gin.Context) {
+func (h *handlerImpl) SignOut(c router.Context) {
 }
 
-func (h *handlerImpl) ForgotPassword(c *gin.Context) {
+func (h *handlerImpl) ForgotPassword(c router.Context) {
 }
 
-func (h *handlerImpl) ResetPassword(c *gin.Context) {
+func (h *handlerImpl) ResetPassword(c router.Context) {
 }
