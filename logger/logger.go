@@ -1,14 +1,14 @@
 package logger
 
 import (
-	"github.com/bookpanda/minio-api/config"
+	"github.com/isd-sgcu/rpkm67-gateway/config"
 	"go.uber.org/zap"
 )
 
-func New(conf *config.Config) *zap.Logger {
+func New(conf *config.AppConfig) *zap.Logger {
 	var logger *zap.Logger
 
-	if conf.App.IsDevelopment() {
+	if conf.IsDevelopment() {
 		logger = zap.Must(zap.NewDevelopment())
 	} else {
 		logger = zap.Must(zap.NewProduction())
