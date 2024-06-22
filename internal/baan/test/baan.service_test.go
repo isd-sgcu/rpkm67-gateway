@@ -7,7 +7,6 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/apperrors"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/baan"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
-	"github.com/isd-sgcu/rpkm67-gateway/internal/utils"
 	baanMock "github.com/isd-sgcu/rpkm67-gateway/mocks/client/baan"
 	baanProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/baan/v1"
 	"github.com/stretchr/testify/assert"
@@ -38,10 +37,10 @@ func (t *BaanServiceTest) SetupTest() {
 	t.controller = gomock.NewController(t.T())
 	t.logger = zap.NewNop()
 
-	t.BaansProto = utils.MockBaansProto()
+	t.BaansProto = MockBaansProto()
 	t.BaanProto = t.BaansProto[0]
-	t.BaansDto = utils.ProtoToDtoList(t.BaansProto)
-	t.BaanDto = utils.ProtoToDto(t.BaanProto)
+	t.BaansDto = baan.ProtoToDtoList(t.BaansProto)
+	t.BaanDto = baan.ProtoToDto(t.BaanProto)
 
 	t.FindAllBaanProtoReq = &baanProto.FindAllBaanRequest{}
 	t.FindOneBaanProtoReq = &baanProto.FindOneBaanRequest{
@@ -58,7 +57,7 @@ func (t *BaanServiceTest) TestFindAllBaanSuccess() {
 		Baans: t.BaansProto,
 	}
 
-	findAllBaansDto := utils.ProtoToDtoList(protoResp.Baans)
+	findAllBaansDto := baan.ProtoToDtoList(protoResp.Baans)
 
 	expected := &dto.FindAllBaanResponse{
 		Baans: findAllBaansDto,
@@ -91,4 +90,8 @@ func (t *BaanServiceTest) TestFindOneBaanSuccess() {
 
 	assert.Nil(t.T(), err)
 	assert.Equal(t.T(), expected, actual)
+}
+
+func (t *BaanServiceTest) TearDownTest() {
+	t.controller.Finish()
 }

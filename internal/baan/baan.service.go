@@ -6,7 +6,6 @@ import (
 
 	"github.com/isd-sgcu/rpkm67-gateway/apperrors"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
-	"github.com/isd-sgcu/rpkm67-gateway/internal/utils"
 	baanProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/baan/v1"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -41,8 +40,8 @@ func (s *serviceImpl) FindAllBaan(req *dto.FindAllBaanRequest) (*dto.FindAllBaan
 			return nil, apperrors.InternalServer
 		}
 		switch st.Code() {
-		case codes.NotFound:
-			return nil, apperrors.NotFoundError("Baans not found")
+		case codes.InvalidArgument:
+			return nil, apperrors.BadRequestError("Invalid argument")
 		case codes.Internal:
 			return nil, apperrors.InternalServerError(err.Error())
 		default:
@@ -51,7 +50,7 @@ func (s *serviceImpl) FindAllBaan(req *dto.FindAllBaanRequest) (*dto.FindAllBaan
 	}
 
 	return &dto.FindAllBaanResponse{
-		Baans: utils.ProtoToDtoList(res.Baans),
+		Baans: ProtoToDtoList(res.Baans),
 	}, nil
 }
 
@@ -78,6 +77,6 @@ func (s *serviceImpl) FindOneBaan(req *dto.FindOneBaanRequest) (*dto.FindOneBaan
 	}
 
 	return &dto.FindOneBaanResponse{
-		Baan: utils.ProtoToDto(res.Baan),
+		Baan: ProtoToDto(res.Baan),
 	}, nil
 }

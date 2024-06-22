@@ -15,6 +15,14 @@ type Handler interface {
 	FindOneBaan(c router.Context)
 }
 
+func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
+	return &handlerImpl{
+		svc:      svc,
+		validate: validate,
+		log:      log,
+	}
+}
+
 type handlerImpl struct {
 	svc      Service
 	validate validator.DtoValidator
@@ -33,8 +41,13 @@ func (h *handlerImpl) FindAllBaan(c router.Context) {
 }
 
 func (h *handlerImpl) FindOneBaan(c router.Context) {
+	baanId := c.Param("id")
+	if baanId == "" {
+		c.BadRequestError("url parameter 'id' not found")
+	}
+
 	req := &dto.FindOneBaanRequest{
-		Id: c.Param("id"),
+		Id: baanId,
 	}
 
 	if errorList := h.validate.Validate(req); errorList != nil {
@@ -50,12 +63,4 @@ func (h *handlerImpl) FindOneBaan(c router.Context) {
 	}
 
 	c.JSON(http.StatusOK, &dto.FindOneBaanResponse{Baan: res.Baan})
-}
-
-func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
-	return &handlerImpl{
-		svc:      svc,
-		validate: validate,
-		log:      log,
-	}
 }
