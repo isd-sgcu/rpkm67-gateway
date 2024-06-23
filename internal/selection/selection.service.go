@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/isd-sgcu/rpkm67-gateway/apperrors"
+	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	selectionProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/selection/v1"
 	"go.uber.org/zap"
@@ -13,9 +13,9 @@ import (
 )
 
 type Service interface {
-	CreateSelection(req *dto.CreateSelectionRequest) (*dto.CreateSelectionResponse, *apperrors.AppError)
-	FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequest) (*dto.FindByGroupIdSelectionResponse, *apperrors.AppError)
-	UpdateSelection(req *dto.UpdateSelectionRequest) (*dto.UpdateSelectionResponse, *apperrors.AppError)
+	CreateSelection(req *dto.CreateSelectionRequest) (*dto.CreateSelectionResponse, *apperror.AppError)
+	FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequest) (*dto.FindByGroupIdSelectionResponse, *apperror.AppError)
+	UpdateSelection(req *dto.UpdateSelectionRequest) (*dto.UpdateSelectionResponse, *apperror.AppError)
 }
 
 type serviceImpl struct {
@@ -30,7 +30,7 @@ func NewService(client selectionProto.SelectionServiceClient, log *zap.Logger) S
 	}
 }
 
-func (s *serviceImpl) CreateSelection(req *dto.CreateSelectionRequest) (*dto.CreateSelectionResponse, *apperrors.AppError) {
+func (s *serviceImpl) CreateSelection(req *dto.CreateSelectionRequest) (*dto.CreateSelectionResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -41,15 +41,15 @@ func (s *serviceImpl) CreateSelection(req *dto.CreateSelectionRequest) (*dto.Cre
 	if err != nil {
 		st, ok := status.FromError(err)
 		if !ok {
-			return nil, apperrors.InternalServer
+			return nil, apperror.InternalServer
 		}
 		switch st.Code() {
 		case codes.InvalidArgument:
-			return nil, apperrors.BadRequestError("Invalid argument")
+			return nil, apperror.BadRequestError("Invalid argument")
 		case codes.Internal:
-			return nil, apperrors.InternalServerError(err.Error())
+			return nil, apperror.InternalServerError(err.Error())
 		default:
-			return nil, apperrors.ServiceUnavailable
+			return nil, apperror.ServiceUnavailable
 		}
 	}
 
@@ -58,25 +58,25 @@ func (s *serviceImpl) CreateSelection(req *dto.CreateSelectionRequest) (*dto.Cre
 	}, nil
 }
 
-func (s *serviceImpl) FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequest) (*dto.FindByGroupIdSelectionResponse, *apperrors.AppError) {
+func (s *serviceImpl) FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequest) (*dto.FindByGroupIdSelectionResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	res, err := s.client.FindByGroupId(ctx, &selectionProto.FindByGroupIdSelectionRequest{
-		UserId: req.UserId,
+		GroupId: req.GroupId,
 	})
 	if err != nil {
 		st, ok := status.FromError(err)
 		if !ok {
-			return nil, apperrors.InternalServer
+			return nil, apperror.InternalServer
 		}
 		switch st.Code() {
 		case codes.InvalidArgument:
-			return nil, apperrors.BadRequestError("Invalid argument")
+			return nil, apperror.BadRequestError("Invalid argument")
 		case codes.Internal:
-			return nil, apperrors.InternalServerError(err.Error())
+			return nil, apperror.InternalServerError(err.Error())
 		default:
-			return nil, apperrors.ServiceUnavailable
+			return nil, apperror.ServiceUnavailable
 		}
 	}
 
@@ -85,7 +85,7 @@ func (s *serviceImpl) FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequ
 	}, nil
 }
 
-func (s *serviceImpl) UpdateSelection(req *dto.UpdateSelectionRequest) (*dto.UpdateSelectionResponse, *apperrors.AppError) {
+func (s *serviceImpl) UpdateSelection(req *dto.UpdateSelectionRequest) (*dto.UpdateSelectionResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -95,15 +95,15 @@ func (s *serviceImpl) UpdateSelection(req *dto.UpdateSelectionRequest) (*dto.Upd
 	if err != nil {
 		st, ok := status.FromError(err)
 		if !ok {
-			return nil, apperrors.InternalServer
+			return nil, apperror.InternalServer
 		}
 		switch st.Code() {
 		case codes.InvalidArgument:
-			return nil, apperrors.BadRequestError("Invalid argument")
+			return nil, apperror.BadRequestError("Invalid argument")
 		case codes.Internal:
-			return nil, apperrors.InternalServerError(err.Error())
+			return nil, apperror.InternalServerError(err.Error())
 		default:
-			return nil, apperrors.ServiceUnavailable
+			return nil, apperror.ServiceUnavailable
 		}
 	}
 
