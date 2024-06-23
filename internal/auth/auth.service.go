@@ -15,7 +15,7 @@ import (
 type Service interface {
 	Validate()
 	RefreshToken()
-	SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperror.AppError)
+	SignUp(req *dto.SignUpRequest) (*dto.SignupResponse, *apperror.AppError)
 	SignIn(req *dto.SignInRequest) (*dto.Credential, *apperror.AppError)
 	SignOut(req *dto.TokenPayloadAuth) (*dto.SignOutResponse, *apperror.AppError)
 	ForgotPassword(req *dto.ForgotPasswordRequest) (*dto.ForgotPasswordResponse, *apperror.AppError)
@@ -39,7 +39,7 @@ func (s *serviceImpl) Validate() {
 func (s *serviceImpl) RefreshToken() {
 }
 
-func (s *serviceImpl) SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperror.AppError) {
+func (s *serviceImpl) SignUp(req *dto.SignUpRequest) (*dto.SignupResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -48,7 +48,6 @@ func (s *serviceImpl) SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperror
 		Password:  req.Password,
 		Firstname: req.Firstname,
 		Lastname:  req.Lastname,
-		Role:      "student",
 	})
 	if err != nil {
 		st, ok := status.FromError(err)
@@ -65,10 +64,11 @@ func (s *serviceImpl) SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperror
 		}
 	}
 
-	return &dto.Credential{
-		AccessToken:  res.Credential.AccessToken,
-		RefreshToken: res.Credential.RefreshToken,
-		ExpiresIn:    int(res.Credential.ExpiresIn),
+	return &dto.SignupResponse{
+		Id:        res.Id,
+		Email:     res.Email,
+		Firstname: res.Firstname,
+		Lastname:  res.Lastname,
 	}, nil
 }
 

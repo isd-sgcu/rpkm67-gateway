@@ -41,7 +41,6 @@ func (t *SelectionHandlerTest) SetupTest() {
 
 	t.Selections = selection.ProtoToDtoList(selectionsProto)
 	t.Selection = selection.ProtoToDto(selectionProto)
-	// updatedSelection := selection.ProtoToDto(selectionsProto[2])
 
 	t.CreateSelectionReq = &dto.CreateSelectionRequest{}
 	t.FindByGroupIdSelectionReq = &dto.FindByGroupIdSelectionRequest{
