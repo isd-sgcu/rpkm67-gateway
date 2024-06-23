@@ -60,15 +60,15 @@ func (h *handlerImpl) CreateSelection(c router.Context) {
 }
 
 func (h *handlerImpl) FindByGroupIdSelection(c router.Context) {
-	groupdId := c.Param("id")
-	if groupdId == "" {
+	groupId := c.Param("id")
+	if groupId == "" {
 		h.log.Named("FindByGroupIdSelection").Error("Param: id not found")
 		c.BadRequestError("url parameter 'id' not found")
 		return
 	}
 
 	req := &dto.FindByGroupIdSelectionRequest{
-		GroupId: groupdId,
+		GroupId: groupId,
 	}
 
 	if errorList := h.validate.Validate(req); errorList != nil {

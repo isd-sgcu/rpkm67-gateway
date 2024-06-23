@@ -39,20 +39,17 @@ func (s *serviceImpl) CreateSelection(req *dto.CreateSelectionRequest) (*dto.Cre
 		BaanIds: req.BaanIds,
 	})
 	if err != nil {
+		s.log.Named("CreateSelection").Error("Create: ", zap.Error(err))
 		st, ok := status.FromError(err)
 		if !ok {
-			s.log.Named("CreateSelection").Error("FromeError: ", zap.Error(err))
 			return nil, apperror.InternalServer
 		}
 		switch st.Code() {
 		case codes.InvalidArgument:
-			s.log.Named("CreateSelection").Error("Create: ", zap.Error(err))
 			return nil, apperror.BadRequestError("Invalid argument")
 		case codes.Internal:
-			s.log.Named("CreateSelection").Error("Create: ", zap.Error(err))
 			return nil, apperror.InternalServerError(err.Error())
 		default:
-			s.log.Named("CreateSelection").Error("Create: ", zap.Error(err))
 			return nil, apperror.ServiceUnavailable
 		}
 	}
@@ -70,20 +67,17 @@ func (s *serviceImpl) FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequ
 		GroupId: req.GroupId,
 	})
 	if err != nil {
+		s.log.Named("FindByGroupIdSelection").Error("FindByGroupId: ", zap.Error(err))
 		st, ok := status.FromError(err)
 		if !ok {
-			s.log.Named("FindByGroupIdSelection").Error("FromeError: ", zap.Error(err))
 			return nil, apperror.InternalServer
 		}
 		switch st.Code() {
 		case codes.InvalidArgument:
-			s.log.Named("FindByGroupIdSelection").Error("FindByGroupId: ", zap.Error(err))
 			return nil, apperror.BadRequestError("Invalid argument")
 		case codes.Internal:
-			s.log.Named("FindByGroupIdSelection").Error("FindByGroupId: ", zap.Error(err))
 			return nil, apperror.InternalServerError(err.Error())
 		default:
-			s.log.Named("FindByGroupIdSelection").Error("FindByGroupId: ", zap.Error(err))
 			return nil, apperror.ServiceUnavailable
 		}
 	}
@@ -101,20 +95,17 @@ func (s *serviceImpl) UpdateSelection(req *dto.UpdateSelectionRequest) (*dto.Upd
 		Selection: DtoToProto(req.Selection),
 	})
 	if err != nil {
+		s.log.Named("UpdateSelection").Error("Update: ", zap.Error(err))
 		st, ok := status.FromError(err)
 		if !ok {
-			s.log.Named("UpdateSelection").Error("FromError: ", zap.Error(err))
 			return nil, apperror.InternalServer
 		}
 		switch st.Code() {
 		case codes.InvalidArgument:
-			s.log.Named("UpdateSelection").Error("Update: ", zap.Error(err))
 			return nil, apperror.BadRequestError("Invalid argument")
 		case codes.Internal:
-			s.log.Named("UpdateSelection").Error("Update: ", zap.Error(err))
 			return nil, apperror.InternalServerError(err.Error())
 		default:
-			s.log.Named("UpdateSelection").Error("Update: ", zap.Error(err))
 			return nil, apperror.ServiceUnavailable
 		}
 	}

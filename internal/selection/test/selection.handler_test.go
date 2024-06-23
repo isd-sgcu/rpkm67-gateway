@@ -24,8 +24,6 @@ type SelectionHandlerTest struct {
 	CreateSelectionReq        *dto.CreateSelectionRequest
 	FindByGroupIdSelectionReq *dto.FindByGroupIdSelectionRequest
 	UpdateSelectionReq        *dto.UpdateSelectionRequest
-	Err                       *apperror.AppError
-	QueriesMock               map[string]string
 }
 
 func TestSelectionHandler(t *testing.T) {
@@ -42,11 +40,16 @@ func (t *SelectionHandlerTest) SetupTest() {
 	t.Selections = selection.ProtoToDtoList(selectionsProto)
 	t.Selection = selection.ProtoToDto(selectionProto)
 
-	t.CreateSelectionReq = &dto.CreateSelectionRequest{}
+	t.CreateSelectionReq = &dto.CreateSelectionRequest{
+		GroupId: t.Selection.GroupId,
+		BaanIds: t.Selection.BaanIds,
+	}
 	t.FindByGroupIdSelectionReq = &dto.FindByGroupIdSelectionRequest{
 		GroupId: t.Selection.GroupId,
 	}
-	t.UpdateSelectionReq = &dto.UpdateSelectionRequest{}
+	t.UpdateSelectionReq = &dto.UpdateSelectionRequest{
+		Selection: selection.ProtoToDto(selectionsProto[1]),
+	}
 }
 
 func (t *SelectionHandlerTest) TestCreateSelectionSuccess() {
@@ -59,7 +62,7 @@ func (t *SelectionHandlerTest) TestCreateSelectionSuccess() {
 		Selection: t.Selection,
 	}
 
-	context.EXPECT().Bind(t.CreateSelectionReq).Return(nil)
+	context.EXPECT().Bind(&dto.CreateSelectionRequest{}).SetArg(0, *t.CreateSelectionReq)
 	validator.EXPECT().Validate(t.CreateSelectionReq).Return(nil)
 	selectionSvc.EXPECT().CreateSelection(t.CreateSelectionReq).Return(expectedResp, nil)
 	context.EXPECT().JSON(http.StatusCreated, expectedResp)
@@ -67,30 +70,26 @@ func (t *SelectionHandlerTest) TestCreateSelectionSuccess() {
 	handler.CreateSelection(context)
 }
 
-func (t *SelectionHandlerTest) TestCreateSelectionInvalidArgument() {
+func (t *SelectionHandlerTest) TestCreateSelectionBindError() {
 	context := routerMock.NewMockContext(t.controller)
 	handler := selection.NewHandler(nil, nil, t.logger)
 
-	expectedErr := apperror.BadRequestError("invalid argument")
-
-	context.EXPECT().Bind(t.CreateSelectionReq).Return(expectedErr)
-	context.EXPECT().BadRequestError(expectedErr.Error())
+	context.EXPECT().Bind(&dto.CreateSelectionRequest{}).Return(apperror.BadRequest)
+	context.EXPECT().BadRequestError(apperror.BadRequest.Error())
 
 	handler.CreateSelection(context)
 }
 
-func (t *SelectionHandlerTest) TestCreateSelectionInternalError() {
+func (t *SelectionHandlerTest) TestCreateSelectionServiceError() {
 	selectionSvc := selectionMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
 	context := routerMock.NewMockContext(t.controller)
 	handler := selection.NewHandler(selectionSvc, validator, t.logger)
 
-	expectedErr := apperror.InternalServerError("internal error")
-
-	context.EXPECT().Bind(t.CreateSelectionReq).Return(nil)
+	context.EXPECT().Bind(&dto.CreateSelectionRequest{}).SetArg(0, *t.CreateSelectionReq)
 	validator.EXPECT().Validate(t.CreateSelectionReq).Return(nil)
-	selectionSvc.EXPECT().CreateSelection(t.CreateSelectionReq).Return(nil, expectedErr)
-	context.EXPECT().ResponseError(expectedErr)
+	selectionSvc.EXPECT().CreateSelection(t.CreateSelectionReq).Return(nil, apperror.InternalServer)
+	context.EXPECT().ResponseError(apperror.InternalServer)
 
 	handler.CreateSelection(context)
 }
@@ -113,7 +112,7 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionSuccess() {
 	handler.FindByGroupIdSelection(context)
 }
 
-func (t *SelectionHandlerTest) TestFindByStudentIdSelectionInvalidArgument() {
+func (t *SelectionHandlerTest) TestFindByStudentIdSelectionUrlParamEmpty() {
 	context := routerMock.NewMockContext(t.controller)
 	handler := selection.NewHandler(nil, nil, t.logger)
 
@@ -125,18 +124,16 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionInvalidArgument() {
 	handler.FindByGroupIdSelection(context)
 }
 
-func (t *SelectionHandlerTest) TestFindByStudentIdSelectionInternalError() {
+func (t *SelectionHandlerTest) TestFindByStudentIdSelectionServiceError() {
 	selectionSvc := selectionMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
 	context := routerMock.NewMockContext(t.controller)
 	handler := selection.NewHandler(selectionSvc, validator, t.logger)
 
-	expectedErr := apperror.InternalServerError("internal error")
-
 	context.EXPECT().Param("id").Return(t.Selection.GroupId)
 	validator.EXPECT().Validate(t.FindByGroupIdSelectionReq).Return(nil)
-	selectionSvc.EXPECT().FindByGroupIdSelection(t.FindByGroupIdSelectionReq).Return(nil, expectedErr)
-	context.EXPECT().ResponseError(expectedErr)
+	selectionSvc.EXPECT().FindByGroupIdSelection(t.FindByGroupIdSelectionReq).Return(nil, apperror.InternalServer)
+	context.EXPECT().ResponseError(apperror.InternalServer)
 
 	handler.FindByGroupIdSelection(context)
 }
@@ -151,7 +148,7 @@ func (t *SelectionHandlerTest) TestUpdateSelectionSuccess() {
 		Success: true,
 	}
 
-	context.EXPECT().Bind(t.UpdateSelectionReq).Return(nil)
+	context.EXPECT().Bind(&dto.UpdateSelectionRequest{}).SetArg(0, *t.UpdateSelectionReq)
 	validator.EXPECT().Validate(t.UpdateSelectionReq).Return(nil)
 	selectionSvc.EXPECT().UpdateSelection(t.UpdateSelectionReq).Return(expectedResp, nil)
 	context.EXPECT().JSON(http.StatusOK, expectedResp)
@@ -159,30 +156,26 @@ func (t *SelectionHandlerTest) TestUpdateSelectionSuccess() {
 	handler.UpdateSelection(context)
 }
 
-func (t *SelectionHandlerTest) TestUpdateSelectionInvalidArgument() {
+func (t *SelectionHandlerTest) TestUpdateSelectionBindError() {
 	context := routerMock.NewMockContext(t.controller)
 	handler := selection.NewHandler(nil, nil, t.logger)
 
-	expectedErr := apperror.BadRequestError("invalid argument")
-
-	context.EXPECT().Bind(t.UpdateSelectionReq).Return(expectedErr)
-	context.EXPECT().BadRequestError(expectedErr.Error())
+	context.EXPECT().Bind(&dto.UpdateSelectionRequest{}).Return(apperror.BadRequest)
+	context.EXPECT().BadRequestError(apperror.BadRequest.Error())
 
 	handler.UpdateSelection(context)
 }
 
-func (t *SelectionHandlerTest) TestUpdateSelectionInternalError() {
+func (t *SelectionHandlerTest) TestUpdateSelectionServiceError() {
 	selectionSvc := selectionMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
 	context := routerMock.NewMockContext(t.controller)
 	handler := selection.NewHandler(selectionSvc, validator, t.logger)
 
-	expectedErr := apperror.InternalServerError("internal error")
-
-	context.EXPECT().Bind(t.UpdateSelectionReq).Return(nil)
+	context.EXPECT().Bind(&dto.UpdateSelectionRequest{}).SetArg(0, *t.UpdateSelectionReq)
 	validator.EXPECT().Validate(t.UpdateSelectionReq).Return(nil)
-	selectionSvc.EXPECT().UpdateSelection(t.UpdateSelectionReq).Return(nil, expectedErr)
-	context.EXPECT().ResponseError(expectedErr)
+	selectionSvc.EXPECT().UpdateSelection(t.UpdateSelectionReq).Return(nil, apperror.InternalServer)
+	context.EXPECT().ResponseError(apperror.InternalServer)
 
 	handler.UpdateSelection(context)
 }
