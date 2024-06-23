@@ -68,20 +68,19 @@ func (t *SelectionServiceTest) SetupTest() {
 }
 
 func (t *SelectionServiceTest) TestCreateSelectionSuccess() {
+	client := selectionMock.SelectionClientMock{}
+	svc := selection.NewService(&client, t.logger)
+
 	protoResp := &selectionProto.CreateSelectionResponse{
 		Selection: t.SelectionProto,
 	}
 
 	createSelectionDto := selection.ProtoToDto(protoResp.Selection)
-
 	expected := &dto.CreateSelectionResponse{
 		Selection: createSelectionDto,
 	}
 
-	client := selectionMock.SelectionClientMock{}
 	client.On("Create", t.CreateSelectionProtoRequest).Return(protoResp, nil)
-
-	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.CreateSelection(t.CreateSelectionDtoRequest)
 
 	t.Nil(err)
@@ -89,16 +88,14 @@ func (t *SelectionServiceTest) TestCreateSelectionSuccess() {
 }
 
 func (t *SelectionServiceTest) TestCreateSelectionInvalidArgument() {
+	client := selectionMock.SelectionClientMock{}
+	svc := selection.NewService(&client, t.logger)
+
 	protoReq := t.CreateSelectionProtoRequest
-
 	expected := apperror.BadRequestError("Invalid argument")
-
 	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
 
-	client := selectionMock.SelectionClientMock{}
 	client.On("Create", protoReq).Return(nil, clientErr)
-
-	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.CreateSelection(t.CreateSelectionDtoRequest)
 
 	t.Nil(actual)
@@ -106,16 +103,14 @@ func (t *SelectionServiceTest) TestCreateSelectionInvalidArgument() {
 }
 
 func (t *SelectionServiceTest) TestCreateSelectionInternalError() {
+	client := selectionMock.SelectionClientMock{}
+	svc := selection.NewService(&client, t.logger)
+
 	protoReq := t.CreateSelectionProtoRequest
-
 	expected := apperror.InternalServerError("rpc error: code = Internal desc = Internal error")
-
 	clientErr := status.Error(codes.Internal, apperror.InternalServer.Error())
 
-	client := selectionMock.SelectionClientMock{}
 	client.On("Create", protoReq).Return(nil, clientErr)
-
-	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.CreateSelection(t.CreateSelectionDtoRequest)
 
 	t.Nil(actual)
@@ -123,18 +118,17 @@ func (t *SelectionServiceTest) TestCreateSelectionInternalError() {
 }
 
 func (t *SelectionServiceTest) TestFindByGroupIdSelectionSuccess() {
+	client := selectionMock.SelectionClientMock{}
+	svc := selection.NewService(&client, t.logger)
+
 	protoResp := &selectionProto.FindByGroupIdSelectionResponse{
 		Selection: t.SelectionProto,
 	}
-
 	expected := &dto.FindByGroupIdSelectionResponse{
 		Selection: t.SelectionDto,
 	}
 
-	client := selectionMock.SelectionClientMock{}
 	client.On("FindByGroupId", t.FindByGroupIdSelectionProtoRequest).Return(protoResp, nil)
-
-	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.FindByGroupIdSelection(t.FindByGroupIdSelectionDtoRequest)
 
 	t.Nil(err)
@@ -142,16 +136,14 @@ func (t *SelectionServiceTest) TestFindByGroupIdSelectionSuccess() {
 }
 
 func (t *SelectionServiceTest) TestFindByGroupIdSelectionInvalidArgument() {
+	client := selectionMock.SelectionClientMock{}
+	svc := selection.NewService(&client, t.logger)
+
 	protoReq := t.FindByGroupIdSelectionProtoRequest
-
 	expected := apperror.BadRequestError("Invalid argument")
-
 	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
 
-	client := selectionMock.SelectionClientMock{}
 	client.On("FindByGroupId", protoReq).Return(nil, clientErr)
-
-	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.FindByGroupIdSelection(t.FindByGroupIdSelectionDtoRequest)
 
 	t.Nil(actual)
@@ -159,16 +151,14 @@ func (t *SelectionServiceTest) TestFindByGroupIdSelectionInvalidArgument() {
 }
 
 func (t *SelectionServiceTest) TestFindByGroupIdSelectionInternalError() {
+	client := selectionMock.SelectionClientMock{}
+	svc := selection.NewService(&client, t.logger)
+
 	protoReq := t.FindByGroupIdSelectionProtoRequest
-
 	expected := apperror.InternalServerError("rpc error: code = Internal desc = Internal error")
-
 	clientErr := status.Error(codes.Internal, apperror.InternalServer.Error())
 
-	client := selectionMock.SelectionClientMock{}
 	client.On("FindByGroupId", protoReq).Return(nil, clientErr)
-
-	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.FindByGroupIdSelection(t.FindByGroupIdSelectionDtoRequest)
 
 	t.Nil(actual)
@@ -177,18 +167,17 @@ func (t *SelectionServiceTest) TestFindByGroupIdSelectionInternalError() {
 }
 
 func (t *SelectionServiceTest) TestUpdateSelectionSuccess() {
+	client := selectionMock.SelectionClientMock{}
+	svc := selection.NewService(&client, t.logger)
+
 	protoResp := &selectionProto.UpdateSelectionResponse{
 		Success: true,
 	}
-
 	expected := &dto.UpdateSelectionResponse{
 		Success: true,
 	}
 
-	client := selectionMock.SelectionClientMock{}
 	client.On("Update", t.UpdateSelectionProtoRequest).Return(protoResp, nil)
-
-	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.UpdateSelection(t.UpdateSelectionDtoRequest)
 
 	t.Nil(err)
@@ -196,16 +185,14 @@ func (t *SelectionServiceTest) TestUpdateSelectionSuccess() {
 }
 
 func (t *SelectionServiceTest) TestUpdateSelectionInvalidArgument() {
+	client := selectionMock.SelectionClientMock{}
+	svc := selection.NewService(&client, t.logger)
+
 	protoReq := t.UpdateSelectionProtoRequest
-
 	expected := apperror.BadRequestError("Invalid argument")
-
 	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
 
-	client := selectionMock.SelectionClientMock{}
 	client.On("Update", protoReq).Return(nil, clientErr)
-
-	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.UpdateSelection(t.UpdateSelectionDtoRequest)
 
 	t.Nil(actual)
@@ -213,16 +200,14 @@ func (t *SelectionServiceTest) TestUpdateSelectionInvalidArgument() {
 }
 
 func (t *SelectionServiceTest) TestUpdateSelectionInternalError() {
+	client := selectionMock.SelectionClientMock{}
+	svc := selection.NewService(&client, t.logger)
+
 	protoReq := t.UpdateSelectionProtoRequest
-
 	expected := apperror.InternalServerError("rpc error: code = Internal desc = Internal error")
-
 	clientErr := status.Error(codes.Internal, apperror.InternalServer.Error())
 
-	client := selectionMock.SelectionClientMock{}
 	client.On("Update", protoReq).Return(nil, clientErr)
-
-	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.UpdateSelection(t.UpdateSelectionDtoRequest)
 
 	t.Nil(actual)
