@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  auth:
+    image: ghcr.io/isd-sgcu/rpkm67-auth:77a18ef043e7ea64f561668d42c3c85044882f7f
+    container_name: auth
+    restart: unless-stopped
+    environment:
+      APP_PORT: 3002
+      APP_ENV: development
+      DB_URL: postgres://root:1234@db:5432/rpkm67_db
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: 5678
+      JWT_SECRET: secret
+      JWT_ACCESS_TTL: 3600
+      JWT_REFRESH_TTL: 259200
+      JWT_ISSUER: issuer
+      JWT_RESET_TOKEN_TTL: 900
+    networks:
+      - rpkm67
+    volumes:
+      - ./microservices/auth:/app/config/staffs
+    ports:
+      - "3002:3002"
+
+  db:
+    image: postgres:15.1-alpine3.17
+    container_name: db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: "1234"
+      POSTGRES_DB: rpkm67_db
+    networks:
+      - rpkm67
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  cache:
+    image: redis:7.2.3-alpine
+    container_name: cache
+    restart: unless-stopped
+    environment:
+      REDIS_HOST: localhost
+      REDIS_PASSWORD: "5678"
+    networks:
+      - rpkm67
+    ports:
+      - "6379:6379"
+
+networks:
+  rpkm67:
+    name: rpkm67
