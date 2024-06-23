@@ -103,7 +103,7 @@ func (s *serviceImpl) UpdateSelection(req *dto.UpdateSelectionRequest) (*dto.Upd
 	if err != nil {
 		st, ok := status.FromError(err)
 		if !ok {
-			s.log.Named("UpdateSelection").Error("FromeError: ", zap.Error(err))
+			s.log.Named("UpdateSelection").Error("FromError: ", zap.Error(err))
 			return nil, apperror.InternalServer
 		}
 		switch st.Code() {

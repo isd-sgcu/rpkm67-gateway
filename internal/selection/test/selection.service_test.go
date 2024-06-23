@@ -9,7 +9,6 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/selection"
 	selectionMock "github.com/isd-sgcu/rpkm67-gateway/mocks/client/selection"
 	selectionProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/selection/v1"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -85,8 +84,8 @@ func (t *SelectionServiceTest) TestCreateSelectionSuccess() {
 	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.CreateSelection(t.CreateSelectionDtoRequest)
 
-	assert.Nil(t.T(), err)
-	assert.Equal(t.T(), expected, actual)
+	t.Nil(err)
+	t.Equal(expected, actual)
 }
 
 func (t *SelectionServiceTest) TestCreateSelectionInvalidArgument() {
@@ -102,8 +101,8 @@ func (t *SelectionServiceTest) TestCreateSelectionInvalidArgument() {
 	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.CreateSelection(t.CreateSelectionDtoRequest)
 
-	assert.Nil(t.T(), actual)
-	assert.Equal(t.T(), expected, err)
+	t.Nil(actual)
+	t.Equal(expected, err)
 }
 
 func (t *SelectionServiceTest) TestCreateSelectionInternalError() {
@@ -119,8 +118,8 @@ func (t *SelectionServiceTest) TestCreateSelectionInternalError() {
 	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.CreateSelection(t.CreateSelectionDtoRequest)
 
-	assert.Nil(t.T(), actual)
-	assert.Equal(t.T(), expected, err)
+	t.Nil(actual)
+	t.Equal(expected, err)
 }
 
 func (t *SelectionServiceTest) TestFindByGroupIdSelectionSuccess() {
@@ -138,8 +137,8 @@ func (t *SelectionServiceTest) TestFindByGroupIdSelectionSuccess() {
 	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.FindByGroupIdSelection(t.FindByGroupIdSelectionDtoRequest)
 
-	assert.Nil(t.T(), err)
-	assert.Equal(t.T(), expected, actual)
+	t.Nil(err)
+	t.Equal(expected, actual)
 }
 
 func (t *SelectionServiceTest) TestFindByGroupIdSelectionInvalidArgument() {
@@ -155,8 +154,8 @@ func (t *SelectionServiceTest) TestFindByGroupIdSelectionInvalidArgument() {
 	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.FindByGroupIdSelection(t.FindByGroupIdSelectionDtoRequest)
 
-	assert.Nil(t.T(), actual)
-	assert.Equal(t.T(), expected, err)
+	t.Nil(actual)
+	t.Equal(expected, err)
 }
 
 func (t *SelectionServiceTest) TestFindByGroupIdSelectionInternalError() {
@@ -172,8 +171,8 @@ func (t *SelectionServiceTest) TestFindByGroupIdSelectionInternalError() {
 	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.FindByGroupIdSelection(t.FindByGroupIdSelectionDtoRequest)
 
-	assert.Nil(t.T(), actual)
-	assert.Equal(t.T(), expected, err)
+	t.Nil(actual)
+	t.Equal(expected, err)
 
 }
 
@@ -192,8 +191,8 @@ func (t *SelectionServiceTest) TestUpdateSelectionSuccess() {
 	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.UpdateSelection(t.UpdateSelectionDtoRequest)
 
-	assert.Nil(t.T(), err)
-	assert.Equal(t.T(), expected, actual)
+	t.Nil(err)
+	t.Equal(expected, actual)
 }
 
 func (t *SelectionServiceTest) TestUpdateSelectionInvalidArgument() {
@@ -209,8 +208,8 @@ func (t *SelectionServiceTest) TestUpdateSelectionInvalidArgument() {
 	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.UpdateSelection(t.UpdateSelectionDtoRequest)
 
-	assert.Nil(t.T(), actual)
-	assert.Equal(t.T(), expected, err)
+	t.Nil(actual)
+	t.Equal(expected, err)
 }
 
 func (t *SelectionServiceTest) TestUpdateSelectionInternalError() {
@@ -226,6 +225,6 @@ func (t *SelectionServiceTest) TestUpdateSelectionInternalError() {
 	svc := selection.NewService(&client, t.logger)
 	actual, err := svc.UpdateSelection(t.UpdateSelectionDtoRequest)
 
-	assert.Nil(t.T(), actual)
-	assert.Equal(t.T(), expected, err)
+	t.Nil(actual)
+	t.Equal(expected, err)
 }

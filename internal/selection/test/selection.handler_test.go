@@ -54,11 +54,9 @@ func (t *SelectionHandlerTest) TestCreateSelectionSuccess() {
 		Selection: t.Selection,
 	}
 
-	controller := gomock.NewController(t.T())
-
-	selectionSvc := selectionMock.NewMockService(controller)
-	validator := validatorMock.NewMockDtoValidator(controller)
-	context := routerMock.NewMockContext(controller)
+	selectionSvc := selectionMock.NewMockService(t.controller)
+	validator := validatorMock.NewMockDtoValidator(t.controller)
+	context := routerMock.NewMockContext(t.controller)
 
 	context.EXPECT().Bind(t.CreateSelectionReq).Return(nil)
 	validator.EXPECT().Validate(t.CreateSelectionReq).Return(nil)
@@ -72,9 +70,7 @@ func (t *SelectionHandlerTest) TestCreateSelectionSuccess() {
 func (t *SelectionHandlerTest) TestCreateSelectionInvalidArgument() {
 	expectedErr := apperror.BadRequestError("invalid argument")
 
-	controller := gomock.NewController(t.T())
-
-	context := routerMock.NewMockContext(controller)
+	context := routerMock.NewMockContext(t.controller)
 
 	context.EXPECT().Bind(t.CreateSelectionReq).Return(expectedErr)
 	context.EXPECT().BadRequestError(expectedErr.Error())
@@ -86,11 +82,9 @@ func (t *SelectionHandlerTest) TestCreateSelectionInvalidArgument() {
 func (t *SelectionHandlerTest) TestCreateSelectionInternalError() {
 	expectedErr := apperror.InternalServerError("internal error")
 
-	controller := gomock.NewController(t.T())
-
-	selectionSvc := selectionMock.NewMockService(controller)
-	validator := validatorMock.NewMockDtoValidator(controller)
-	context := routerMock.NewMockContext(controller)
+	selectionSvc := selectionMock.NewMockService(t.controller)
+	validator := validatorMock.NewMockDtoValidator(t.controller)
+	context := routerMock.NewMockContext(t.controller)
 
 	context.EXPECT().Bind(t.CreateSelectionReq).Return(nil)
 	validator.EXPECT().Validate(t.CreateSelectionReq).Return(nil)
@@ -107,11 +101,9 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionSuccess() {
 		Selection: t.Selection,
 	}
 
-	controller := gomock.NewController(t.T())
-
-	selectionSvc := selectionMock.NewMockService(controller)
-	validator := validatorMock.NewMockDtoValidator(controller)
-	context := routerMock.NewMockContext(controller)
+	selectionSvc := selectionMock.NewMockService(t.controller)
+	validator := validatorMock.NewMockDtoValidator(t.controller)
+	context := routerMock.NewMockContext(t.controller)
 
 	context.EXPECT().Param("id").Return(t.Selection.GroupId)
 	validator.EXPECT().Validate(t.FindByGroupIdSelectionReq).Return(nil)
@@ -126,9 +118,7 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionSuccess() {
 func (t *SelectionHandlerTest) TestFindByStudentIdSelectionInvalidArgument() {
 	expectedErr := apperror.BadRequestError("url parameter 'id' not found")
 
-	controller := gomock.NewController(t.T())
-
-	context := routerMock.NewMockContext(controller)
+	context := routerMock.NewMockContext(t.controller)
 
 	context.EXPECT().Param("id").Return("")
 	context.EXPECT().BadRequestError(expectedErr.Error())
@@ -140,11 +130,9 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionInvalidArgument() {
 func (t *SelectionHandlerTest) TestFindByStudentIdSelectionInternalError() {
 	expectedErr := apperror.InternalServerError("internal error")
 
-	controller := gomock.NewController(t.T())
-
-	selectionSvc := selectionMock.NewMockService(controller)
-	validator := validatorMock.NewMockDtoValidator(controller)
-	context := routerMock.NewMockContext(controller)
+	selectionSvc := selectionMock.NewMockService(t.controller)
+	validator := validatorMock.NewMockDtoValidator(t.controller)
+	context := routerMock.NewMockContext(t.controller)
 
 	context.EXPECT().Param("id").Return(t.Selection.GroupId)
 	validator.EXPECT().Validate(t.FindByGroupIdSelectionReq).Return(nil)
@@ -161,11 +149,9 @@ func (t *SelectionHandlerTest) TestUpdateSelectionSuccess() {
 		Success: true,
 	}
 
-	controller := gomock.NewController(t.T())
-
-	selectionSvc := selectionMock.NewMockService(controller)
-	validator := validatorMock.NewMockDtoValidator(controller)
-	context := routerMock.NewMockContext(controller)
+	selectionSvc := selectionMock.NewMockService(t.controller)
+	validator := validatorMock.NewMockDtoValidator(t.controller)
+	context := routerMock.NewMockContext(t.controller)
 
 	context.EXPECT().Bind(t.UpdateSelectionReq).Return(nil)
 	validator.EXPECT().Validate(t.UpdateSelectionReq).Return(nil)
@@ -179,9 +165,7 @@ func (t *SelectionHandlerTest) TestUpdateSelectionSuccess() {
 func (t *SelectionHandlerTest) TestUpdateSelectionInvalidArgument() {
 	expectedErr := apperror.BadRequestError("invalid argument")
 
-	controller := gomock.NewController(t.T())
-
-	context := routerMock.NewMockContext(controller)
+	context := routerMock.NewMockContext(t.controller)
 
 	context.EXPECT().Bind(t.UpdateSelectionReq).Return(expectedErr)
 	context.EXPECT().BadRequestError(expectedErr.Error())
@@ -193,11 +177,9 @@ func (t *SelectionHandlerTest) TestUpdateSelectionInvalidArgument() {
 func (t *SelectionHandlerTest) TestUpdateSelectionInternalError() {
 	expectedErr := apperror.InternalServerError("internal error")
 
-	controller := gomock.NewController(t.T())
-
-	selectionSvc := selectionMock.NewMockService(controller)
-	validator := validatorMock.NewMockDtoValidator(controller)
-	context := routerMock.NewMockContext(controller)
+	selectionSvc := selectionMock.NewMockService(t.controller)
+	validator := validatorMock.NewMockDtoValidator(t.controller)
+	context := routerMock.NewMockContext(t.controller)
 
 	context.EXPECT().Bind(t.UpdateSelectionReq).Return(nil)
 	validator.EXPECT().Validate(t.UpdateSelectionReq).Return(nil)
