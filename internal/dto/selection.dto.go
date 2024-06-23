@@ -2,29 +2,29 @@ package dto
 
 type Selection struct {
 	Id      string   `json:"id"`
-	UserId  string   `json:"user_id"`
+	GroupId string   `json:"group_id"`
 	BaanIds []string `json:"baan_ids"`
 }
 
 type CreateSelectionRequest struct {
-	UserId  string   `json:"user_id" validate:"required"`
+	GroupId string   `json:"group_id" validate:"required"`
 	BaanIds []string `json:"baan_ids" validate:"required"`
 }
 
 type CreateSelectionResponse struct {
-	Selection Selection `json:"selection"`
+	Selection *Selection `json:"selection"`
 }
 
-type FindByStudentIdSelectionRequest struct {
-	UserId string `json:"user_id" validate:"required"`
+type FindByGroupIdSelectionRequest struct {
+	GroupId string `json:"group_id" validate:"required"`
 }
 
-type FindByStudentIdSelectionResponse struct {
-	Selection Selection `json:"selection"`
+type FindByGroupIdSelectionResponse struct {
+	Selection *Selection `json:"selection"`
 }
 
 type UpdateSelectionRequest struct {
-	Selection Selection `json:"selection" validate:"required"`
+	Selection *Selection `json:"selection" validate:"required"`
 }
 
 type UpdateSelectionResponse struct {

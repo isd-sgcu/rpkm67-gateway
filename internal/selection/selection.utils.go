@@ -20,3 +20,11 @@ func DtoToProto(selection *dto.Selection) *selectionProto.Selection {
 		BaanIds: selection.BaanIds,
 	}
 }
+
+func ProtoToDtoList(selections []*selectionProto.Selection) []*dto.Selection {
+	var out []*dto.Selection
+	for _, selection := range selections {
+		out = append(out, ProtoToDto(selection))
+	}
+	return out
+}
