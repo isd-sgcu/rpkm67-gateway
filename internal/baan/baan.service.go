@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/isd-sgcu/rpkm67-gateway/apperrors"
+	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	baanProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/baan/v1"
 	"go.uber.org/zap"
@@ -13,8 +13,8 @@ import (
 )
 
 type Service interface {
-	FindAllBaan(req *dto.FindAllBaanRequest) (*dto.FindAllBaanResponse, *apperrors.AppError)
-	FindOneBaan(req *dto.FindOneBaanRequest) (*dto.FindOneBaanResponse, *apperrors.AppError)
+	FindAllBaan(req *dto.FindAllBaanRequest) (*dto.FindAllBaanResponse, *apperror.AppError)
+	FindOneBaan(req *dto.FindOneBaanRequest) (*dto.FindOneBaanResponse, *apperror.AppError)
 }
 
 type serviceImpl struct {
@@ -29,7 +29,7 @@ func NewService(client baanProto.BaanServiceClient, log *zap.Logger) Service {
 	}
 }
 
-func (s *serviceImpl) FindAllBaan(req *dto.FindAllBaanRequest) (*dto.FindAllBaanResponse, *apperrors.AppError) {
+func (s *serviceImpl) FindAllBaan(req *dto.FindAllBaanRequest) (*dto.FindAllBaanResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -37,15 +37,15 @@ func (s *serviceImpl) FindAllBaan(req *dto.FindAllBaanRequest) (*dto.FindAllBaan
 	if err != nil {
 		st, ok := status.FromError(err)
 		if !ok {
-			return nil, apperrors.InternalServer
+			return nil, apperror.InternalServer
 		}
 		switch st.Code() {
 		case codes.InvalidArgument:
-			return nil, apperrors.BadRequestError("Invalid argument")
+			return nil, apperror.BadRequestError("Invalid argument")
 		case codes.Internal:
-			return nil, apperrors.InternalServerError(err.Error())
+			return nil, apperror.InternalServerError(err.Error())
 		default:
-			return nil, apperrors.ServiceUnavailable
+			return nil, apperror.ServiceUnavailable
 		}
 	}
 
@@ -54,7 +54,7 @@ func (s *serviceImpl) FindAllBaan(req *dto.FindAllBaanRequest) (*dto.FindAllBaan
 	}, nil
 }
 
-func (s *serviceImpl) FindOneBaan(req *dto.FindOneBaanRequest) (*dto.FindOneBaanResponse, *apperrors.AppError) {
+func (s *serviceImpl) FindOneBaan(req *dto.FindOneBaanRequest) (*dto.FindOneBaanResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -64,15 +64,15 @@ func (s *serviceImpl) FindOneBaan(req *dto.FindOneBaanRequest) (*dto.FindOneBaan
 	if err != nil {
 		st, ok := status.FromError(err)
 		if !ok {
-			return nil, apperrors.InternalServer
+			return nil, apperror.InternalServer
 		}
 		switch st.Code() {
 		case codes.NotFound:
-			return nil, apperrors.NotFoundError("Baan not found")
+			return nil, apperror.NotFoundError("Baan not found")
 		case codes.Internal:
-			return nil, apperrors.InternalServerError(err.Error())
+			return nil, apperror.InternalServerError(err.Error())
 		default:
-			return nil, apperrors.ServiceUnavailable
+			return nil, apperror.ServiceUnavailable
 		}
 	}
 

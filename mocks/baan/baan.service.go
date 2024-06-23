@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	apperrors "github.com/isd-sgcu/rpkm67-gateway/apperrors"
+	apperror "github.com/isd-sgcu/rpkm67-gateway/apperror"
 	dto "github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 )
 
@@ -36,11 +36,11 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // FindAllBaan mocks base method.
-func (m *MockService) FindAllBaan(req *dto.FindAllBaanRequest) (*dto.FindAllBaanResponse, *apperrors.AppError) {
+func (m *MockService) FindAllBaan(req *dto.FindAllBaanRequest) (*dto.FindAllBaanResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindAllBaan", req)
 	ret0, _ := ret[0].(*dto.FindAllBaanResponse)
-	ret1, _ := ret[1].(*apperrors.AppError)
+	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 
@@ -51,11 +51,11 @@ func (mr *MockServiceMockRecorder) FindAllBaan(req interface{}) *gomock.Call {
 }
 
 // FindOneBaan mocks base method.
-func (m *MockService) FindOneBaan(req *dto.FindOneBaanRequest) (*dto.FindOneBaanResponse, *apperrors.AppError) {
+func (m *MockService) FindOneBaan(req *dto.FindOneBaanRequest) (*dto.FindOneBaanResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindOneBaan", req)
 	ret0, _ := ret[0].(*dto.FindOneBaanResponse)
-	ret1, _ := ret[1].(*apperrors.AppError)
+	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 

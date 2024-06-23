@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	apperrors "github.com/isd-sgcu/rpkm67-gateway/apperrors"
+	apperror "github.com/isd-sgcu/rpkm67-gateway/apperror"
 	dto "github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 )
 
@@ -36,11 +36,11 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // ForgotPassword mocks base method.
-func (m *MockService) ForgotPassword(req *dto.ForgotPasswordRequest) (*dto.ForgotPasswordResponse, *apperrors.AppError) {
+func (m *MockService) ForgotPassword(req *dto.ForgotPasswordRequest) (*dto.ForgotPasswordResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ForgotPassword", req)
 	ret0, _ := ret[0].(*dto.ForgotPasswordResponse)
-	ret1, _ := ret[1].(*apperrors.AppError)
+	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 
@@ -63,11 +63,11 @@ func (mr *MockServiceMockRecorder) RefreshToken() *gomock.Call {
 }
 
 // ResetPassword mocks base method.
-func (m *MockService) ResetPassword(req *dto.ResetPasswordRequest) (*dto.ResetPasswordResponse, *apperrors.AppError) {
+func (m *MockService) ResetPassword(req *dto.ResetPasswordRequest) (*dto.ResetPasswordResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ResetPassword", req)
 	ret0, _ := ret[0].(*dto.ResetPasswordResponse)
-	ret1, _ := ret[1].(*apperrors.AppError)
+	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 
@@ -78,11 +78,11 @@ func (mr *MockServiceMockRecorder) ResetPassword(req interface{}) *gomock.Call {
 }
 
 // SignIn mocks base method.
-func (m *MockService) SignIn(req *dto.SignInRequest) (*dto.Credential, *apperrors.AppError) {
+func (m *MockService) SignIn(req *dto.SignInRequest) (*dto.Credential, *apperror.AppError) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignIn", req)
 	ret0, _ := ret[0].(*dto.Credential)
-	ret1, _ := ret[1].(*apperrors.AppError)
+	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 
@@ -93,11 +93,11 @@ func (mr *MockServiceMockRecorder) SignIn(req interface{}) *gomock.Call {
 }
 
 // SignOut mocks base method.
-func (m *MockService) SignOut(req *dto.TokenPayloadAuth) (*dto.SignOutResponse, *apperrors.AppError) {
+func (m *MockService) SignOut(req *dto.TokenPayloadAuth) (*dto.SignOutResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignOut", req)
 	ret0, _ := ret[0].(*dto.SignOutResponse)
-	ret1, _ := ret[1].(*apperrors.AppError)
+	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 
@@ -108,11 +108,11 @@ func (mr *MockServiceMockRecorder) SignOut(req interface{}) *gomock.Call {
 }
 
 // SignUp mocks base method.
-func (m *MockService) SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperrors.AppError) {
+func (m *MockService) SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperror.AppError) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignUp", req)
 	ret0, _ := ret[0].(*dto.Credential)
-	ret1, _ := ret[1].(*apperrors.AppError)
+	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 

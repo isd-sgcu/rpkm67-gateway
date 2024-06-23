@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/isd-sgcu/rpkm67-gateway/apperrors"
+	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/baan"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	baanMock "github.com/isd-sgcu/rpkm67-gateway/mocks/client/baan"
@@ -26,7 +26,7 @@ type BaanServiceTest struct {
 	FindAllBaanDtoReq   *dto.FindAllBaanRequest
 	FindOneBaanProtoReq *baanProto.FindOneBaanRequest
 	FindOneBaanDtoReq   *dto.FindOneBaanRequest
-	Err                 apperrors.AppError
+	Err                 apperror.AppError
 }
 
 func TestBaanService(t *testing.T) {

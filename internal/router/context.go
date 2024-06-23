@@ -3,13 +3,13 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/isd-sgcu/rpkm67-gateway/apperrors"
+	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 )
 
 type Context interface {
 	JSON(statusCode int, obj interface{})
-	ResponseError(err *apperrors.AppError)
+	ResponseError(err *apperror.AppError)
 	BadRequestError(err string)
 	InternalServerError(err string)
 	NewUUID() uuid.UUID
@@ -32,16 +32,16 @@ func (c *contextImpl) JSON(statusCode int, obj interface{}) {
 	c.Context.JSON(statusCode, obj)
 }
 
-func (c *contextImpl) ResponseError(err *apperrors.AppError) {
+func (c *contextImpl) ResponseError(err *apperror.AppError) {
 	c.JSON(err.HttpCode, gin.H{"error": err.Error()})
 }
 
 func (c *contextImpl) InternalServerError(err string) {
-	c.JSON(apperrors.InternalServer.HttpCode, gin.H{"error": err})
+	c.JSON(apperror.InternalServer.HttpCode, gin.H{"error": err})
 }
 
 func (c *contextImpl) BadRequestError(err string) {
-	c.JSON(apperrors.BadRequest.HttpCode, gin.H{"error": err})
+	c.JSON(apperror.BadRequest.HttpCode, gin.H{"error": err})
 }
 
 func (c *contextImpl) NewUUID() uuid.UUID {

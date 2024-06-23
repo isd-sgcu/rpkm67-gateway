@@ -9,7 +9,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
-	apperrors "github.com/isd-sgcu/rpkm67-gateway/apperrors"
+	apperror "github.com/isd-sgcu/rpkm67-gateway/apperror"
 	dto "github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 )
 
@@ -158,7 +158,7 @@ func (mr *MockContextMockRecorder) Query(key interface{}) *gomock.Call {
 }
 
 // ResponseError mocks base method.
-func (m *MockContext) ResponseError(err *apperrors.AppError) {
+func (m *MockContext) ResponseError(err *apperror.AppError) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "ResponseError", err)
 }

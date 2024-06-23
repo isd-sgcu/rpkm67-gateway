@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/isd-sgcu/rpkm67-gateway/apperrors"
+	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	authProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/auth/v1"
 	"go.uber.org/zap"
@@ -15,11 +15,11 @@ import (
 type Service interface {
 	Validate()
 	RefreshToken()
-	SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperrors.AppError)
-	SignIn(req *dto.SignInRequest) (*dto.Credential, *apperrors.AppError)
-	SignOut(req *dto.TokenPayloadAuth) (*dto.SignOutResponse, *apperrors.AppError)
-	ForgotPassword(req *dto.ForgotPasswordRequest) (*dto.ForgotPasswordResponse, *apperrors.AppError)
-	ResetPassword(req *dto.ResetPasswordRequest) (*dto.ResetPasswordResponse, *apperrors.AppError)
+	SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperror.AppError)
+	SignIn(req *dto.SignInRequest) (*dto.Credential, *apperror.AppError)
+	SignOut(req *dto.TokenPayloadAuth) (*dto.SignOutResponse, *apperror.AppError)
+	ForgotPassword(req *dto.ForgotPasswordRequest) (*dto.ForgotPasswordResponse, *apperror.AppError)
+	ResetPassword(req *dto.ResetPasswordRequest) (*dto.ResetPasswordResponse, *apperror.AppError)
 }
 
 type serviceImpl struct {
@@ -39,7 +39,7 @@ func (s *serviceImpl) Validate() {
 func (s *serviceImpl) RefreshToken() {
 }
 
-func (s *serviceImpl) SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperrors.AppError) {
+func (s *serviceImpl) SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -53,15 +53,15 @@ func (s *serviceImpl) SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperror
 	if err != nil {
 		st, ok := status.FromError(err)
 		if !ok {
-			return nil, apperrors.InternalServer
+			return nil, apperror.InternalServer
 		}
 		switch st.Code() {
 		case codes.AlreadyExists:
-			return nil, apperrors.BadRequestError("User already exists")
+			return nil, apperror.BadRequestError("User already exists")
 		case codes.Internal:
-			return nil, apperrors.InternalServerError(err.Error())
+			return nil, apperror.InternalServerError(err.Error())
 		default:
-			return nil, apperrors.ServiceUnavailable
+			return nil, apperror.ServiceUnavailable
 		}
 	}
 
@@ -72,7 +72,7 @@ func (s *serviceImpl) SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperror
 	}, nil
 }
 
-func (s *serviceImpl) SignIn(req *dto.SignInRequest) (*dto.Credential, *apperrors.AppError) {
+func (s *serviceImpl) SignIn(req *dto.SignInRequest) (*dto.Credential, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -83,15 +83,15 @@ func (s *serviceImpl) SignIn(req *dto.SignInRequest) (*dto.Credential, *apperror
 	if err != nil {
 		st, ok := status.FromError(err)
 		if !ok {
-			return nil, apperrors.InternalServer
+			return nil, apperror.InternalServer
 		}
 		switch st.Code() {
 		case codes.AlreadyExists:
-			return nil, apperrors.BadRequestError("User already exists")
+			return nil, apperror.BadRequestError("User already exists")
 		case codes.Internal:
-			return nil, apperrors.InternalServerError(err.Error())
+			return nil, apperror.InternalServerError(err.Error())
 		default:
-			return nil, apperrors.ServiceUnavailable
+			return nil, apperror.ServiceUnavailable
 		}
 	}
 
@@ -102,14 +102,14 @@ func (s *serviceImpl) SignIn(req *dto.SignInRequest) (*dto.Credential, *apperror
 	}, nil
 }
 
-func (s *serviceImpl) SignOut(req *dto.TokenPayloadAuth) (*dto.SignOutResponse, *apperrors.AppError) {
+func (s *serviceImpl) SignOut(req *dto.TokenPayloadAuth) (*dto.SignOutResponse, *apperror.AppError) {
 	return nil, nil
 }
 
-func (s *serviceImpl) ForgotPassword(req *dto.ForgotPasswordRequest) (*dto.ForgotPasswordResponse, *apperrors.AppError) {
+func (s *serviceImpl) ForgotPassword(req *dto.ForgotPasswordRequest) (*dto.ForgotPasswordResponse, *apperror.AppError) {
 	return nil, nil
 }
 
-func (s *serviceImpl) ResetPassword(req *dto.ResetPasswordRequest) (*dto.ResetPasswordResponse, *apperrors.AppError) {
+func (s *serviceImpl) ResetPassword(req *dto.ResetPasswordRequest) (*dto.ResetPasswordResponse, *apperror.AppError) {
 	return nil, nil
 }
