@@ -33,6 +33,7 @@ func (h *handlerImpl) FindAllBaan(c router.Context) {
 	req := &dto.FindAllBaanRequest{}
 	res, appErr := h.svc.FindAllBaan(req)
 	if appErr != nil {
+		h.log.Named("FindAllBaan").Error("FindAllBaan: ", zap.Error(appErr))
 		c.ResponseError(appErr)
 		return
 	}
@@ -51,13 +52,14 @@ func (h *handlerImpl) FindOneBaan(c router.Context) {
 	}
 
 	if errorList := h.validate.Validate(req); errorList != nil {
-		h.log.Named("baan hdr").Error("validation error", zap.Strings("errorList", errorList))
+		h.log.Named("FineOneBaan").Error("Validate: ", zap.Strings("errorList", errorList))
 		c.BadRequestError(strings.Join(errorList, ", "))
 		return
 	}
 
 	res, appErr := h.svc.FindOneBaan(req)
 	if appErr != nil {
+		h.log.Named("FindOneBaan").Error("FindOneBaan: ", zap.Error(appErr))
 		c.ResponseError(appErr)
 		return
 	}
