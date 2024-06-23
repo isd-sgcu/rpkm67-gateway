@@ -50,40 +50,36 @@ func (t *BaanHandlerTest) SetupTest() {
 }
 
 func (t *BaanHandlerTest) TestFindAllBaanSuccess() {
+	baanSvc := baanMock.NewMockService(t.controller)
+	validator := validatorMock.NewMockDtoValidator(t.controller)
+	context := routerMock.NewMockContext(t.controller)
+	handler := baan.NewHandler(baanSvc, validator, t.logger)
+
 	expectedResp := &dto.FindAllBaanResponse{
 		Baans: t.Baans,
 	}
 
-	controller := gomock.NewController(t.T())
-
-	baanSvc := baanMock.NewMockService(controller)
-	validator := validatorMock.NewMockDtoValidator(controller)
-	context := routerMock.NewMockContext(controller)
-
 	baanSvc.EXPECT().FindAllBaan(t.FindAllBaanReq).Return(expectedResp, t.Err)
 	context.EXPECT().JSON(http.StatusOK, expectedResp)
 
-	handler := baan.NewHandler(baanSvc, validator, t.logger)
 	handler.FindAllBaan(context)
 }
 
 func (t *BaanHandlerTest) TestFindOneBaanSuccess() {
+	baanSvc := baanMock.NewMockService(t.controller)
+	validator := validatorMock.NewMockDtoValidator(t.controller)
+	context := routerMock.NewMockContext(t.controller)
+	handler := baan.NewHandler(baanSvc, validator, t.logger)
+
 	expectedResp := &dto.FindOneBaanResponse{
 		Baan: t.Baan,
 	}
-
-	controller := gomock.NewController(t.T())
-
-	baanSvc := baanMock.NewMockService(controller)
-	validator := validatorMock.NewMockDtoValidator(controller)
-	context := routerMock.NewMockContext(controller)
 
 	context.EXPECT().Param("id").Return(t.ParamMock)
 	validator.EXPECT().Validate(t.FindOneBaanReq).Return(nil)
 	baanSvc.EXPECT().FindOneBaan(t.FindOneBaanReq).Return(expectedResp, t.Err)
 	context.EXPECT().JSON(http.StatusOK, expectedResp)
 
-	handler := baan.NewHandler(baanSvc, validator, t.logger)
 	handler.FindOneBaan(context)
 }
 
