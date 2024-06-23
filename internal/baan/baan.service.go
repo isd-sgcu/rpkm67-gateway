@@ -35,6 +35,7 @@ func (s *serviceImpl) FindAllBaan(req *dto.FindAllBaanRequest) (*dto.FindAllBaan
 
 	res, err := s.client.FindAllBaan(ctx, &baanProto.FindAllBaanRequest{})
 	if err != nil {
+		s.log.Named("FindAllBaan").Error("FindAllBaan: ", zap.Error(err))
 		st, ok := status.FromError(err)
 		if !ok {
 			return nil, apperror.InternalServer
@@ -62,6 +63,7 @@ func (s *serviceImpl) FindOneBaan(req *dto.FindOneBaanRequest) (*dto.FindOneBaan
 		Id: req.Id,
 	})
 	if err != nil {
+		s.log.Named("FindOneBaan").Error("FindOneBaan: ", zap.Error(err))
 		st, ok := status.FromError(err)
 		if !ok {
 			return nil, apperror.InternalServer
