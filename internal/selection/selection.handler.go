@@ -33,13 +33,13 @@ type handlerImpl struct {
 func (h *handlerImpl) CreateSelection(c router.Context) {
 	body := &dto.CreateSelectionRequest{}
 	if err := c.Bind(body); err != nil {
-		h.log.Named("selection hdr").Error("failed to bind request body", zap.Error(err))
+		h.log.Named("CreateSelection").Error("Bind: failed to bind request body", zap.Error(err))
 		c.BadRequestError(err.Error())
 		return
 	}
 
 	if errorList := h.validate.Validate(body); errorList != nil {
-		h.log.Named("selection hdr").Error("validation error", zap.Strings("errorList", errorList))
+		h.log.Named("CreateSelection").Error("Validate: ", zap.Strings("errorList", errorList))
 		c.BadRequestError(strings.Join(errorList, ", "))
 		return
 	}
@@ -51,6 +51,7 @@ func (h *handlerImpl) CreateSelection(c router.Context) {
 
 	res, appErr := h.svc.CreateSelection(req)
 	if appErr != nil {
+		h.log.Named("CreateSelection").Error("CreateSelection: ", zap.Error(appErr))
 		c.ResponseError(appErr)
 		return
 	}
@@ -61,7 +62,7 @@ func (h *handlerImpl) CreateSelection(c router.Context) {
 func (h *handlerImpl) FindByGroupIdSelection(c router.Context) {
 	groupdId := c.Param("id")
 	if groupdId == "" {
-		h.log.Named("selection hdr").Error("url parameter 'id' not found", zap.String("id", groupdId))
+		h.log.Named("FindByGroupIdSelection").Error("Param: id not found")
 		c.BadRequestError("url parameter 'id' not found")
 		return
 	}
@@ -71,13 +72,14 @@ func (h *handlerImpl) FindByGroupIdSelection(c router.Context) {
 	}
 
 	if errorList := h.validate.Validate(req); errorList != nil {
-		h.log.Named("selection hdr").Error("validation error", zap.Strings("errorList", errorList))
+		h.log.Named("FindByGroupIdSelection").Error("Validate: ", zap.Strings("errorList", errorList))
 		c.BadRequestError(strings.Join(errorList, ", "))
 		return
 	}
 
 	res, appErr := h.svc.FindByGroupIdSelection(req)
 	if appErr != nil {
+		h.log.Named("FindByGroupIdSelection").Error("FindByGroupIdSelection: ", zap.Error(appErr))
 		c.ResponseError(appErr)
 		return
 	}
@@ -88,13 +90,13 @@ func (h *handlerImpl) FindByGroupIdSelection(c router.Context) {
 func (h *handlerImpl) UpdateSelection(c router.Context) {
 	body := &dto.UpdateSelectionRequest{}
 	if err := c.Bind(body); err != nil {
-		h.log.Named("selection hdr").Error("failed to bind request body", zap.Error(err))
+		h.log.Named("UpdateSelection").Error("Bind: ", zap.Error(err))
 		c.BadRequestError(err.Error())
 		return
 	}
 
 	if errorList := h.validate.Validate(body); errorList != nil {
-		h.log.Named("selection hdr").Error("validation error", zap.Strings("errorList", errorList))
+		h.log.Named("UpdateSelection").Error("Validate: ", zap.Strings("errorList", errorList))
 		c.BadRequestError(strings.Join(errorList, ", "))
 		return
 	}
@@ -105,6 +107,7 @@ func (h *handlerImpl) UpdateSelection(c router.Context) {
 
 	res, appErr := h.svc.UpdateSelection(req)
 	if appErr != nil {
+		h.log.Named("UpdateSelection").Error("UpdateSelection: ", zap.Error(appErr))
 		c.ResponseError(appErr)
 		return
 	}
