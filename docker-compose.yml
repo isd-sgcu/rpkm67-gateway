@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   auth:
-    image: ghcr.io/isd-sgcu/rpkm67-auth:77a18ef043e7ea64f561668d42c3c85044882f7f
+    image: ghcr.io/isd-sgcu/rpkm67-auth:35878d73abe9ff3e0d0e4eba709d8260bd48853a
     container_name: auth
     restart: unless-stopped
     environment:
