@@ -46,26 +46,26 @@ func (mr *MockHandlerMockRecorder) CreateSelection(c interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSelection", reflect.TypeOf((*MockHandler)(nil).CreateSelection), c)
 }
 
-// FindByStudentIdSelection mocks base method.
-func (m *MockHandler) FindByStudentIdSelection(c router.Context) {
+// DeleteSelection mocks base method.
+func (m *MockHandler) DeleteSelection(c router.Context) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "FindByStudentIdSelection", c)
+	m.ctrl.Call(m, "DeleteSelection", c)
 }
 
-// FindByStudentIdSelection indicates an expected call of FindByStudentIdSelection.
-func (mr *MockHandlerMockRecorder) FindByStudentIdSelection(c interface{}) *gomock.Call {
+// DeleteSelection indicates an expected call of DeleteSelection.
+func (mr *MockHandlerMockRecorder) DeleteSelection(c interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByStudentIdSelection", reflect.TypeOf((*MockHandler)(nil).FindByStudentIdSelection), c)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSelection", reflect.TypeOf((*MockHandler)(nil).DeleteSelection), c)
 }
 
-// UpdateSelection mocks base method.
-func (m *MockHandler) UpdateSelection(c router.Context) {
+// FindByGroupIdSelection mocks base method.
+func (m *MockHandler) FindByGroupIdSelection(c router.Context) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "UpdateSelection", c)
+	m.ctrl.Call(m, "FindByGroupIdSelection", c)
 }
 
-// UpdateSelection indicates an expected call of UpdateSelection.
-func (mr *MockHandlerMockRecorder) UpdateSelection(c interface{}) *gomock.Call {
+// FindByGroupIdSelection indicates an expected call of FindByGroupIdSelection.
+func (mr *MockHandlerMockRecorder) FindByGroupIdSelection(c interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSelection", reflect.TypeOf((*MockHandler)(nil).UpdateSelection), c)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByGroupIdSelection", reflect.TypeOf((*MockHandler)(nil).FindByGroupIdSelection), c)
 }

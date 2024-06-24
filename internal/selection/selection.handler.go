@@ -13,7 +13,7 @@ import (
 type Handler interface {
 	CreateSelection(c router.Context)
 	FindByGroupIdSelection(c router.Context)
-	UpdateSelection(c router.Context)
+	DeleteSelection(c router.Context)
 }
 
 func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
@@ -44,12 +44,7 @@ func (h *handlerImpl) CreateSelection(c router.Context) {
 		return
 	}
 
-	req := &dto.CreateSelectionRequest{
-		GroupId: body.GroupId,
-		BaanIds: body.BaanIds,
-	}
-
-	res, appErr := h.svc.CreateSelection(req)
+	res, appErr := h.svc.CreateSelection(body)
 	if appErr != nil {
 		h.log.Named("CreateSelection").Error("CreateSelection: ", zap.Error(appErr))
 		c.ResponseError(appErr)
@@ -87,8 +82,8 @@ func (h *handlerImpl) FindByGroupIdSelection(c router.Context) {
 	c.JSON(http.StatusOK, &dto.FindByGroupIdSelectionResponse{Selection: res.Selection})
 }
 
-func (h *handlerImpl) UpdateSelection(c router.Context) {
-	body := &dto.UpdateSelectionRequest{}
+func (h *handlerImpl) DeleteSelection(c router.Context) {
+	body := &dto.DeleteSelectionRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("UpdateSelection").Error("Bind: ", zap.Error(err))
 		c.BadRequestError(err.Error())
@@ -101,18 +96,14 @@ func (h *handlerImpl) UpdateSelection(c router.Context) {
 		return
 	}
 
-	req := &dto.UpdateSelectionRequest{
-		Selection: body.Selection,
-	}
-
-	res, appErr := h.svc.UpdateSelection(req)
+	res, appErr := h.svc.DeleteSelection(body)
 	if appErr != nil {
 		h.log.Named("UpdateSelection").Error("UpdateSelection: ", zap.Error(appErr))
 		c.ResponseError(appErr)
 		return
 	}
 
-	c.JSON(http.StatusOK, &dto.UpdateSelectionResponse{
+	c.JSON(http.StatusOK, &dto.DeleteSelectionResponse{
 		Success: res.Success,
 	})
 }

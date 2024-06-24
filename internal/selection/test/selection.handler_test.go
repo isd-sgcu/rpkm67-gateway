@@ -23,7 +23,7 @@ type SelectionHandlerTest struct {
 	Selection                 *dto.Selection
 	CreateSelectionReq        *dto.CreateSelectionRequest
 	FindByGroupIdSelectionReq *dto.FindByGroupIdSelectionRequest
-	UpdateSelectionReq        *dto.UpdateSelectionRequest
+	DeleteSelectionReq        *dto.DeleteSelectionRequest
 }
 
 func TestSelectionHandler(t *testing.T) {
@@ -42,13 +42,13 @@ func (t *SelectionHandlerTest) SetupTest() {
 
 	t.CreateSelectionReq = &dto.CreateSelectionRequest{
 		GroupId: t.Selection.GroupId,
-		BaanIds: t.Selection.BaanIds,
+		BaanId:  t.Selection.BaanId,
 	}
 	t.FindByGroupIdSelectionReq = &dto.FindByGroupIdSelectionRequest{
 		GroupId: t.Selection.GroupId,
 	}
-	t.UpdateSelectionReq = &dto.UpdateSelectionRequest{
-		Selection: selection.ProtoToDto(selectionsProto[1]),
+	t.DeleteSelectionReq = &dto.DeleteSelectionRequest{
+		Id: t.Selection.Id,
 	}
 }
 
@@ -138,44 +138,44 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionServiceError() {
 	handler.FindByGroupIdSelection(context)
 }
 
-func (t *SelectionHandlerTest) TestUpdateSelectionSuccess() {
+func (t *SelectionHandlerTest) TestDeleteSelectionSuccess() {
 	selectionSvc := selectionMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
 	context := routerMock.NewMockContext(t.controller)
 	handler := selection.NewHandler(selectionSvc, validator, t.logger)
 
-	expectedResp := &dto.UpdateSelectionResponse{
+	expectedResp := &dto.DeleteSelectionResponse{
 		Success: true,
 	}
 
-	context.EXPECT().Bind(&dto.UpdateSelectionRequest{}).SetArg(0, *t.UpdateSelectionReq)
-	validator.EXPECT().Validate(t.UpdateSelectionReq).Return(nil)
-	selectionSvc.EXPECT().UpdateSelection(t.UpdateSelectionReq).Return(expectedResp, nil)
+	context.EXPECT().Bind(&dto.DeleteSelectionRequest{}).SetArg(0, *t.DeleteSelectionReq)
+	validator.EXPECT().Validate(t.DeleteSelectionReq).Return(nil)
+	selectionSvc.EXPECT().DeleteSelection(t.DeleteSelectionReq).Return(expectedResp, nil)
 	context.EXPECT().JSON(http.StatusOK, expectedResp)
 
-	handler.UpdateSelection(context)
+	handler.DeleteSelection(context)
 }
 
-func (t *SelectionHandlerTest) TestUpdateSelectionBindError() {
+func (t *SelectionHandlerTest) TestDeleteSelectionBindError() {
 	context := routerMock.NewMockContext(t.controller)
 	handler := selection.NewHandler(nil, nil, t.logger)
 
-	context.EXPECT().Bind(&dto.UpdateSelectionRequest{}).Return(apperror.BadRequest)
+	context.EXPECT().Bind(&dto.DeleteSelectionRequest{}).Return(apperror.BadRequest)
 	context.EXPECT().BadRequestError(apperror.BadRequest.Error())
 
-	handler.UpdateSelection(context)
+	handler.DeleteSelection(context)
 }
 
-func (t *SelectionHandlerTest) TestUpdateSelectionServiceError() {
+func (t *SelectionHandlerTest) TestDeleteSelectionServiceError() {
 	selectionSvc := selectionMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
 	context := routerMock.NewMockContext(t.controller)
 	handler := selection.NewHandler(selectionSvc, validator, t.logger)
 
-	context.EXPECT().Bind(&dto.UpdateSelectionRequest{}).SetArg(0, *t.UpdateSelectionReq)
-	validator.EXPECT().Validate(t.UpdateSelectionReq).Return(nil)
-	selectionSvc.EXPECT().UpdateSelection(t.UpdateSelectionReq).Return(nil, apperror.InternalServer)
+	context.EXPECT().Bind(&dto.DeleteSelectionRequest{}).SetArg(0, *t.DeleteSelectionReq)
+	validator.EXPECT().Validate(t.DeleteSelectionReq).Return(nil)
+	selectionSvc.EXPECT().DeleteSelection(t.DeleteSelectionReq).Return(nil, apperror.InternalServer)
 	context.EXPECT().ResponseError(apperror.InternalServer)
 
-	handler.UpdateSelection(context)
+	handler.DeleteSelection(context)
 }

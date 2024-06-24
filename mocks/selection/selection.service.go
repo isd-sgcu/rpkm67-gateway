@@ -50,6 +50,21 @@ func (mr *MockServiceMockRecorder) CreateSelection(req interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSelection", reflect.TypeOf((*MockService)(nil).CreateSelection), req)
 }
 
+// DeleteSelection mocks base method.
+func (m *MockService) DeleteSelection(req *dto.DeleteSelectionRequest) (*dto.DeleteSelectionResponse, *apperror.AppError) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteSelection", req)
+	ret0, _ := ret[0].(*dto.DeleteSelectionResponse)
+	ret1, _ := ret[1].(*apperror.AppError)
+	return ret0, ret1
+}
+
+// DeleteSelection indicates an expected call of DeleteSelection.
+func (mr *MockServiceMockRecorder) DeleteSelection(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSelection", reflect.TypeOf((*MockService)(nil).DeleteSelection), req)
+}
+
 // FindByGroupIdSelection mocks base method.
 func (m *MockService) FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequest) (*dto.FindByGroupIdSelectionResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
@@ -63,19 +78,4 @@ func (m *MockService) FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequ
 func (mr *MockServiceMockRecorder) FindByGroupIdSelection(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByGroupIdSelection", reflect.TypeOf((*MockService)(nil).FindByGroupIdSelection), req)
-}
-
-// UpdateSelection mocks base method.
-func (m *MockService) UpdateSelection(req *dto.UpdateSelectionRequest) (*dto.UpdateSelectionResponse, *apperror.AppError) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateSelection", req)
-	ret0, _ := ret[0].(*dto.UpdateSelectionResponse)
-	ret1, _ := ret[1].(*apperror.AppError)
-	return ret0, ret1
-}
-
-// UpdateSelection indicates an expected call of UpdateSelection.
-func (mr *MockServiceMockRecorder) UpdateSelection(req interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSelection", reflect.TypeOf((*MockService)(nil).UpdateSelection), req)
 }

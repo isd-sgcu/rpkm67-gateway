@@ -13,6 +13,7 @@ mock-gen:
 	mockgen -source ./internal/baan/baan.service.go -destination ./mocks/baan/baan.service.go
 	mockgen -source ./internal/selection/selection.handler.go -destination ./mocks/selection/selection.handler.go
 	mockgen -source ./internal/selection/selection.service.go -destination ./mocks/selection/selection.service.go
+	mockgen -source ./internal/selection/selection.client.go -destination ./mocks/selection/selection.client.go
 	mockgen -source ./internal/router/context.go -destination ./mocks/router/context.mock.go
 	mockgen -source ./internal/validator/validator.go -destination ./mocks/validator/validator.mock.go
 

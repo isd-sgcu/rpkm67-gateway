@@ -32,11 +32,11 @@ func (c *SelectionClientMock) FindByGroupId(_ context.Context, req *selectionPro
 	return res, args.Error(1)
 }
 
-func (c *SelectionClientMock) Update(_ context.Context, req *selectionProto.UpdateSelectionRequest, _ ...grpc.CallOption) (res *selectionProto.UpdateSelectionResponse, err error) {
+func (c *SelectionClientMock) Delete(_ context.Context, req *selectionProto.DeleteSelectionRequest, _ ...grpc.CallOption) (res *selectionProto.DeleteSelectionResponse, err error) {
 	args := c.Called(req)
 
 	if args.Get(0) != nil {
-		res = args.Get(0).(*selectionProto.UpdateSelectionResponse)
+		res = args.Get(0).(*selectionProto.DeleteSelectionResponse)
 	}
 
 	return res, args.Error(1)

@@ -108,10 +108,10 @@ func (mr *MockServiceMockRecorder) SignOut(req interface{}) *gomock.Call {
 }
 
 // SignUp mocks base method.
-func (m *MockService) SignUp(req *dto.SignUpRequest) (*dto.Credential, *apperror.AppError) {
+func (m *MockService) SignUp(req *dto.SignUpRequest) (*dto.SignupResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignUp", req)
-	ret0, _ := ret[0].(*dto.Credential)
+	ret0, _ := ret[0].(*dto.SignupResponse)
 	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }

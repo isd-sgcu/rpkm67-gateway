@@ -1,14 +1,16 @@
 package dto
 
 type Selection struct {
-	Id      string   `json:"id"`
-	GroupId string   `json:"group_id"`
-	BaanIds []string `json:"baan_ids"`
+	Id      string `json:"id"`
+	GroupId string `json:"group_id"`
+	BaanId  string `json:"baan_id"`
+	Order   int    `json:"order"`
 }
 
 type CreateSelectionRequest struct {
-	GroupId string   `json:"group_id" validate:"required"`
-	BaanIds []string `json:"baan_ids" validate:"required"`
+	GroupId string `json:"group_id" validate:"required"`
+	BaanId  string `json:"baan_ids" validate:"required"`
+	Order   int    `json:"order" validate:"required"`
 }
 
 type CreateSelectionResponse struct {
@@ -23,10 +25,10 @@ type FindByGroupIdSelectionResponse struct {
 	Selection *Selection `json:"selection"`
 }
 
-type UpdateSelectionRequest struct {
-	Selection *Selection `json:"selection" validate:"required"`
+type DeleteSelectionRequest struct {
+	Id string `json:"id" validate:"required"`
 }
 
-type UpdateSelectionResponse struct {
+type DeleteSelectionResponse struct {
 	Success bool `json:"success"`
 }

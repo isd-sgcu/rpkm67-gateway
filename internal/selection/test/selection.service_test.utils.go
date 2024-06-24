@@ -11,7 +11,7 @@ func MockSelectionsProto() []*selectionProto.Selection {
 		selection := &selectionProto.Selection{
 			Id:      faker.UUIDDigit(),
 			GroupId: faker.UUIDDigit(),
-			BaanIds: []string{faker.UUIDDigit(), faker.UUIDDigit(), faker.UUIDDigit()},
+			BaanId:  faker.UUIDDigit(),
 		}
 		selections = append(selections, selection)
 	}

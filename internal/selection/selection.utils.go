@@ -9,7 +9,7 @@ func ProtoToDto(selection *selectionProto.Selection) *dto.Selection {
 	return &dto.Selection{
 		Id:      selection.Id,
 		GroupId: selection.GroupId,
-		BaanIds: selection.BaanIds,
+		BaanId:  selection.BaanId,
 	}
 }
 
@@ -17,7 +17,7 @@ func DtoToProto(selection *dto.Selection) *selectionProto.Selection {
 	return &selectionProto.Selection{
 		Id:      selection.Id,
 		GroupId: selection.GroupId,
-		BaanIds: selection.BaanIds,
+		BaanId:  selection.BaanId,
 	}
 }
 

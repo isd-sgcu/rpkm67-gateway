@@ -15,15 +15,15 @@ import (
 type Service interface {
 	CreateSelection(req *dto.CreateSelectionRequest) (*dto.CreateSelectionResponse, *apperror.AppError)
 	FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequest) (*dto.FindByGroupIdSelectionResponse, *apperror.AppError)
-	UpdateSelection(req *dto.UpdateSelectionRequest) (*dto.UpdateSelectionResponse, *apperror.AppError)
+	DeleteSelection(req *dto.DeleteSelectionRequest) (*dto.DeleteSelectionResponse, *apperror.AppError)
 }
 
 type serviceImpl struct {
-	client selectionProto.SelectionServiceClient
+	client Client
 	log    *zap.Logger
 }
 
-func NewService(client selectionProto.SelectionServiceClient, log *zap.Logger) Service {
+func NewService(client Client, log *zap.Logger) Service {
 	return &serviceImpl{
 		client: client,
 		log:    log,
@@ -36,7 +36,7 @@ func (s *serviceImpl) CreateSelection(req *dto.CreateSelectionRequest) (*dto.Cre
 
 	res, err := s.client.Create(ctx, &selectionProto.CreateSelectionRequest{
 		GroupId: req.GroupId,
-		BaanIds: req.BaanIds,
+		BaanId:  req.BaanId,
 	})
 	if err != nil {
 		s.log.Named("CreateSelection").Error("Create: ", zap.Error(err))
@@ -87,12 +87,12 @@ func (s *serviceImpl) FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequ
 	}, nil
 }
 
-func (s *serviceImpl) UpdateSelection(req *dto.UpdateSelectionRequest) (*dto.UpdateSelectionResponse, *apperror.AppError) {
+func (s *serviceImpl) DeleteSelection(req *dto.DeleteSelectionRequest) (*dto.DeleteSelectionResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res, err := s.client.Update(ctx, &selectionProto.UpdateSelectionRequest{
-		Selection: DtoToProto(req.Selection),
+	res, err := s.client.Delete(ctx, &selectionProto.DeleteSelectionRequest{
+		Id: req.Id,
 	})
 	if err != nil {
 		s.log.Named("UpdateSelection").Error("Update: ", zap.Error(err))
@@ -110,7 +110,7 @@ func (s *serviceImpl) UpdateSelection(req *dto.UpdateSelectionRequest) (*dto.Upd
 		}
 	}
 
-	return &dto.UpdateSelectionResponse{
+	return &dto.DeleteSelectionResponse{
 		Success: res.Success,
 	}, nil
 }
