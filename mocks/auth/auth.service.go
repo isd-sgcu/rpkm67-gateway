@@ -35,19 +35,16 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 	return m.recorder
 }
 
-// ForgotPassword mocks base method.
-func (m *MockService) ForgotPassword(req *dto.ForgotPasswordRequest) (*dto.ForgotPasswordResponse, *apperror.AppError) {
+// GetGoogleLoginUrl mocks base method.
+func (m *MockService) GetGoogleLoginUrl() {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ForgotPassword", req)
-	ret0, _ := ret[0].(*dto.ForgotPasswordResponse)
-	ret1, _ := ret[1].(*apperror.AppError)
-	return ret0, ret1
+	m.ctrl.Call(m, "GetGoogleLoginUrl")
 }
 
-// ForgotPassword indicates an expected call of ForgotPassword.
-func (mr *MockServiceMockRecorder) ForgotPassword(req interface{}) *gomock.Call {
+// GetGoogleLoginUrl indicates an expected call of GetGoogleLoginUrl.
+func (mr *MockServiceMockRecorder) GetGoogleLoginUrl() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ForgotPassword", reflect.TypeOf((*MockService)(nil).ForgotPassword), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGoogleLoginUrl", reflect.TypeOf((*MockService)(nil).GetGoogleLoginUrl))
 }
 
 // RefreshToken mocks base method.
@@ -62,66 +59,6 @@ func (mr *MockServiceMockRecorder) RefreshToken() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshToken", reflect.TypeOf((*MockService)(nil).RefreshToken))
 }
 
-// ResetPassword mocks base method.
-func (m *MockService) ResetPassword(req *dto.ResetPasswordRequest) (*dto.ResetPasswordResponse, *apperror.AppError) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ResetPassword", req)
-	ret0, _ := ret[0].(*dto.ResetPasswordResponse)
-	ret1, _ := ret[1].(*apperror.AppError)
-	return ret0, ret1
-}
-
-// ResetPassword indicates an expected call of ResetPassword.
-func (mr *MockServiceMockRecorder) ResetPassword(req interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResetPassword", reflect.TypeOf((*MockService)(nil).ResetPassword), req)
-}
-
-// SignIn mocks base method.
-func (m *MockService) SignIn(req *dto.SignInRequest) (*dto.Credential, *apperror.AppError) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SignIn", req)
-	ret0, _ := ret[0].(*dto.Credential)
-	ret1, _ := ret[1].(*apperror.AppError)
-	return ret0, ret1
-}
-
-// SignIn indicates an expected call of SignIn.
-func (mr *MockServiceMockRecorder) SignIn(req interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignIn", reflect.TypeOf((*MockService)(nil).SignIn), req)
-}
-
-// SignOut mocks base method.
-func (m *MockService) SignOut(req *dto.TokenPayloadAuth) (*dto.SignOutResponse, *apperror.AppError) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SignOut", req)
-	ret0, _ := ret[0].(*dto.SignOutResponse)
-	ret1, _ := ret[1].(*apperror.AppError)
-	return ret0, ret1
-}
-
-// SignOut indicates an expected call of SignOut.
-func (mr *MockServiceMockRecorder) SignOut(req interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignOut", reflect.TypeOf((*MockService)(nil).SignOut), req)
-}
-
-// SignUp mocks base method.
-func (m *MockService) SignUp(req *dto.SignUpRequest) (*dto.SignupResponse, *apperror.AppError) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SignUp", req)
-	ret0, _ := ret[0].(*dto.SignupResponse)
-	ret1, _ := ret[1].(*apperror.AppError)
-	return ret0, ret1
-}
-
-// SignUp indicates an expected call of SignUp.
-func (mr *MockServiceMockRecorder) SignUp(req interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignUp", reflect.TypeOf((*MockService)(nil).SignUp), req)
-}
-
 // Validate mocks base method.
 func (m *MockService) Validate() {
 	m.ctrl.T.Helper()
@@ -132,4 +69,19 @@ func (m *MockService) Validate() {
 func (mr *MockServiceMockRecorder) Validate() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockService)(nil).Validate))
+}
+
+// VerifyGoogleLogin mocks base method.
+func (m *MockService) VerifyGoogleLogin(req *dto.VerifyGoogleLoginRequest) (*dto.VerifyGoogleLoginResponse, *apperror.AppError) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "VerifyGoogleLogin", req)
+	ret0, _ := ret[0].(*dto.VerifyGoogleLoginResponse)
+	ret1, _ := ret[1].(*apperror.AppError)
+	return ret0, ret1
+}
+
+// VerifyGoogleLogin indicates an expected call of VerifyGoogleLogin.
+func (mr *MockServiceMockRecorder) VerifyGoogleLogin(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VerifyGoogleLogin", reflect.TypeOf((*MockService)(nil).VerifyGoogleLogin), req)
 }

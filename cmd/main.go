@@ -42,6 +42,7 @@ func main() {
 
 	r.V1Get("/auth/google-url", authHdr.GetGoogleLoginUrl)
 	r.V1Post("/auth/verify-google", authHdr.VerifyGoogleLogin)
+	r.V1Post("/auth/test", authHdr.Test)
 
 	if err := r.Run(fmt.Sprintf(":%v", conf.App.Port)); err != nil {
 		logger.Fatal("unable to start server")

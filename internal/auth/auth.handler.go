@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"go.uber.org/zap"
@@ -11,6 +12,7 @@ type Handler interface {
 	RefreshToken(c router.Context)
 	GetGoogleLoginUrl(c router.Context)
 	VerifyGoogleLogin(c router.Context)
+	Test(c router.Context)
 }
 
 type handlerImpl struct {
@@ -37,6 +39,26 @@ func (h *handlerImpl) GetGoogleLoginUrl(c router.Context) {
 }
 
 func (h *handlerImpl) VerifyGoogleLogin(c router.Context) {
+}
+
+func (h *handlerImpl) Test(c router.Context) {
+	code := c.Param("code")
+	if code == "" {
+		c.BadRequestError("url parameter 'code' not found")
+	}
+
+	req := &dto.VerifyGoogleLoginRequest{
+		Code: code,
+	}
+
+	credential, appErr := h.svc.VerifyGoogleLogin(req)
+	if appErr != nil {
+		c.ResponseError(appErr)
+		return
+	}
+
+	c.JSON(200, credential)
+
 }
 
 // func (h *handlerImpl) SignUp(c router.Context) {

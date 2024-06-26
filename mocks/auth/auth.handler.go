@@ -34,16 +34,16 @@ func (m *MockHandler) EXPECT() *MockHandlerMockRecorder {
 	return m.recorder
 }
 
-// ForgotPassword mocks base method.
-func (m *MockHandler) ForgotPassword(c router.Context) {
+// GetGoogleLoginUrl mocks base method.
+func (m *MockHandler) GetGoogleLoginUrl(c router.Context) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ForgotPassword", c)
+	m.ctrl.Call(m, "GetGoogleLoginUrl", c)
 }
 
-// ForgotPassword indicates an expected call of ForgotPassword.
-func (mr *MockHandlerMockRecorder) ForgotPassword(c interface{}) *gomock.Call {
+// GetGoogleLoginUrl indicates an expected call of GetGoogleLoginUrl.
+func (mr *MockHandlerMockRecorder) GetGoogleLoginUrl(c interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ForgotPassword", reflect.TypeOf((*MockHandler)(nil).ForgotPassword), c)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGoogleLoginUrl", reflect.TypeOf((*MockHandler)(nil).GetGoogleLoginUrl), c)
 }
 
 // RefreshToken mocks base method.
@@ -58,52 +58,16 @@ func (mr *MockHandlerMockRecorder) RefreshToken(c interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshToken", reflect.TypeOf((*MockHandler)(nil).RefreshToken), c)
 }
 
-// ResetPassword mocks base method.
-func (m *MockHandler) ResetPassword(c router.Context) {
+// Test mocks base method.
+func (m *MockHandler) Test(c router.Context) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ResetPassword", c)
+	m.ctrl.Call(m, "Test", c)
 }
 
-// ResetPassword indicates an expected call of ResetPassword.
-func (mr *MockHandlerMockRecorder) ResetPassword(c interface{}) *gomock.Call {
+// Test indicates an expected call of Test.
+func (mr *MockHandlerMockRecorder) Test(c interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResetPassword", reflect.TypeOf((*MockHandler)(nil).ResetPassword), c)
-}
-
-// SignIn mocks base method.
-func (m *MockHandler) SignIn(c router.Context) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SignIn", c)
-}
-
-// SignIn indicates an expected call of SignIn.
-func (mr *MockHandlerMockRecorder) SignIn(c interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignIn", reflect.TypeOf((*MockHandler)(nil).SignIn), c)
-}
-
-// SignOut mocks base method.
-func (m *MockHandler) SignOut(c router.Context) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SignOut", c)
-}
-
-// SignOut indicates an expected call of SignOut.
-func (mr *MockHandlerMockRecorder) SignOut(c interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignOut", reflect.TypeOf((*MockHandler)(nil).SignOut), c)
-}
-
-// SignUp mocks base method.
-func (m *MockHandler) SignUp(c router.Context) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SignUp", c)
-}
-
-// SignUp indicates an expected call of SignUp.
-func (mr *MockHandlerMockRecorder) SignUp(c interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignUp", reflect.TypeOf((*MockHandler)(nil).SignUp), c)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Test", reflect.TypeOf((*MockHandler)(nil).Test), c)
 }
 
 // Validate mocks base method.
@@ -116,4 +80,16 @@ func (m *MockHandler) Validate(c router.Context) {
 func (mr *MockHandlerMockRecorder) Validate(c interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockHandler)(nil).Validate), c)
+}
+
+// VerifyGoogleLogin mocks base method.
+func (m *MockHandler) VerifyGoogleLogin(c router.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "VerifyGoogleLogin", c)
+}
+
+// VerifyGoogleLogin indicates an expected call of VerifyGoogleLogin.
+func (mr *MockHandlerMockRecorder) VerifyGoogleLogin(c interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VerifyGoogleLogin", reflect.TypeOf((*MockHandler)(nil).VerifyGoogleLogin), c)
 }

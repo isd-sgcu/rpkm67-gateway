@@ -22,34 +22,14 @@ type TokenPayloadAuth struct {
 	Role   string `json:"role"`
 }
 
-type SignupResponse struct {
-	Id        string `json:"id"`
-	Email     string `json:"email"`
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-}
-
-type SignOutResponse struct {
-	IsSuccess bool `json:"is_success"`
-}
-
 type RefreshTokenRequest struct {
 	RefreshToken string `json:"refresh_token" validate:"required"`
 }
 
-type ForgotPasswordRequest struct {
-	Email string `json:"email" validate:"required,email"`
+type VerifyGoogleLoginRequest struct {
+	Code string `json:"code" validate:"required"`
 }
 
-type ForgotPasswordResponse struct {
-	IsSuccess bool `json:"is_success"`
-}
-
-type ResetPasswordRequest struct {
-	Token    string `json:"token" validate:"required"`
-	Password string `json:"password" validate:"required,gte=6,lte=30"`
-}
-
-type ResetPasswordResponse struct {
-	IsSuccess bool `json:"is_success"`
+type VerifyGoogleLoginResponse struct {
+	Credential *Credential `json:"credential"`
 }
