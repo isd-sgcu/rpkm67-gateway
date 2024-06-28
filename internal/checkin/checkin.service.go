@@ -49,7 +49,7 @@ func (s *serviceImpl) Create(req *dto.CreateCheckInRequest) (*dto.CreateCheckInR
 		case codes.InvalidArgument:
 			return nil, apperror.BadRequest
 		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
+			return nil, apperror.InternalServer
 		default:
 			return nil, apperror.ServiceUnavailable
 		}
@@ -82,7 +82,7 @@ func (s *serviceImpl) FindByEmail(req *dto.FindByEmailCheckInRequest) (*dto.Find
 		case codes.InvalidArgument:
 			return nil, apperror.BadRequest
 		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
+			return nil, apperror.InternalServer
 		default:
 			return nil, apperror.ServiceUnavailable
 		}
@@ -110,7 +110,7 @@ func (s *serviceImpl) FindByUserID(req *dto.FindByUserIdCheckInRequest) (*dto.Fi
 		case codes.InvalidArgument:
 			return nil, apperror.BadRequest
 		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
+			return nil, apperror.InternalServer
 		default:
 			return nil, apperror.ServiceUnavailable
 		}

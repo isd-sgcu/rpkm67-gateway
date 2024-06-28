@@ -61,6 +61,7 @@ func (h *handlerImpl) Create(c router.Context) {
 		CheckIn: &dto.CheckIn{
 			ID:     res.CheckIn.ID,
 			UserID: res.CheckIn.UserID,
+			Email:  res.CheckIn.Email,
 			Event:  res.CheckIn.Event,
 		},
 	})
