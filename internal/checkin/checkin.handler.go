@@ -68,21 +68,15 @@ func (h *handlerImpl) Create(c router.Context) {
 }
 
 func (h *handlerImpl) FindByEmail(c router.Context) {
-	body := &dto.FindByEmailCheckInRequest{}
-	if err := c.Bind(body); err != nil {
-		h.log.Named("FindByEmail").Error("Bind: failed to bind request body", zap.Error(err))
-		c.BadRequestError(err.Error())
-		return
-	}
-
-	if errorList := h.validate.Validate(body); errorList != nil {
-		h.log.Named("FindByEmail").Error("Validate: ", zap.Strings("errorList", errorList))
-		c.BadRequestError(strings.Join(errorList, ", "))
+	email := c.Param("email")
+	if email == "" {
+		h.log.Named("FindByEmail").Error("FindByEmail: email should not be empty")
+		c.BadRequestError("email should not be empty")
 		return
 	}
 
 	req := &dto.FindByEmailCheckInRequest{
-		Email: body.Email,
+		Email: email,
 	}
 
 	res, appErr := h.svc.FindByEmail(req)
@@ -98,21 +92,15 @@ func (h *handlerImpl) FindByEmail(c router.Context) {
 }
 
 func (h *handlerImpl) FindByUserID(c router.Context) {
-	body := &dto.FindByUserIdCheckInRequest{}
-	if err := c.Bind(body); err != nil {
-		h.log.Named("FindByUserID").Error("Bind: failed to bind request body", zap.Error(err))
-		c.BadRequestError(err.Error())
-		return
-	}
-
-	if errorList := h.validate.Validate(body); errorList != nil {
-		h.log.Named("FindByUserID").Error("Validate: ", zap.Strings("errorList", errorList))
-		c.BadRequestError(strings.Join(errorList, ", "))
+	userId := c.Param("userId")
+	if userId == "" {
+		h.log.Named("FindByUserID").Error("FindByUserID: user_id should not be empty")
+		c.BadRequestError("user_id should not be empty")
 		return
 	}
 
 	req := &dto.FindByUserIdCheckInRequest{
-		UserID: body.UserID,
+		UserID: userId,
 	}
 
 	res, appErr := h.svc.FindByUserID(req)

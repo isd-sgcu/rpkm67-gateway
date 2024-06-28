@@ -116,55 +116,36 @@ func (t *CheckInHandlerTest) TestCreateCheckinServiceError() {
 
 func (t *CheckInHandlerTest) TestFindByEmailCheckinSuccess() {
 	checkinSvc := checkinMock.NewMockService(t.controller)
-	validator := validatorMock.NewMockDtoValidator(t.controller)
 	context := routerMock.NewMockContext(t.controller)
-	handler := checkin.NewHandler(checkinSvc, validator, t.logger)
+	handler := checkin.NewHandler(checkinSvc, nil, t.logger)
 
 	expectedResp := &dto.FindByEmailCheckInResponse{
 		CheckIns: t.checkins,
 	}
 
-	context.EXPECT().Bind(&dto.FindByEmailCheckInRequest{}).SetArg(0, *t.findByEmailCheckinReq)
-	validator.EXPECT().Validate(t.findByEmailCheckinReq).Return(nil)
+	context.EXPECT().Param("email").Return(t.checkin.Email)
 	checkinSvc.EXPECT().FindByEmail(t.findByEmailCheckinReq).Return(expectedResp, nil)
 	context.EXPECT().JSON(http.StatusOK, expectedResp)
 
 	handler.FindByEmail(context)
 }
 
-func (t *CheckInHandlerTest) TestFindByEmailCheckinBindError() {
+func (t *CheckInHandlerTest) TestFindByEmailCheckInParamEmpty() {
 	context := routerMock.NewMockContext(t.controller)
 	handler := checkin.NewHandler(nil, nil, t.logger)
 
-	context.EXPECT().Bind(&dto.FindByEmailCheckInRequest{}).Return(apperror.BadRequest)
-	context.EXPECT().BadRequestError(apperror.BadRequest.Error())
-
-	handler.FindByEmail(context)
-}
-
-func (t *CheckInHandlerTest) TestFindByEmailCheckinValidationError() {
-	checkinSvc := checkinMock.NewMockService(t.controller)
-	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := routerMock.NewMockContext(t.controller)
-	handler := checkin.NewHandler(checkinSvc, validator, t.logger)
-
-	expectedError := []string{"error1", "error2"}
-
-	context.EXPECT().Bind(&dto.FindByEmailCheckInRequest{}).SetArg(0, *t.findByEmailCheckinReq)
-	validator.EXPECT().Validate(t.findByEmailCheckinReq).Return(expectedError)
-	context.EXPECT().BadRequestError("error1, error2")
+	context.EXPECT().Param("email").Return("")
+	context.EXPECT().BadRequestError(apperror.BadRequestError("email should not be empty").Error())
 
 	handler.FindByEmail(context)
 }
 
 func (t *CheckInHandlerTest) TestFindByEmailCheckinServiceError() {
 	checkinSvc := checkinMock.NewMockService(t.controller)
-	validator := validatorMock.NewMockDtoValidator(t.controller)
 	context := routerMock.NewMockContext(t.controller)
-	handler := checkin.NewHandler(checkinSvc, validator, t.logger)
+	handler := checkin.NewHandler(checkinSvc, nil, t.logger)
 
-	context.EXPECT().Bind(&dto.FindByEmailCheckInRequest{}).SetArg(0, *t.findByEmailCheckinReq)
-	validator.EXPECT().Validate(t.findByEmailCheckinReq).Return(nil)
+	context.EXPECT().Param("email").Return(t.checkin.Email)
 	checkinSvc.EXPECT().FindByEmail(t.findByEmailCheckinReq).Return(nil, apperror.InternalServer)
 	context.EXPECT().ResponseError(apperror.InternalServer)
 
@@ -173,55 +154,38 @@ func (t *CheckInHandlerTest) TestFindByEmailCheckinServiceError() {
 
 func (t *CheckInHandlerTest) TestFindByUserIdCheckinSuccess() {
 	checkinSvc := checkinMock.NewMockService(t.controller)
-	validator := validatorMock.NewMockDtoValidator(t.controller)
 	context := routerMock.NewMockContext(t.controller)
-	handler := checkin.NewHandler(checkinSvc, validator, t.logger)
+	handler := checkin.NewHandler(checkinSvc, nil, t.logger)
 
 	expectedResp := &dto.FindByUserIdCheckInResponse{
 		CheckIns: t.checkins,
 	}
 
-	context.EXPECT().Bind(&dto.FindByUserIdCheckInRequest{}).SetArg(0, *t.findByUserIdCheckinReq)
-	validator.EXPECT().Validate(t.findByUserIdCheckinReq).Return(nil)
+	context.EXPECT().Param("userId").Return(t.checkin.UserID)
 	checkinSvc.EXPECT().FindByUserID(t.findByUserIdCheckinReq).Return(expectedResp, nil)
 	context.EXPECT().JSON(http.StatusOK, expectedResp)
 
 	handler.FindByUserID(context)
 }
 
-func (t *CheckInHandlerTest) TestFindByUserIdCheckinBindError() {
+func (t *CheckInHandlerTest) TestFindByUserIdCheckinParamEmpty() {
 	context := routerMock.NewMockContext(t.controller)
 	handler := checkin.NewHandler(nil, nil, t.logger)
 
-	context.EXPECT().Bind(&dto.FindByUserIdCheckInRequest{}).Return(apperror.BadRequest)
-	context.EXPECT().BadRequestError(apperror.BadRequest.Error())
+	expectedErr := apperror.BadRequestError("user_id should not be empty").Error()
 
-	handler.FindByUserID(context)
-}
-
-func (t *CheckInHandlerTest) TestFindByUserIdCheckinValidationError() {
-	checkinSvc := checkinMock.NewMockService(t.controller)
-	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := routerMock.NewMockContext(t.controller)
-	handler := checkin.NewHandler(checkinSvc, validator, t.logger)
-
-	expectedError := []string{"error1", "error2"}
-
-	context.EXPECT().Bind(&dto.FindByUserIdCheckInRequest{}).SetArg(0, *t.findByUserIdCheckinReq)
-	validator.EXPECT().Validate(t.findByUserIdCheckinReq).Return(expectedError)
-	context.EXPECT().BadRequestError("error1, error2")
+	context.EXPECT().Param("userId").Return("")
+	context.EXPECT().BadRequestError(expectedErr)
 
 	handler.FindByUserID(context)
 }
 
 func (t *CheckInHandlerTest) TestFindByUserIdCheckinServiceError() {
 	checkinSvc := checkinMock.NewMockService(t.controller)
-	validator := validatorMock.NewMockDtoValidator(t.controller)
 	context := routerMock.NewMockContext(t.controller)
-	handler := checkin.NewHandler(checkinSvc, validator, t.logger)
+	handler := checkin.NewHandler(checkinSvc, nil, t.logger)
 
-	context.EXPECT().Bind(&dto.FindByUserIdCheckInRequest{}).SetArg(0, *t.findByUserIdCheckinReq)
-	validator.EXPECT().Validate(t.findByUserIdCheckinReq).Return(nil)
+	context.EXPECT().Param("userId").Return(t.checkin.UserID)
 	checkinSvc.EXPECT().FindByUserID(t.findByUserIdCheckinReq).Return(nil, apperror.InternalServer)
 	context.EXPECT().ResponseError(apperror.InternalServer)
 
