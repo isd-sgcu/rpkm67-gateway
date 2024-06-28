@@ -15,7 +15,7 @@ import (
 type Service interface {
 	Validate()
 	RefreshToken()
-	GetGoogleLoginUrl()
+	GetGoogleLoginUrl() (*dto.GetGoogleLoginUrlResponse, *apperror.AppError)
 	VerifyGoogleLogin(req *dto.VerifyGoogleLoginRequest) (*dto.VerifyGoogleLoginResponse, *apperror.AppError)
 }
 
@@ -36,7 +36,27 @@ func (s *serviceImpl) Validate() {
 func (s *serviceImpl) RefreshToken() {
 }
 
-func (s *serviceImpl) GetGoogleLoginUrl() {
+func (s *serviceImpl) GetGoogleLoginUrl() (*dto.GetGoogleLoginUrlResponse, *apperror.AppError) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := s.client.GetGoogleLoginUrl(ctx, &authProto.GetGoogleLoginUrlRequest{})
+	if err != nil {
+		st, ok := status.FromError(err)
+		if !ok {
+			return nil, apperror.InternalServer
+		}
+		switch st.Code() {
+		case codes.Internal:
+			return nil, apperror.InternalServerError(err.Error())
+		default:
+			return nil, apperror.ServiceUnavailable
+		}
+	}
+
+	return &dto.GetGoogleLoginUrlResponse{
+		Url: res.Url,
+	}, nil
 }
 
 func (s *serviceImpl) VerifyGoogleLogin(req *dto.VerifyGoogleLoginRequest) (*dto.VerifyGoogleLoginResponse, *apperror.AppError) {

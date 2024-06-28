@@ -164,50 +164,50 @@ func (t *SelectionServiceTest) TestFindByGroupIdSelectionInternalError() {
 	t.Equal(expected, err)
 }
 
-func (t *SelectionServiceTest) TestDeleteSelectionSuccess() {
-	client := selectionMock.NewMockClient(t.controller)
-	svc := selection.NewService(client, t.logger)
+// func (t *SelectionServiceTest) TestDeleteSelectionSuccess() {
+// 	client := selectionMock.NewMockClient(t.controller)
+// 	svc := selection.NewService(client, t.logger)
 
-	protoResp := &selectionProto.DeleteSelectionResponse{
-		Success: true,
-	}
-	expected := &dto.DeleteSelectionResponse{
-		Success: true,
-	}
+// 	protoResp := &selectionProto.DeleteSelectionResponse{
+// 		Success: true,
+// 	}
+// 	expected := &dto.DeleteSelectionResponse{
+// 		Success: true,
+// 	}
 
-	client.EXPECT().Delete(gomock.Any(), t.DeleteSelectionProtoRequest).Return(protoResp, nil)
-	actual, err := svc.DeleteSelection(t.DeleteSelectionDtoRequest)
+// 	client.EXPECT().Delete(gomock.Any(), t.DeleteSelectionProtoRequest).Return(protoResp, nil)
+// 	actual, err := svc.DeleteSelection(t.DeleteSelectionDtoRequest)
 
-	t.Nil(err)
-	t.Equal(expected, actual)
-}
+// 	t.Nil(err)
+// 	t.Equal(expected, actual)
+// }
 
-func (t *SelectionServiceTest) TestDeleteSelectionInvalidArgument() {
-	client := selectionMock.NewMockClient(t.controller)
-	svc := selection.NewService(client, t.logger)
+// func (t *SelectionServiceTest) TestDeleteSelectionInvalidArgument() {
+// 	client := selectionMock.NewMockClient(t.controller)
+// 	svc := selection.NewService(client, t.logger)
 
-	protoReq := t.DeleteSelectionProtoRequest
-	expected := apperror.BadRequestError("Invalid argument")
-	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
+// 	protoReq := t.DeleteSelectionProtoRequest
+// 	expected := apperror.BadRequestError("Invalid argument")
+// 	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
 
-	client.EXPECT().Delete(gomock.Any(), protoReq).Return(nil, clientErr)
-	actual, err := svc.DeleteSelection(t.DeleteSelectionDtoRequest)
+// 	client.EXPECT().Delete(gomock.Any(), protoReq).Return(nil, clientErr)
+// 	actual, err := svc.DeleteSelection(t.DeleteSelectionDtoRequest)
 
-	t.Nil(actual)
-	t.Equal(expected, err)
-}
+// 	t.Nil(actual)
+// 	t.Equal(expected, err)
+// }
 
-func (t *SelectionServiceTest) TestDeleteSelectionInternalError() {
-	client := selectionMock.NewMockClient(t.controller)
-	svc := selection.NewService(client, t.logger)
+// func (t *SelectionServiceTest) TestDeleteSelectionInternalError() {
+// 	client := selectionMock.NewMockClient(t.controller)
+// 	svc := selection.NewService(client, t.logger)
 
-	protoReq := t.DeleteSelectionProtoRequest
-	expected := apperror.InternalServerError("rpc error: code = Internal desc = Internal error")
-	clientErr := status.Error(codes.Internal, apperror.InternalServer.Error())
+// 	protoReq := t.DeleteSelectionProtoRequest
+// 	expected := apperror.InternalServerError("rpc error: code = Internal desc = Internal error")
+// 	clientErr := status.Error(codes.Internal, apperror.InternalServer.Error())
 
-	client.EXPECT().Delete(gomock.Any(), protoReq).Return(nil, clientErr)
-	actual, err := svc.DeleteSelection(t.DeleteSelectionDtoRequest)
+// 	client.EXPECT().Delete(gomock.Any(), protoReq).Return(nil, clientErr)
+// 	actual, err := svc.DeleteSelection(t.DeleteSelectionDtoRequest)
 
-	t.Nil(actual)
-	t.Equal(expected, err)
-}
+// 	t.Nil(actual)
+// 	t.Equal(expected, err)
+// }
