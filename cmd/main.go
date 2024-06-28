@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/isd-sgcu/rpkm67-gateway/config"
+	"github.com/isd-sgcu/rpkm67-gateway/constant"
 	auth "github.com/isd-sgcu/rpkm67-gateway/internal/auth"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/user"
@@ -42,7 +43,7 @@ func main() {
 
 	userClient := userProto.NewUserServiceClient(authConn)
 	userSvc := user.NewService(userClient, logger)
-	userHdr := user.NewHandler(userSvc, validate, logger)
+	userHdr := user.NewHandler(userSvc, conf.App.MaxFileSizeMb, constant.AllowedContentType, validate, logger)
 
 	r := router.New(conf, corsHandler, authMiddleware)
 
