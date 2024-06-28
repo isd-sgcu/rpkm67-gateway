@@ -14,12 +14,14 @@ import (
 
 type Service interface {
 	FindOne(req *dto.FindOneUserRequest) (*dto.FindOneUserResponse, *apperror.AppError)
-	Update(req *dto.UpdateUserRequest) (*dto.UpdateUserResponse, *apperror.AppError)
+	UpdateProfile(req *dto.UpdateUserProfileRequest) (*dto.UpdateUserProfileResponse, *apperror.AppError)
+	UpdatePicture(req *dto.UpdateUserPictureRequest) (*dto.UpdateUserPictureResponse, *apperror.AppError)
 }
 
 type serviceImpl struct {
 	client userProto.UserServiceClient
-	log    *zap.Logger
+	//object svc
+	log *zap.Logger
 }
 
 func NewService(client userProto.UserServiceClient, log *zap.Logger) Service {
@@ -57,7 +59,7 @@ func (s *serviceImpl) FindOne(req *dto.FindOneUserRequest) (*dto.FindOneUserResp
 	}, nil
 }
 
-func (s *serviceImpl) Update(req *dto.UpdateUserRequest) (*dto.UpdateUserResponse, *apperror.AppError) {
+func (s *serviceImpl) UpdateProfile(req *dto.UpdateUserProfileRequest) (*dto.UpdateUserProfileResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -80,12 +82,45 @@ func (s *serviceImpl) Update(req *dto.UpdateUserRequest) (*dto.UpdateUserRespons
 		}
 	}
 
-	return &dto.UpdateUserResponse{
+	return &dto.UpdateUserProfileResponse{
 		User: ProtoToDto(res.User),
 	}, nil
 }
 
-func (s *serviceImpl) createUpdateUserRequestProto(req *dto.UpdateUserRequest) *userProto.UpdateUserRequest {
+func (s *serviceImpl) UpdatePicture(req *dto.UpdateUserPictureRequest) (*dto.UpdateUserPictureResponse, *apperror.AppError) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	//object code
+
+	updateReq := &userProto.UpdateUserRequest{
+		Id: req.Id,
+		// PhotoKey: req.PhotoKey, from object
+	}
+
+	res, err := s.client.Update(ctx, updateReq)
+	if err != nil {
+		s.log.Named("UpdatePicture").Error("Update: ", zap.Error(err))
+		st, ok := status.FromError(err)
+		if !ok {
+			return nil, apperror.InternalServer
+		}
+		switch st.Code() {
+		case codes.NotFound:
+			return nil, apperror.NotFoundError("User not found")
+		case codes.Internal:
+			return nil, apperror.InternalServerError(err.Error())
+		default:
+			return nil, apperror.ServiceUnavailable
+		}
+	}
+
+	return &dto.UpdateUserPictureResponse{
+		User: ProtoToDto(res.User),
+	}, nil
+}
+
+func (s *serviceImpl) createUpdateUserRequestProto(req *dto.UpdateUserProfileRequest) *userProto.UpdateUserRequest {
 	return &userProto.UpdateUserRequest{
 		Id:          req.Id,
 		Nickname:    req.Nickname,

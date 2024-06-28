@@ -36,7 +36,7 @@ type FindOneUserResponse struct {
 	User *User `json:"user"`
 }
 
-type UpdateUserRequestBody struct {
+type UpdateUserProfileBody struct {
 	Nickname    string `json:"nickname"`
 	Title       string `json:"title"`
 	Firstname   string `json:"firstname"`
@@ -56,7 +56,7 @@ type UpdateUserRequestBody struct {
 	GroupId     string `json:"group_id"`
 }
 
-type UpdateUserRequest struct {
+type UpdateUserProfileRequest struct {
 	Id          string `json:"id" validate:"required"`
 	Nickname    string `json:"nickname"`
 	Title       string `json:"title"`
@@ -77,6 +77,15 @@ type UpdateUserRequest struct {
 	GroupId     string `json:"group_id"`
 }
 
-type UpdateUserResponse struct {
+type UpdateUserProfileResponse struct {
+	User *User `json:"user"`
+}
+
+type UpdateUserPictureRequest struct {
+	Id   string          `json:"id"`
+	File *DecomposedFile `json:"file"`
+}
+
+type UpdateUserPictureResponse struct {
 	User *User `json:"user"`
 }
