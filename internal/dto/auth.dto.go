@@ -26,6 +26,10 @@ type RefreshTokenRequest struct {
 	RefreshToken string `json:"refresh_token" validate:"required"`
 }
 
+type GetGoogleLoginUrlResponse struct {
+	Url string `json:"url"`
+}
+
 type VerifyGoogleLoginRequest struct {
 	Code string `json:"code" validate:"required"`
 }

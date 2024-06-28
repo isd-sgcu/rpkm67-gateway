@@ -36,13 +36,20 @@ func (h *handlerImpl) RefreshToken(c router.Context) {
 }
 
 func (h *handlerImpl) GetGoogleLoginUrl(c router.Context) {
+	res, appErr := h.svc.GetGoogleLoginUrl()
+	if appErr != nil {
+		c.ResponseError(appErr)
+		return
+	}
+
+	c.JSON(200, res)
 }
 
 func (h *handlerImpl) VerifyGoogleLogin(c router.Context) {
 }
 
 func (h *handlerImpl) Test(c router.Context) {
-	code := c.Param("code")
+	code := c.Query("code")
 	if code == "" {
 		c.BadRequestError("url parameter 'code' not found")
 	}
