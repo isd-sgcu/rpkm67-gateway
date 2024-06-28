@@ -21,20 +21,3 @@ func ProtoToDtos(in []*checkinProto.CheckIn) []*dto.CheckIn {
 	}
 	return out
 }
-
-// func DtoToProto(in *dto.CheckIn) *checkinProto.CheckIn {
-// 	return &checkinProto.CheckIn{
-// 		Id:     in.ID,
-// 		UserId: in.UserID,
-// 		Email:  in.Email,
-// 		Event:  in.Event,
-// 	}
-// }
-
-// func DtoToProtos(in []*dto.CheckIn) []*checkinProto.CheckIn {
-// 	var out []*checkinProto.CheckIn
-// 	for _, v := range in {
-// 		out = append(out, DtoToProto(v))
-// 	}
-// 	return out
-// }
