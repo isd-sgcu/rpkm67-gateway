@@ -1,0 +1,108 @@
+version: "3.9"
+
+services:
+  auth:
+    image: ghcr.io/isd-sgcu/rpkm67-auth:914e1c9a6b3a8d2ac1b0a9ff4173076fc36d1df3
+    container_name: auth
+    restart: unless-stopped
+    environment:
+      APP_PORT: 3002
+      APP_ENV: development
+      DB_URL: postgres://root:1234@db:5432/rpkm67_db
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: 5678
+      JWT_SECRET: secret
+      JWT_ACCESS_TTL: 3600
+      JWT_REFRESH_TTL: 259200
+      JWT_ISSUER: issuer
+      JWT_RESET_TOKEN_TTL: 900
+      OAUTH_CLIENT_ID: client_id
+      OAUTH_CLIENT_SECRET: client_secret
+      OAUTH_REDIRECT_URI: http://localhost:3000/auth/google/callback
+    networks:
+      - rpkm67
+    ports:
+      - "3002:3002"
+  
+  backend:
+    image: ghcr.io/isd-sgcu/rpkm67-backend:40ca3d5cda65663fcc8c32ede5170a2dc456d7b9
+    container_name: backend
+    restart: unless-stopped
+    environment:
+      APP_PORT: 3003
+      APP_ENV: development
+      DB_URL: postgres://root:1234@db:5432/rpkm67_db
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: 5678
+      PIN_WORKSHOP_CODE: workshop
+      PIN_WORKSHOP_COUNT: 5
+      PIN_LANDMARK_CODE: landmark
+      PIN_LANDMARK_COUNT: 4
+    networks:
+      - rpkm67
+    ports:
+      - "3003:3003"
+
+  checkin:
+    image: ghcr.io/isd-sgcu/rpkm67-checkin:718156635121b4d560c5d4d4f75fd9abdf3103cb
+    container_name: checkin
+    restart: unless-stopped
+    environment:
+      APP_PORT: 3004
+      APP_ENV: development
+      DB_URL: postgres://root:1234@db:5432/rpkm67_db
+    networks:
+      - rpkm67
+    ports:
+      - "3004:3004"
+
+  store:
+    image: ghcr.io/isd-sgcu/rpkm67-store:a6f718f5556abfb44b10b178fba0db9f9dc717a1
+    container_name: store
+    restart: unless-stopped
+    environment:
+      APP_PORT: 3005
+      APP_ENV: development
+      APP_MAX_FILE_SIZE_MB: 20
+      ENDPOINT: endpoint
+      ACCESS_KEY: access_key
+      SECRET_KEY: secret_key
+      USE_SSL: true
+      BUCKET_NAME: rpkm67-qa
+    networks:
+      - rpkm67
+    ports:
+      - "3005:3005"
+
+  db:
+    image: postgres:15.1-alpine3.17
+    container_name: db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: "1234"
+      POSTGRES_DB: rpkm67_db
+    networks:
+      - rpkm67
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  cache:
+    image: redis:7.2.3-alpine
+    container_name: cache
+    restart: unless-stopped
+    environment:
+      REDIS_HOST: localhost
+      REDIS_PASSWORD: "5678"
+    networks:
+      - rpkm67
+    ports:
+      - "6379:6379"
+
+networks:
+  rpkm67:
+    name: rpkm67

@@ -1,11 +1,15 @@
 docker:
 	docker-compose up
 
+docker-qa:
+	docker-compose -f docker-compose.qa.yml up
+
 server:
 	go run cmd/main.go
 
 watch: 
 	air
+
 mock-gen:
 	mockgen -source ./internal/auth/auth.service.go -destination ./mocks/auth/auth.service.go
 	mockgen -source ./internal/pin/pin.service.go -destination ./mocks/pin/pin.service.go
@@ -22,6 +26,9 @@ test:
 
 proto:
 	go get github.com/isd-sgcu/rpkm67-go-proto@latest
+
+model:
+	go get github.com/isd-sgcu/rpkm67-model@latest
 
 swagger:
 	swag init -d ./internal/file -g ../../cmd/main.go -o ./docs -md ./docs/markdown --parseDependency --parseInternal
