@@ -55,9 +55,9 @@ func main() {
 	r.V1Post("/auth/verify-google", authHdr.VerifyGoogleLogin)
 	r.V1Post("/auth/test", authHdr.Test)
 
-	r.V1Post("/checkin", checkinHdr.Create)
-	r.V1Post("/checkin/userId/", checkinHdr.FindByUserID)
-	r.V1Post("/checkin/email/", checkinHdr.FindByEmail)
+	r.V1Post("/checkin/create", checkinHdr.Create)
+	r.V1Get("/checkin/:userId", checkinHdr.FindByUserID)
+	r.V1Get("/checkin/email/:email", checkinHdr.FindByEmail)
 
 	if err := r.Run(fmt.Sprintf(":%v", conf.App.Port)); err != nil {
 		logger.Fatal("unable to start server")
