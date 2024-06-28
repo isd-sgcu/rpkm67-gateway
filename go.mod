@@ -21,8 +21,6 @@ require (
 	google.golang.org/grpc v1.64.0
 )
 
-require github.com/stretchr/objx v0.5.2 // indirect
-
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect

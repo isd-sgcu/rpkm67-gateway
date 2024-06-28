@@ -11,6 +11,8 @@ mock-gen:
 	mockgen -source ./internal/pin/pin.service.go -destination ./mocks/pin/pin.service.go
 	mockgen -source ./internal/selection/selection.service.go -destination ./mocks/selection/selection.service.go
 	mockgen -source ./internal/selection/selection.client.go -destination ./mocks/selection/selection.client.go
+	mockgen -source ./internal/checkin/checkin.service.go -destination ./mocks/checkin/checkin.service.go
+	mockgen -source ./internal/checkin/checkin.client.go -destination ./mocks/checkin/checkin.client.go
 	mockgen -source ./internal/router/context.go -destination ./mocks/router/context.mock.go
 	mockgen -source ./internal/validator/validator.go -destination ./mocks/validator/validator.mock.go
 
