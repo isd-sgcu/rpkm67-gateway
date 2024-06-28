@@ -29,7 +29,6 @@ type SelectionServiceTest struct {
 	FindByGroupIdSelectionDtoRequest   *dto.FindByGroupIdSelectionRequest
 	DeleteSelectionProtoRequest        *selectionProto.DeleteSelectionRequest
 	DeleteSelectionDtoRequest          *dto.DeleteSelectionRequest
-	Err                                apperror.AppError
 }
 
 func TestSelectionService(t *testing.T) {
@@ -42,7 +41,7 @@ func (t *SelectionServiceTest) SetupTest() {
 
 	t.SelectionsProto = MockSelectionsProto()
 	t.SelectionProto = t.SelectionsProto[0]
-	t.SelectionsDto = selection.ProtoToDtoList(t.SelectionsProto)
+	t.SelectionsDto = selection.ProtoToDtos(t.SelectionsProto)
 	t.SelectionDto = selection.ProtoToDto(t.SelectionProto)
 
 	t.CreateSelectionProtoRequest = &selectionProto.CreateSelectionRequest{
@@ -60,10 +59,10 @@ func (t *SelectionServiceTest) SetupTest() {
 		GroupId: t.SelectionDto.GroupId,
 	}
 	t.DeleteSelectionProtoRequest = &selectionProto.DeleteSelectionRequest{
-		Id: t.SelectionProto.Id,
+		GroupId: t.SelectionProto.GroupId,
 	}
 	t.DeleteSelectionDtoRequest = &dto.DeleteSelectionRequest{
-		Id: t.SelectionDto.Id,
+		GroupId: t.SelectionDto.GroupId,
 	}
 }
 
@@ -122,10 +121,10 @@ func (t *SelectionServiceTest) TestFindByGroupIdSelectionSuccess() {
 	svc := selection.NewService(client, t.logger)
 
 	protoResp := &selectionProto.FindByGroupIdSelectionResponse{
-		Selection: t.SelectionProto,
+		Selections: t.SelectionsProto,
 	}
 	expected := &dto.FindByGroupIdSelectionResponse{
-		Selection: t.SelectionDto,
+		Selections: t.SelectionsDto,
 	}
 
 	client.EXPECT().FindByGroupId(gomock.Any(), t.FindByGroupIdSelectionProtoRequest).Return(protoResp, nil)

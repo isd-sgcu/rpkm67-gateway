@@ -79,7 +79,9 @@ func (h *handlerImpl) FindByGroupIdSelection(c router.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &dto.FindByGroupIdSelectionResponse{Selection: res.Selection})
+	c.JSON(http.StatusOK, &dto.FindByGroupIdSelectionResponse{
+		Selections: res.Selections,
+	})
 }
 
 func (h *handlerImpl) DeleteSelection(c router.Context) {

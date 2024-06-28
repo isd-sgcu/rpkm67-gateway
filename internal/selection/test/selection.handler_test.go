@@ -37,7 +37,7 @@ func (t *SelectionHandlerTest) SetupTest() {
 	selectionsProto := MockSelectionsProto()
 	selectionProto := selectionsProto[0]
 
-	t.Selections = selection.ProtoToDtoList(selectionsProto)
+	t.Selections = selection.ProtoToDtos(selectionsProto)
 	t.Selection = selection.ProtoToDto(selectionProto)
 
 	t.CreateSelectionReq = &dto.CreateSelectionRequest{
@@ -48,7 +48,7 @@ func (t *SelectionHandlerTest) SetupTest() {
 		GroupId: t.Selection.GroupId,
 	}
 	t.DeleteSelectionReq = &dto.DeleteSelectionRequest{
-		Id: t.Selection.Id,
+		GroupId: t.Selection.GroupId,
 	}
 }
 
@@ -101,7 +101,7 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionSuccess() {
 	handler := selection.NewHandler(selectionSvc, validator, t.logger)
 
 	expectedResp := &dto.FindByGroupIdSelectionResponse{
-		Selection: t.Selection,
+		Selections: t.Selections,
 	}
 
 	context.EXPECT().Param("id").Return(t.Selection.GroupId)

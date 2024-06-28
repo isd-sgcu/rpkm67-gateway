@@ -7,6 +7,11 @@ type Selection struct {
 	Order   int    `json:"order"`
 }
 
+type BaanCount struct {
+	BaanId string `json:"baan_id"`
+	Count  int32  `json:"count"`
+}
+
 type CreateSelectionRequest struct {
 	GroupId string `json:"group_id" validate:"required"`
 	BaanId  string `json:"baan_ids" validate:"required"`
@@ -22,13 +27,20 @@ type FindByGroupIdSelectionRequest struct {
 }
 
 type FindByGroupIdSelectionResponse struct {
-	Selection *Selection `json:"selection"`
+	Selections []*Selection `json:"selections"`
 }
 
 type DeleteSelectionRequest struct {
-	Id string `json:"id" validate:"required"`
+	GroupId string `json:"id" validate:"required"`
 }
 
 type DeleteSelectionResponse struct {
 	Success bool `json:"success"`
+}
+
+type CountByBaanIdSelectionRequest struct {
+}
+
+type CountByBaanIdSelectionResponse struct {
+	BaanCounts []*BaanCount `json:"baan_counts"`
 }
