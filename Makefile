@@ -9,11 +9,12 @@ watch:
 mock-gen:
 	mockgen -source ./internal/auth/auth.handler.go -destination ./mocks/auth/auth.handler.go
 	mockgen -source ./internal/auth/auth.service.go -destination ./mocks/auth/auth.service.go
-	mockgen -source ./internal/baan/baan.handler.go -destination ./mocks/baan/baan.handler.go
-	mockgen -source ./internal/baan/baan.service.go -destination ./mocks/baan/baan.service.go
 	mockgen -source ./internal/selection/selection.handler.go -destination ./mocks/selection/selection.handler.go
 	mockgen -source ./internal/selection/selection.service.go -destination ./mocks/selection/selection.service.go
 	mockgen -source ./internal/selection/selection.client.go -destination ./mocks/selection/selection.client.go
+	mockgen -source ./internal/checkin/checkin.handler.go -destination ./mocks/checkin/checkin.handler.go
+	mockgen -source ./internal/checkin/checkin.service.go -destination ./mocks/checkin/checkin.service.go
+	mockgen -source ./internal/checkin/checkin.client.go -destination ./mocks/checkin/checkin.client.go
 	mockgen -source ./internal/router/context.go -destination ./mocks/router/context.mock.go
 	mockgen -source ./internal/validator/validator.go -destination ./mocks/validator/validator.mock.go
 
