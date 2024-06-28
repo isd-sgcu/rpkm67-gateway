@@ -13,6 +13,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.6.0
 	github.com/isd-sgcu/rpkm67-go-proto v0.1.6
+	github.com/isd-sgcu/rpkm67-model v0.0.4
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.9.0
 	github.com/swaggo/files v1.0.1
@@ -20,8 +21,6 @@ require (
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.64.0
 )
-
-require github.com/stretchr/objx v0.5.2 // indirect
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
