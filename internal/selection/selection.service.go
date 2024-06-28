@@ -83,7 +83,7 @@ func (s *serviceImpl) FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequ
 	}
 
 	return &dto.FindByGroupIdSelectionResponse{
-		Selection: ProtoToDto(res.Selection),
+		Selections: ProtoToDtoList(res.Selections),
 	}, nil
 }
 
@@ -92,7 +92,7 @@ func (s *serviceImpl) DeleteSelection(req *dto.DeleteSelectionRequest) (*dto.Del
 	defer cancel()
 
 	res, err := s.client.Delete(ctx, &selectionProto.DeleteSelectionRequest{
-		Id: req.Id,
+		GroupId: req.Id,
 	})
 	if err != nil {
 		s.log.Named("UpdateSelection").Error("Update: ", zap.Error(err))

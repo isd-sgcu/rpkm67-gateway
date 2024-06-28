@@ -22,7 +22,7 @@ type FindByGroupIdSelectionRequest struct {
 }
 
 type FindByGroupIdSelectionResponse struct {
-	Selection *Selection `json:"selection"`
+	Selections []*Selection `json:"selection"`
 }
 
 type DeleteSelectionRequest struct {

@@ -101,7 +101,7 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionSuccess() {
 	handler := selection.NewHandler(selectionSvc, validator, t.logger)
 
 	expectedResp := &dto.FindByGroupIdSelectionResponse{
-		Selection: t.Selection,
+		Selections: t.Selections,
 	}
 
 	context.EXPECT().Param("id").Return(t.Selection.GroupId)

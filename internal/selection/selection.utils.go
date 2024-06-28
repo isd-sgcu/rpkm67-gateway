@@ -10,6 +10,7 @@ func ProtoToDto(selection *selectionProto.Selection) *dto.Selection {
 		Id:      selection.Id,
 		GroupId: selection.GroupId,
 		BaanId:  selection.BaanId,
+		Order:   int(selection.Order),
 	}
 }
 
@@ -18,6 +19,7 @@ func DtoToProto(selection *dto.Selection) *selectionProto.Selection {
 		Id:      selection.Id,
 		GroupId: selection.GroupId,
 		BaanId:  selection.BaanId,
+		Order:   int32(selection.Order),
 	}
 }
 
