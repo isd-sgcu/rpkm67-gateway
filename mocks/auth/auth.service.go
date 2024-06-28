@@ -36,9 +36,12 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // GetGoogleLoginUrl mocks base method.
-func (m *MockService) GetGoogleLoginUrl() {
+func (m *MockService) GetGoogleLoginUrl() (*dto.GetGoogleLoginUrlResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "GetGoogleLoginUrl")
+	ret := m.ctrl.Call(m, "GetGoogleLoginUrl")
+	ret0, _ := ret[0].(*dto.GetGoogleLoginUrlResponse)
+	ret1, _ := ret[1].(*apperror.AppError)
+	return ret0, ret1
 }
 
 // GetGoogleLoginUrl indicates an expected call of GetGoogleLoginUrl.
