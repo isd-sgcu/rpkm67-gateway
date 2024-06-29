@@ -43,7 +43,6 @@ func (t *SelectionServiceTest) SetupTest() {
 	t.SelectionsProto = MockSelectionsProto()
 	t.SelectionProto = (t.SelectionsProto)[0]
 	t.SelectionsDto = selection.ProtoToDtoList(t.SelectionsProto)
-	// t.SelectionDto = selection.ProtoToDto(t.SelectionProto)
 	t.SelectionDto = (t.SelectionsDto)[0]
 
 	t.CreateSelectionProtoRequest = &selectionProto.CreateSelectionRequest{
@@ -93,7 +92,7 @@ func (t *SelectionServiceTest) TestCreateSelectionInvalidArgument() {
 	svc := selection.NewService(client, t.logger)
 
 	protoReq := t.CreateSelectionProtoRequest
-	expected := apperror.BadRequestError("Invalid argument")
+	expected := apperror.BadRequest
 	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
 
 	client.EXPECT().Create(gomock.Any(), protoReq).Return(nil, clientErr)
@@ -108,8 +107,8 @@ func (t *SelectionServiceTest) TestCreateSelectionInternalError() {
 	svc := selection.NewService(client, t.logger)
 
 	protoReq := t.CreateSelectionProtoRequest
-	expected := apperror.InternalServerError("rpc error: code = Internal desc = Internal error")
-	clientErr := status.Error(codes.Internal, apperror.InternalServer.Error())
+	expected := apperror.InternalServer
+	clientErr := apperror.InternalServer
 
 	client.EXPECT().Create(gomock.Any(), protoReq).Return(nil, clientErr)
 	actual, err := svc.CreateSelection(t.CreateSelectionDtoRequest)
@@ -141,7 +140,7 @@ func (t *SelectionServiceTest) TestFindByGroupIdSelectionInvalidArgument() {
 	svc := selection.NewService(client, t.logger)
 
 	protoReq := t.FindByGroupIdSelectionProtoRequest
-	expected := apperror.BadRequestError("Invalid argument")
+	expected := apperror.BadRequest
 	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
 
 	client.EXPECT().FindByGroupId(gomock.Any(), protoReq).Return(nil, clientErr)
@@ -156,7 +155,7 @@ func (t *SelectionServiceTest) TestFindByGroupIdSelectionInternalError() {
 	svc := selection.NewService(client, t.logger)
 
 	protoReq := t.FindByGroupIdSelectionProtoRequest
-	expected := apperror.InternalServerError("rpc error: code = Internal desc = Internal error")
+	expected := apperror.InternalServer
 	clientErr := status.Error(codes.Internal, apperror.InternalServer.Error())
 
 	client.EXPECT().FindByGroupId(gomock.Any(), protoReq).Return(nil, clientErr)

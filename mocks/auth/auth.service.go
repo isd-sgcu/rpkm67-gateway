@@ -51,27 +51,33 @@ func (mr *MockServiceMockRecorder) GetGoogleLoginUrl() *gomock.Call {
 }
 
 // RefreshToken mocks base method.
-func (m *MockService) RefreshToken() {
+func (m *MockService) RefreshToken(req *dto.RefreshTokenRequest) (*dto.Credential, *apperror.AppError) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "RefreshToken")
+	ret := m.ctrl.Call(m, "RefreshToken", req)
+	ret0, _ := ret[0].(*dto.Credential)
+	ret1, _ := ret[1].(*apperror.AppError)
+	return ret0, ret1
 }
 
 // RefreshToken indicates an expected call of RefreshToken.
-func (mr *MockServiceMockRecorder) RefreshToken() *gomock.Call {
+func (mr *MockServiceMockRecorder) RefreshToken(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshToken", reflect.TypeOf((*MockService)(nil).RefreshToken))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshToken", reflect.TypeOf((*MockService)(nil).RefreshToken), req)
 }
 
 // Validate mocks base method.
-func (m *MockService) Validate() {
+func (m *MockService) Validate(req *dto.ValidateRequest) (*dto.ValidateResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Validate")
+	ret := m.ctrl.Call(m, "Validate", req)
+	ret0, _ := ret[0].(*dto.ValidateResponse)
+	ret1, _ := ret[1].(*apperror.AppError)
+	return ret0, ret1
 }
 
 // Validate indicates an expected call of Validate.
-func (mr *MockServiceMockRecorder) Validate() *gomock.Call {
+func (mr *MockServiceMockRecorder) Validate(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockService)(nil).Validate))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockService)(nil).Validate), req)
 }
 
 // VerifyGoogleLogin mocks base method.
