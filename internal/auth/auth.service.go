@@ -94,5 +94,6 @@ func (s *serviceImpl) VerifyGoogleLogin(req *dto.VerifyGoogleLoginRequest) (*dto
 			RefreshToken: res.Credential.RefreshToken,
 			ExpiresIn:    int(res.Credential.ExpiresIn),
 		},
+		UserId: res.UserId,
 	}, nil
 }

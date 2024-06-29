@@ -33,8 +33,8 @@ mock-gen:
 	mockgen -source ./internal/selection/selection.client.go -destination ./mocks/selection/selection.client.go
 	mockgen -source ./internal/checkin/checkin.service.go -destination ./mocks/checkin/checkin.service.go
 	mockgen -source ./internal/checkin/checkin.client.go -destination ./mocks/checkin/checkin.client.go
-	mockgen -source ./internal/store/store.service.go -destination ./mocks/store/store.service.go
-	mockgen -source ./internal/store/store.client.go -destination ./mocks/store/store.client.go
+	mockgen -source ./internal/object/object.service.go -destination ./mocks/object/object.service.go
+	mockgen -source ./internal/object/object.client.go -destination ./mocks/object/object.client.go
 	mockgen -source ./internal/router/context.go -destination ./mocks/router/context.mock.go
 	mockgen -source ./internal/validator/validator.go -destination ./mocks/validator/validator.mock.go
 

@@ -7,6 +7,7 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/constant"
 	auth "github.com/isd-sgcu/rpkm67-gateway/internal/auth"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/checkin"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/object"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/user"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
@@ -15,6 +16,7 @@ import (
 	authProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/auth/v1"
 	userProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/user/v1"
 	checkinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/checkin/checkin/v1"
+	objectProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/store/object/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -54,8 +56,11 @@ func main() {
 	authSvc := auth.NewService(authClient, logger)
 	authHdr := auth.NewHandler(authSvc, validate, logger)
 
+	objClient := objectProto.NewObjectServiceClient(authConn)
+	objSvc := object.NewService(objClient, logger)
+
 	userClient := userProto.NewUserServiceClient(authConn)
-	userSvc := user.NewService(userClient, logger)
+	userSvc := user.NewService(userClient, objSvc, logger)
 	userHdr := user.NewHandler(userSvc, conf.App.MaxFileSizeMb, constant.AllowedContentType, validate, logger)
 
 	checkinClient := checkinProto.NewCheckInServiceClient(checkinConn)

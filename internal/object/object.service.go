@@ -1,4 +1,4 @@
-package store
+package object
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
-	storeProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/store/object/v1"
+	objectProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/store/object/v1"
 	"go.uber.org/zap"
 )
 
@@ -17,11 +17,11 @@ type Service interface {
 }
 
 type serviceImpl struct {
-	client storeProto.ObjectServiceClient
+	client objectProto.ObjectServiceClient
 	log    *zap.Logger
 }
 
-func NewService(client storeProto.ObjectServiceClient, log *zap.Logger) Service {
+func NewService(client objectProto.ObjectServiceClient, log *zap.Logger) Service {
 	return &serviceImpl{
 		client: client,
 		log:    log,
@@ -32,7 +32,7 @@ func (s *serviceImpl) Upload(req *dto.UploadObjectRequest) (*dto.UploadObjectRes
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res, err := s.client.Upload(ctx, &storeProto.UploadObjectRequest{
+	res, err := s.client.Upload(ctx, &objectProto.UploadObjectRequest{
 		Filename: req.Filename,
 	})
 	if err != nil {
@@ -52,7 +52,7 @@ func (s *serviceImpl) FindByKey(req *dto.FindByKeyObjectRequest) (*dto.FindByKey
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res, err := s.client.FindByKey(ctx, &storeProto.FindByKeyObjectRequest{
+	res, err := s.client.FindByKey(ctx, &objectProto.FindByKeyObjectRequest{
 		Key: req.Key,
 	})
 	if err != nil {
@@ -72,7 +72,7 @@ func (s *serviceImpl) DeleteByKey(req *dto.DeleteObjectRequest) (*dto.DeleteObje
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res, err := s.client.DeleteByKey(ctx, &storeProto.DeleteByKeyObjectRequest{
+	res, err := s.client.DeleteByKey(ctx, &objectProto.DeleteByKeyObjectRequest{
 		Key: req.Key,
 	})
 	if err != nil {
