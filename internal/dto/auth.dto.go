@@ -29,4 +29,5 @@ type VerifyGoogleLoginRequest struct {
 
 type VerifyGoogleLoginResponse struct {
 	Credential *Credential `json:"credential"`
+	UserId     string      `json:"user_id"`
 }
