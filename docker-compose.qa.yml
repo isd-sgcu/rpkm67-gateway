@@ -70,7 +70,7 @@ services:
       ACCESS_KEY: access_key
       SECRET_KEY: secret_key
       USE_SSL: true
-      BUCKET_NAME: rpkm67-qa
+      BUCKET_NAME: rpkm67-local
     networks:
       - rpkm67
     ports:
