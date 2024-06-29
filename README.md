@@ -37,6 +37,13 @@
 ### Unit Testing
 1. Run `make test`
 
+## API
+When run locally, the gateway url will be available at `localhost:3001`.
+- Swagger UI: `localhost:3001/api/v1/docs/index.html#/`
+- Grafana: `localhost:3006` (username: admin, password: 1234)
+- Prometheus: `localhost:9090`
+- Gateway's metrics endpoint: `localhost:3001/metrics`
+
 ## Other microservices/repositories of RPKM67
 - [gateway](https://github.com/isd-sgcu/rpkm67-gateway): Routing and request handling
 - [auth](https://github.com/isd-sgcu/rpkm67-auth): Authentication and user service
