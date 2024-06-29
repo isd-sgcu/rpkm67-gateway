@@ -24,7 +24,7 @@ func DtoToProto(selection *dto.Selection) *selectionProto.Selection {
 }
 
 func ProtoToDtoList(selections []*selectionProto.Selection) []*dto.Selection {
-	var out []*dto.Selection
+	out := make([]*dto.Selection, 0, len(selections))
 	for _, selection := range selections {
 		out = append(out, ProtoToDto(selection))
 	}

@@ -15,7 +15,7 @@ func ProtoToDto(in *checkinProto.CheckIn) *dto.CheckIn {
 }
 
 func ProtoToDtos(in []*checkinProto.CheckIn) []*dto.CheckIn {
-	var out []*dto.CheckIn
+	out := make([]*dto.CheckIn, 0, len(in))
 	for _, v := range in {
 		out = append(out, ProtoToDto(v))
 	}

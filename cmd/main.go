@@ -19,6 +19,12 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+// @title RPKM67 API
+// @version 1.0
+// @description the RPKM67 API server.
+
+// @host localhost:3001
+// @BasePath /api/v1
 func main() {
 	conf, err := config.LoadConfig()
 	if err != nil {
@@ -66,7 +72,7 @@ func main() {
 	r.V1Patch("/user/profile/:id", userHdr.UpdateProfile)
 	r.V1Put("/user/picture/:id", userHdr.UpdatePicture)
 
-	r.V1Post("/checkin/create", checkinHdr.Create)
+	r.V1Post("/checkin", checkinHdr.Create)
 	r.V1Get("/checkin/:userId", checkinHdr.FindByUserID)
 	r.V1Get("/checkin/email/:email", checkinHdr.FindByEmail)
 
