@@ -8,8 +8,6 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	checkinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/checkin/checkin/v1"
 	"go.uber.org/zap"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type Service interface {
@@ -41,18 +39,7 @@ func (s *serviceImpl) Create(req *dto.CreateCheckInRequest) (*dto.CreateCheckInR
 	})
 	if err != nil {
 		s.log.Named("Create").Error("Create: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequest
-		case codes.Internal:
-			return nil, apperror.InternalServer
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.CreateCheckInResponse{
@@ -74,18 +61,7 @@ func (s *serviceImpl) FindByEmail(req *dto.FindByEmailCheckInRequest) (*dto.Find
 	})
 	if err != nil {
 		s.log.Named("FindByEmail").Error("FindByEmail: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequest
-		case codes.Internal:
-			return nil, apperror.InternalServer
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.FindByEmailCheckInResponse{
@@ -102,18 +78,7 @@ func (s *serviceImpl) FindByUserID(req *dto.FindByUserIdCheckInRequest) (*dto.Fi
 	})
 	if err != nil {
 		s.log.Named("FindByUserID").Error("FindByUserID: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequest
-		case codes.Internal:
-			return nil, apperror.InternalServer
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.FindByUserIdCheckInResponse{

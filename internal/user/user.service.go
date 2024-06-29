@@ -8,8 +8,6 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	userProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/user/v1"
 	"go.uber.org/zap"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type Service interface {
@@ -40,18 +38,7 @@ func (s *serviceImpl) FindOne(req *dto.FindOneUserRequest) (*dto.FindOneUserResp
 	})
 	if err != nil {
 		s.log.Named("FindOne").Error("FindOne: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("Invalid argument")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.FindOneUserResponse{
@@ -63,23 +50,12 @@ func (s *serviceImpl) UpdateProfile(req *dto.UpdateUserProfileRequest) (*dto.Upd
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	updateReq := s.createUpdateUserRequestProto(req)
+	updateReq := CreateUpdateUserRequestProto(req)
 
 	res, err := s.client.Update(ctx, updateReq)
 	if err != nil {
 		s.log.Named("Update").Error("Update: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.NotFound:
-			return nil, apperror.NotFoundError("User not found")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.UpdateUserProfileResponse{
@@ -101,44 +77,10 @@ func (s *serviceImpl) UpdatePicture(req *dto.UpdateUserPictureRequest) (*dto.Upd
 	res, err := s.client.Update(ctx, updateReq)
 	if err != nil {
 		s.log.Named("UpdatePicture").Error("Update: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.NotFound:
-			return nil, apperror.NotFoundError("User not found")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.UpdateUserPictureResponse{
 		User: ProtoToDto(res.User),
 	}, nil
-}
-
-func (s *serviceImpl) createUpdateUserRequestProto(req *dto.UpdateUserProfileRequest) *userProto.UpdateUserRequest {
-	return &userProto.UpdateUserRequest{
-		Id:          req.Id,
-		Nickname:    req.Nickname,
-		Title:       req.Title,
-		Firstname:   req.Firstname,
-		Lastname:    req.Lastname,
-		Year:        int32(req.Year),
-		Faculty:     req.Faculty,
-		Tel:         req.Tel,
-		ParentTel:   req.ParentTel,
-		Parent:      req.Parent,
-		FoodAllergy: req.FoodAllergy,
-		DrugAllergy: req.DrugAllergy,
-		Illness:     req.Illness,
-		PhotoKey:    req.PhotoKey,
-		PhotoUrl:    req.PhotoUrl,
-		Baan:        req.Baan,
-		ReceiveGift: int32(req.ReceiveGift),
-		GroupId:     req.GroupId,
-	}
 }
