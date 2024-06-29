@@ -3,9 +3,13 @@ package constant
 type Domain string
 
 const (
-	HealthCheck Domain = "health_check"
-	Metrics     Domain = "metrics"
-	File        Domain = "file"
+	Auth      Domain = "auth"
+	CheckIn   Domain = "check_in"
+	Group     Domain = "group"
+	Object    Domain = "object"
+	Pin       Domain = "pin"
+	Selection Domain = "selection"
+	User      Domain = "user"
 )
 
 func (d Domain) String() string {
