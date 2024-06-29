@@ -14,7 +14,8 @@ type AppConfig struct {
 }
 
 type ServiceConfig struct {
-	Auth string
+	Auth    string
+	CheckIn string
 }
 
 type CorsConfig struct {
@@ -47,7 +48,8 @@ func LoadConfig() (*Config, error) {
 	}
 
 	serviceConfig := ServiceConfig{
-		Auth: os.Getenv("SERVICE_AUTH"),
+		Auth:    os.Getenv("SERVICE_AUTH"),
+		CheckIn: os.Getenv("SERVICE_CHECKIN"),
 	}
 
 	corsConfig := CorsConfig{

@@ -1,34 +1,34 @@
 package dto
 
 type CheckIn struct {
-	Id     string `json:"id"`
-	Event  string `json:"event"`
+	ID     string `json:"id"`
+	UserID string `json:"user_id"`
 	Email  string `json:"email"`
-	UserId string `json:"user_id"`
+	Event  string `json:"event"`
 }
 
 type CreateCheckInRequest struct {
-	Event  string `json:"event" validate:"required"`
-	Email  string `json:"email" validate:"required"`
-	UserId string `json:"user_id" validate:"required"`
+	UserID string `json:"user_id"`
+	Email  string `json:"email"`
+	Event  string `json:"event"`
 }
 
 type CreateCheckInResponse struct {
-	CheckIn *CheckIn `json:"check_in"`
+	CheckIn *CheckIn `json:"checkin"`
 }
 
 type FindByUserIdCheckInRequest struct {
-	UserId string `json:"user_id" validate:"required"`
+	UserID string `json:"user_id"`
 }
 
 type FindByUserIdCheckInResponse struct {
-	CheckIns []*CheckIn `json:"check_ins"`
+	CheckIns []*CheckIn `json:"checkins"`
 }
 
 type FindByEmailCheckInRequest struct {
-	Email string `json:"email" validate:"required"`
+	Email string `json:"email"`
 }
 
 type FindByEmailCheckInResponse struct {
-	CheckIns []*CheckIn `json:"check_ins"`
+	CheckIns []*CheckIn `json:"checkins"`
 }
