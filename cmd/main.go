@@ -7,6 +7,7 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/constant"
 	auth "github.com/isd-sgcu/rpkm67-gateway/internal/auth"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/checkin"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/metrics"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/object"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/user"
@@ -17,6 +18,7 @@ import (
 	userProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/user/v1"
 	checkinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/checkin/checkin/v1"
 	objectProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/store/object/v1"
+	"github.com/prometheus/client_golang/prometheus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -67,7 +69,16 @@ func main() {
 	checkinSvc := checkin.NewService(checkinClient, logger)
 	checkinHdr := checkin.NewHandler(checkinSvc, validate, logger)
 
-	r := router.New(conf, corsHandler, authMiddleware)
+	requestsCounter := prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "api_requests_total",
+		Help: "Total number of API requests by domain, method, status code",
+	}, []string{"domain", "method", "status_code"})
+	requestMetrics := metrics.NewRequestMetrics(requestsCounter)
+
+	metricsReg := metrics.NewRegistry(prometheus.NewRegistry(), requestMetrics)
+	metricsHdr := metrics.NewHandler(metricsReg, logger)
+
+	r := router.New(conf, corsHandler, authMiddleware, requestMetrics)
 
 	r.V1Get("/auth/google-url", authHdr.GetGoogleLoginUrl)
 	r.V1Post("/auth/verify-google", authHdr.VerifyGoogleLogin)
@@ -80,6 +91,8 @@ func main() {
 	r.V1Post("/checkin", checkinHdr.Create)
 	r.V1Get("/checkin/:userId", checkinHdr.FindByUserID)
 	r.V1Get("/checkin/email/:email", checkinHdr.FindByEmail)
+
+	r.V1.GET("metrics", metricsHdr.ExposeMetrics)
 
 	if err := r.Run(fmt.Sprintf(":%v", conf.App.Port)); err != nil {
 		logger.Fatal("unable to start server")

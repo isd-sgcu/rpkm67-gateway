@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/isd-sgcu/rpkm67-gateway/config"
 	_ "github.com/isd-sgcu/rpkm67-gateway/docs"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/metrics"
 	"github.com/isd-sgcu/rpkm67-gateway/middleware"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -11,10 +12,11 @@ import (
 
 type Router struct {
 	*gin.Engine
-	v1 *gin.RouterGroup
+	V1             *gin.RouterGroup
+	requestMetrics metrics.RequestMetrics
 }
 
-func New(conf *config.Config, corsHandler config.CorsHandler, authMiddleware middleware.AuthMiddleware) *Router {
+func New(conf *config.Config, corsHandler config.CorsHandler, authMiddleware middleware.AuthMiddleware, requestMetrics metrics.RequestMetrics) *Router {
 	if !conf.App.IsDevelopment() {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -27,5 +29,5 @@ func New(conf *config.Config, corsHandler config.CorsHandler, authMiddleware mid
 		v1.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
-	return &Router{r, v1}
+	return &Router{r, v1, requestMetrics}
 }
