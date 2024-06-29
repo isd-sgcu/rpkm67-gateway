@@ -2,13 +2,15 @@ package config
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
 
 type AppConfig struct {
-	Port string
-	Env  string
+	Port          string
+	Env           string
+	MaxFileSizeMb int
 }
 
 type ServiceConfig struct {
@@ -34,9 +36,15 @@ func LoadConfig() (*Config, error) {
 		}
 	}
 
+	maxFileSizeMb, err := strconv.ParseInt(os.Getenv("MAX_FILE_SIZE_MB"), 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
 	appConfig := AppConfig{
-		Port: os.Getenv("APP_PORT"),
-		Env:  os.Getenv("APP_ENV"),
+		Port:          os.Getenv("APP_PORT"),
+		Env:           os.Getenv("APP_ENV"),
+		MaxFileSizeMb: int(maxFileSizeMb),
 	}
 
 	serviceConfig := ServiceConfig{
