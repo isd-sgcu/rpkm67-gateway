@@ -8,7 +8,7 @@ import (
 )
 
 type RequestMetrics interface {
-	AddRequest(domain constant.Domain, method constant.Method, statusCode int, duration int)
+	AddRequest(domain constant.Domain, method constant.Method, statusCode int)
 	GetCounterVec() *prometheus.CounterVec
 }
 
@@ -22,9 +22,9 @@ func NewRequestMetrics(requestCounter *prometheus.CounterVec) RequestMetrics {
 	}
 }
 
-func (m *requestMetricsImpl) AddRequest(domain constant.Domain, method constant.Method, statusCode int, duration int) {
+func (m *requestMetricsImpl) AddRequest(domain constant.Domain, method constant.Method, statusCode int) {
 	m.requestCounter.WithLabelValues(
-		domain.String(), method.String(), fmt.Sprint(statusCode), fmt.Sprint(duration)).Inc()
+		domain.String(), method.String(), fmt.Sprint(statusCode)).Inc()
 }
 
 func (m *requestMetricsImpl) GetCounterVec() *prometheus.CounterVec {

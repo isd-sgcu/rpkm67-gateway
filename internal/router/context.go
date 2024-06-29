@@ -36,12 +36,28 @@ func (c *contextImpl) ResponseError(err *apperror.AppError) {
 	c.JSON(err.HttpCode, gin.H{"error": err.Error()})
 }
 
+func (c *contextImpl) BadRequestError(err string) {
+	c.JSON(apperror.BadRequest.HttpCode, gin.H{"error": err})
+}
+
+func (c *contextImpl) UnauthorizedError(err string) {
+	c.JSON(apperror.Unauthorized.HttpCode, gin.H{"error": err})
+}
+
+func (c *contextImpl) ForbiddenError(err string) {
+	c.JSON(apperror.Forbidden.HttpCode, gin.H{"error": err})
+}
+
+func (c *contextImpl) NotFoundError(err string) {
+	c.JSON(apperror.NotFound.HttpCode, gin.H{"error": err})
+}
+
 func (c *contextImpl) InternalServerError(err string) {
 	c.JSON(apperror.InternalServer.HttpCode, gin.H{"error": err})
 }
 
-func (c *contextImpl) BadRequestError(err string) {
-	c.JSON(apperror.BadRequest.HttpCode, gin.H{"error": err})
+func (c *contextImpl) ServiceUnavailableError(err string) {
+	c.JSON(apperror.ServiceUnavailable.HttpCode, gin.H{"error": err})
 }
 
 func (c *contextImpl) NewUUID() uuid.UUID {

@@ -71,8 +71,8 @@ func main() {
 
 	requestsCounter := prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: "api_requests_total",
-		Help: "Total number of API requests by domain, method, status code, and duration",
-	}, []string{"domain", "method", "status_code", "duration"})
+		Help: "Total number of API requests by domain, method, status code",
+	}, []string{"domain", "method", "status_code"})
 	requestMetrics := metrics.NewRequestMetrics(requestsCounter)
 
 	metricsReg := metrics.NewRegistry(prometheus.NewRegistry(), requestMetrics)
