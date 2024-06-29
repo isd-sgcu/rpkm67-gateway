@@ -1,6 +1,11 @@
 package apperror
 
-import "net/http"
+import (
+	"net/http"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
 
 type AppError struct {
 	Id       string
@@ -13,23 +18,15 @@ func (e *AppError) Error() string {
 
 var (
 	BadRequest         = &AppError{"Bad request", http.StatusBadRequest}
-	NotFound           = &AppError{"Not found", http.StatusNotFound}
-	InternalServer     = &AppError{"Internal error", http.StatusInternalServerError}
 	Unauthorized       = &AppError{"Unauthorized", http.StatusUnauthorized}
 	Forbidden          = &AppError{"Forbidden", http.StatusForbidden}
+	NotFound           = &AppError{"Not found", http.StatusNotFound}
+	InternalServer     = &AppError{"Internal error", http.StatusInternalServerError}
 	ServiceUnavailable = &AppError{"Internal error", http.StatusServiceUnavailable}
 )
 
 func BadRequestError(message string) *AppError {
 	return &AppError{message, http.StatusBadRequest}
-}
-
-func NotFoundError(message string) *AppError {
-	return &AppError{message, http.StatusNotFound}
-}
-
-func InternalServerError(message string) *AppError {
-	return &AppError{message, http.StatusInternalServerError}
 }
 
 func UnauthorizedError(message string) *AppError {
@@ -40,6 +37,35 @@ func ForbiddenError(message string) *AppError {
 	return &AppError{message, http.StatusForbidden}
 }
 
+func NotFoundError(message string) *AppError {
+	return &AppError{message, http.StatusNotFound}
+}
+
+func InternalServerError(message string) *AppError {
+	return &AppError{message, http.StatusInternalServerError}
+}
+
 func ServiceUnavailableError(message string) *AppError {
 	return &AppError{message, http.StatusServiceUnavailable}
+}
+
+func HandleServiceError(err error) *AppError {
+	st, ok := status.FromError(err)
+	if !ok {
+		return InternalServer
+	}
+	switch st.Code() {
+	case codes.InvalidArgument:
+		return BadRequestError(err.Error())
+	case codes.Unauthenticated:
+		return UnauthorizedError(err.Error())
+	case codes.PermissionDenied:
+		return ForbiddenError(err.Error())
+	case codes.NotFound:
+		return NotFoundError(err.Error())
+	case codes.Internal:
+		return InternalServerError(err.Error())
+	default:
+		return ServiceUnavailable
+	}
 }

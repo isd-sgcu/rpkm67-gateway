@@ -8,8 +8,6 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	authProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/auth/v1"
 	"go.uber.org/zap"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type Service interface {
@@ -37,18 +35,8 @@ func (s *serviceImpl) Validate(req *dto.ValidateRequest) (*dto.ValidateResponse,
 
 	res, err := s.client.Validate(ctx, &authProto.ValidateRequest{AccessToken: req.AccessToken})
 	if err != nil {
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.Unauthenticated:
-			return nil, apperror.UnauthorizedError("Unauthorized")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		s.log.Named("Validate").Error("Validate: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.ValidateResponse{
@@ -62,16 +50,8 @@ func (s *serviceImpl) RefreshToken(req *dto.RefreshTokenRequest) (*dto.Credentia
 
 	res, err := s.client.RefreshToken(ctx, &authProto.RefreshTokenRequest{RefreshToken: req.RefreshToken})
 	if err != nil {
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		s.log.Named("RefreshToken").Error("RefreshToken: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.Credential{
@@ -87,16 +67,8 @@ func (s *serviceImpl) GetGoogleLoginUrl() (*dto.GetGoogleLoginUrlResponse, *appe
 
 	res, err := s.client.GetGoogleLoginUrl(ctx, &authProto.GetGoogleLoginUrlRequest{})
 	if err != nil {
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		s.log.Named("GetGoogleLoginUrl").Error("GetGoogleLoginUrl: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.GetGoogleLoginUrlResponse{
@@ -112,18 +84,8 @@ func (s *serviceImpl) VerifyGoogleLogin(req *dto.VerifyGoogleLoginRequest) (*dto
 		Code: req.Code,
 	})
 	if err != nil {
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.AlreadyExists:
-			return nil, apperror.BadRequestError("User already exists")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		s.log.Named("VerifyGoogleLogin").Error("VerifyGoogleLogin: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.VerifyGoogleLoginResponse{
