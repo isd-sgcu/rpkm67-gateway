@@ -69,7 +69,13 @@ func main() {
 	checkinSvc := checkin.NewService(checkinClient, logger)
 	checkinHdr := checkin.NewHandler(checkinSvc, validate, logger)
 
-	metricsReg := metrics.NewRegistry(prometheus.NewRegistry())
+	requestsCounter := prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "api_requests_total",
+		Help: "Total number of API requests by domain, method, status code, and duration",
+	}, []string{"domain", "method", "status_code", "duration"})
+	requestMetrics := metrics.NewRequestMetrics(requestsCounter)
+
+	metricsReg := metrics.NewRegistry(prometheus.NewRegistry(), requestMetrics)
 	metricsHdr := metrics.NewHandler(metricsReg, logger)
 
 	r := router.New(conf, corsHandler, authMiddleware)

@@ -13,7 +13,7 @@ type registryImpl struct {
 	reg *prometheus.Registry
 }
 
-func NewRegistry(registry *prometheus.Registry) Registry {
+func NewRegistry(registry *prometheus.Registry, requestMetrics RequestMetrics) Registry {
 	// requestDurations := prometheus.NewHistogram(prometheus.HistogramOpts{
 	// 	Name:    "http_request_duration_seconds",
 	// 	Help:    "A histogram of the HTTP request durations in seconds.",
@@ -23,8 +23,7 @@ func NewRegistry(registry *prometheus.Registry) Registry {
 	registry.MustRegister(
 		collectors.NewGoCollector(),
 		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}),
-		// requestsMetrics.GetCounterVec(),
-		// requestDurations,
+		requestMetrics.GetCounterVec(),
 	)
 
 	return &registryImpl{
