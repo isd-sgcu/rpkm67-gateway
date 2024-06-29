@@ -54,17 +54,18 @@ func HandleServiceError(err error) *AppError {
 	if !ok {
 		return InternalServer
 	}
+
 	switch st.Code() {
 	case codes.InvalidArgument:
-		return BadRequestError(err.Error())
+		return BadRequestError(st.Message())
 	case codes.Unauthenticated:
-		return UnauthorizedError(err.Error())
+		return UnauthorizedError(st.Message())
 	case codes.PermissionDenied:
-		return ForbiddenError(err.Error())
+		return ForbiddenError(st.Message())
 	case codes.NotFound:
-		return NotFoundError(err.Error())
+		return NotFoundError(st.Message())
 	case codes.Internal:
-		return InternalServerError(err.Error())
+		return InternalServerError(st.Message())
 	default:
 		return ServiceUnavailable
 	}
