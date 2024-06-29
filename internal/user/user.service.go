@@ -6,6 +6,7 @@ import (
 
 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/object"
 	userProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/user/v1"
 	"go.uber.org/zap"
 )
@@ -18,13 +19,14 @@ type Service interface {
 
 type serviceImpl struct {
 	client userProto.UserServiceClient
-	objSvc object
+	objSvc object.Service
 	log    *zap.Logger
 }
 
-func NewService(client userProto.UserServiceClient, log *zap.Logger) Service {
+func NewService(client userProto.UserServiceClient, objSvc object.Service, log *zap.Logger) Service {
 	return &serviceImpl{
 		client: client,
+		objSvc: objSvc,
 		log:    log,
 	}
 }
@@ -67,11 +69,21 @@ func (s *serviceImpl) UpdatePicture(req *dto.UpdateUserPictureRequest) (*dto.Upd
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	//object code
+	uploadReq := &dto.UploadObjectRequest{
+		Filename: req.File.Filename,
+		Data:     req.File.Data,
+	}
+
+	uploadRes, svcErr := s.objSvc.Upload(uploadReq)
+	if svcErr != nil {
+		s.log.Named("UpdatePicture").Error("Upload: ", zap.Error(svcErr))
+		return nil, svcErr
+	}
 
 	updateReq := &userProto.UpdateUserRequest{
-		Id: req.Id,
-		// PhotoKey: req.PhotoKey, from object
+		Id:       req.Id,
+		PhotoKey: uploadRes.Object.Key,
+		PhotoUrl: uploadRes.Object.Url,
 	}
 
 	res, err := s.client.Update(ctx, updateReq)
