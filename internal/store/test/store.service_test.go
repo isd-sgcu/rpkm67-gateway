@@ -130,7 +130,9 @@ func (t *StoreServiceTest) TestFindObjectByKeyInvalidArgument() {
 	client := objectMock.NewMockClient(t.controller)
 	svc := store.NewService(client, t.logger)
 
-	client.EXPECT().FindByKey(gomock.Any(), t.findByKeyObjectProtoRequest).Return(nil, nil)
+	clientErr := apperror.BadRequest
+
+	client.EXPECT().FindByKey(gomock.Any(), t.findByKeyObjectProtoRequest).Return(nil, clientErr)
 	actual, err := svc.FindByKey(t.findByKeyObjectDtoRequest)
 
 	t.NotNil(err)
@@ -173,7 +175,9 @@ func (t *StoreServiceTest) TestDeleteObjectByKeyInvalidArgument() {
 	client := objectMock.NewMockClient(t.controller)
 	svc := store.NewService(client, t.logger)
 
-	client.EXPECT().DeleteByKey(gomock.Any(), t.deleteByKeyObjectProtoRequest).Return(nil, nil)
+	clientErr := apperror.BadRequest
+
+	client.EXPECT().DeleteByKey(gomock.Any(), t.deleteByKeyObjectProtoRequest).Return(nil, clientErr)
 	actual, err := svc.DeleteByKey(t.deleteObjectDtoRequest)
 
 	t.Nil(actual)
