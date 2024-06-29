@@ -27,3 +27,26 @@ func ProtoToDto(in *userProto.User) *dto.User {
 		GroupId:     in.GroupId,
 	}
 }
+
+func CreateUpdateUserRequestProto(req *dto.UpdateUserProfileRequest) *userProto.UpdateUserRequest {
+	return &userProto.UpdateUserRequest{
+		Id:          req.Id,
+		Nickname:    req.Nickname,
+		Title:       req.Title,
+		Firstname:   req.Firstname,
+		Lastname:    req.Lastname,
+		Year:        int32(req.Year),
+		Faculty:     req.Faculty,
+		Tel:         req.Tel,
+		ParentTel:   req.ParentTel,
+		Parent:      req.Parent,
+		FoodAllergy: req.FoodAllergy,
+		DrugAllergy: req.DrugAllergy,
+		Illness:     req.Illness,
+		PhotoKey:    req.PhotoKey,
+		PhotoUrl:    req.PhotoUrl,
+		Baan:        req.Baan,
+		ReceiveGift: int32(req.ReceiveGift),
+		GroupId:     req.GroupId,
+	}
+}

@@ -8,8 +8,6 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	groupProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/group/v1"
 	"go.uber.org/zap"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type Service interface {
@@ -44,18 +42,7 @@ func (s *serviceImpl) DeleteMember(req *dto.DeleteMemberGroupRequest) (*dto.Dele
 	})
 	if err != nil {
 		s.log.Named("DeleteMember").Error("DeleteMember: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.DeleteMemberGroupResponse{
@@ -72,18 +59,7 @@ func (s *serviceImpl) FindByToken(req *dto.FindByTokenGroupRequest) (*dto.FindBy
 	})
 	if err != nil {
 		s.log.Named("FindByToken").Error("FindByToken: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("Invalid argument")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.FindByTokenGroupResponse{
@@ -102,18 +78,7 @@ func (s *serviceImpl) FindOne(req *dto.FindOneGroupRequest) (*dto.FindOneGroupRe
 	})
 	if err != nil {
 		s.log.Named("FindOne").Error("FindOne: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("Invalid argument")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.FindOneGroupResponse{
@@ -132,18 +97,7 @@ func (s *serviceImpl) Join(req *dto.JoinGroupRequest) (*dto.JoinGroupResponse, *
 
 	if err != nil {
 		s.log.Named("Join").Error("Join: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("Invalid argument")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.JoinGroupResponse{
@@ -160,18 +114,7 @@ func (s *serviceImpl) Leave(req *dto.LeaveGroupRequest) (*dto.LeaveGroupResponse
 	})
 	if err != nil {
 		s.log.Named("Leave").Error("Leave: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("Invalid argument")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.LeaveGroupResponse{
@@ -189,18 +132,7 @@ func (s *serviceImpl) SelectBaan(req *dto.SelectBaanRequest) (*dto.SelectBaanRes
 	})
 	if err != nil {
 		s.log.Named("SelectBaan").Error("SelectBaan: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("Invalid argument")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.SelectBaanResponse{
@@ -218,18 +150,7 @@ func (s *serviceImpl) Update(req *dto.UpdateGroupRequest) (*dto.UpdateGroupRespo
 	})
 	if err != nil {
 		s.log.Named("Update").Error("Update: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("Invalid argument")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.UpdateGroupResponse{
