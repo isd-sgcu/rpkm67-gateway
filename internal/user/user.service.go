@@ -20,7 +20,7 @@ type Service interface {
 
 type serviceImpl struct {
 	client userProto.UserServiceClient
-	//object svc
+	// object svc
 	log *zap.Logger
 }
 
