@@ -66,7 +66,7 @@ func main() {
 
 	r.V1Get("/auth/google-url", authHdr.GetGoogleLoginUrl)
 	r.V1Post("/auth/verify-google", authHdr.VerifyGoogleLogin)
-	r.V1Post("/auth/test", authHdr.Test)
+	r.V1Get("/auth/test", authHdr.Test)
 
 	r.V1Get("/user/:id", userHdr.FindOne)
 	r.V1Patch("/user/profile/:id", userHdr.UpdateProfile)
