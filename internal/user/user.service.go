@@ -18,8 +18,8 @@ type Service interface {
 
 type serviceImpl struct {
 	client userProto.UserServiceClient
-	// object svc
-	log *zap.Logger
+	objSvc object
+	log    *zap.Logger
 }
 
 func NewService(client userProto.UserServiceClient, log *zap.Logger) Service {
