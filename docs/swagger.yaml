@@ -1,0 +1,132 @@
+basePath: /api/v1
+definitions:
+  apperror.AppError:
+    properties:
+      httpCode:
+        type: integer
+      id:
+        type: string
+    type: object
+  dto.CheckIn:
+    properties:
+      email:
+        type: string
+      event:
+        type: string
+      id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.CreateCheckInRequest:
+    properties:
+      email:
+        type: string
+      event:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.CreateCheckInResponse:
+    properties:
+      checkin:
+        $ref: '#/definitions/dto.CheckIn'
+    type: object
+  dto.FindByEmailCheckInResponse:
+    properties:
+      checkins:
+        items:
+          $ref: '#/definitions/dto.CheckIn'
+        type: array
+    type: object
+  dto.FindByUserIdCheckInResponse:
+    properties:
+      checkins:
+        items:
+          $ref: '#/definitions/dto.CheckIn'
+        type: array
+    type: object
+host: localhost:3001
+info:
+  contact: {}
+  description: the RPKM67 API server.
+  title: RPKM67 API
+  version: "1.0"
+paths:
+  /checkin:
+    post:
+      consumes:
+      - application/json
+      description: Create a check-in using email, event and user_id
+      parameters:
+      - description: Create CheckIn Request
+        in: body
+        name: create
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCheckInRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CreateCheckInResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Create a check-in
+      tags:
+      - checkin
+  /checkin/{userId}:
+    get:
+      consumes:
+      - text/plain
+      description: Find check-ins by user_id
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FindByUserIdCheckInResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Find check-ins by user_id
+      tags:
+      - checkin
+  /checkin/email/{email}:
+    get:
+      consumes:
+      - text/plain
+      description: Find check-ins by email
+      parameters:
+      - description: Email
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FindByEmailCheckInResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Find check-ins by email
+      tags:
+      - checkin
+swagger: "2.0"

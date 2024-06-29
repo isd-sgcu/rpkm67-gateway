@@ -30,6 +30,16 @@ type handlerImpl struct {
 	log      *zap.Logger
 }
 
+// Upload godoc
+// @Summary Create a check-in
+// @Description Create a check-in using email, event and user_id
+// @Tags checkin
+// @Accept json
+// @Produce json
+// @Param create body dto.CreateCheckInRequest true "Create CheckIn Request"
+// @Success 201 {object} dto.CreateCheckInResponse
+// @Failure 400 {object} apperror.AppError
+// @Router /checkin [post]
 func (h *handlerImpl) Create(c router.Context) {
 	body := &dto.CreateCheckInRequest{}
 	if err := c.Bind(body); err != nil {
@@ -67,6 +77,16 @@ func (h *handlerImpl) Create(c router.Context) {
 	})
 }
 
+// Get godoc
+// @Summary Find check-ins by email
+// @Description Find check-ins by email
+// @Tags checkin
+// @Accept plain
+// @Produce json
+// @Param email path string true "Email"
+// @Success 200 {object} dto.FindByEmailCheckInResponse
+// @Failure 400 {object} apperror.AppError
+// @Router /checkin/email/{email} [get]
 func (h *handlerImpl) FindByEmail(c router.Context) {
 	email := c.Param("email")
 	if email == "" {
@@ -91,6 +111,16 @@ func (h *handlerImpl) FindByEmail(c router.Context) {
 	})
 }
 
+// Get godoc
+// @Summary Find check-ins by user_id
+// @Description Find check-ins by user_id
+// @Tags checkin
+// @Accept plain
+// @Produce json
+// @Param userId path string true "User ID"
+// @Success 200 {object} dto.FindByUserIdCheckInResponse
+// @Failure 400 {object} apperror.AppError
+// @Router /checkin/{userId} [get]
 func (h *handlerImpl) FindByUserID(c router.Context) {
 	userId := c.Param("userId")
 	if userId == "" {
