@@ -8,8 +8,6 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	storeProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/store/object/v1"
 	"go.uber.org/zap"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type Service interface {
@@ -39,18 +37,7 @@ func (s *serviceImpl) Upload(req *dto.UploadObjectRequest) (*dto.UploadObjectRes
 	})
 	if err != nil {
 		s.log.Named("Upload").Error("Upload: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequest
-		case codes.Internal:
-			return nil, apperror.InternalServer
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.UploadObjectResponse{
@@ -70,18 +57,7 @@ func (s *serviceImpl) FindByKey(req *dto.FindByKeyObjectRequest) (*dto.FindByKey
 	})
 	if err != nil {
 		s.log.Named("FindByKey").Error("FindByKey: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequest
-		case codes.Internal:
-			return nil, apperror.InternalServer
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.FindByKeyObjectResponse{
@@ -101,18 +77,7 @@ func (s *serviceImpl) DeleteByKey(req *dto.DeleteObjectRequest) (*dto.DeleteObje
 	})
 	if err != nil {
 		s.log.Named("DeleteByKey").Error("DeleteByKey: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequest
-		case codes.Internal:
-			return nil, apperror.InternalServer
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.DeleteObjectResponse{
