@@ -4,14 +4,14 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
-	"github.com/isd-sgcu/rpkm67-gateway/internal/store"
-	objectMock "github.com/isd-sgcu/rpkm67-gateway/mocks/store"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/object"
+	objectMock "github.com/isd-sgcu/rpkm67-gateway/mocks/object"
 	objectProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/store/object/v1"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/zap"
 )
 
-type StoreServiceTest struct {
+type ObjectServiceTest struct {
 	suite.Suite
 	controller                    *gomock.Controller
 	logger                        *zap.Logger
@@ -28,7 +28,7 @@ type StoreServiceTest struct {
 	deleteObjectDtoRequest        *dto.DeleteObjectRequest
 }
 
-func (t *StoreServiceTest) SetupTest() {
+func (t *ObjectServiceTest) SetupTest() {
 	t.controller = gomock.NewController(t.T())
 	t.logger = zap.NewNop()
 	t.mockUrl = "mockUrl"
@@ -62,9 +62,9 @@ func (t *StoreServiceTest) SetupTest() {
 	}
 }
 
-func (t *StoreServiceTest) TestCreateObjectSuccess() {
+func (t *ObjectServiceTest) TestCreateObjectSuccess() {
 	client := objectMock.NewMockClient(t.controller)
-	svc := store.NewService(client, t.logger)
+	svc := object.NewService(client, t.logger)
 
 	protoResp := &objectProto.UploadObjectResponse{
 		Object: t.objectProto,
@@ -81,9 +81,9 @@ func (t *StoreServiceTest) TestCreateObjectSuccess() {
 	t.Equal(expected, actual)
 }
 
-func (t *StoreServiceTest) TestCreateObjectInvalidArgument() {
+func (t *ObjectServiceTest) TestCreateObjectInvalidArgument() {
 	client := objectMock.NewMockClient(t.controller)
-	svc := store.NewService(client, t.logger)
+	svc := object.NewService(client, t.logger)
 
 	clientErr := apperror.BadRequest
 
@@ -94,9 +94,9 @@ func (t *StoreServiceTest) TestCreateObjectInvalidArgument() {
 	t.Equal(apperror.BadRequest, err)
 }
 
-func (t *StoreServiceTest) TestCreateObjectInternalError() {
+func (t *ObjectServiceTest) TestCreateObjectInternalError() {
 	client := objectMock.NewMockClient(t.controller)
-	svc := store.NewService(client, t.logger)
+	svc := object.NewService(client, t.logger)
 
 	clientErr := apperror.InternalServer
 
@@ -107,9 +107,9 @@ func (t *StoreServiceTest) TestCreateObjectInternalError() {
 	t.Equal(apperror.InternalServer, err)
 }
 
-func (t *StoreServiceTest) TestFindObjectByKeySuccess() {
+func (t *ObjectServiceTest) TestFindObjectByKeySuccess() {
 	client := objectMock.NewMockClient(t.controller)
-	svc := store.NewService(client, t.logger)
+	svc := object.NewService(client, t.logger)
 
 	protoResp := &objectProto.FindByKeyObjectResponse{
 		Object: t.objectProto,
@@ -126,9 +126,9 @@ func (t *StoreServiceTest) TestFindObjectByKeySuccess() {
 	t.Equal(expected, actual)
 }
 
-func (t *StoreServiceTest) TestFindObjectByKeyInvalidArgument() {
+func (t *ObjectServiceTest) TestFindObjectByKeyInvalidArgument() {
 	client := objectMock.NewMockClient(t.controller)
-	svc := store.NewService(client, t.logger)
+	svc := object.NewService(client, t.logger)
 
 	clientErr := apperror.BadRequest
 
@@ -139,9 +139,9 @@ func (t *StoreServiceTest) TestFindObjectByKeyInvalidArgument() {
 	t.Nil(actual)
 }
 
-func (t *StoreServiceTest) TestFindObjectByKeyInternalError() {
+func (t *ObjectServiceTest) TestFindObjectByKeyInternalError() {
 	client := objectMock.NewMockClient(t.controller)
-	svc := store.NewService(client, t.logger)
+	svc := object.NewService(client, t.logger)
 
 	clientErr := apperror.InternalServer
 
@@ -152,9 +152,9 @@ func (t *StoreServiceTest) TestFindObjectByKeyInternalError() {
 	t.Equal(apperror.InternalServer, err)
 }
 
-func (t *StoreServiceTest) TestDeleteObjectByKeySuccess() {
+func (t *ObjectServiceTest) TestDeleteObjectByKeySuccess() {
 	client := objectMock.NewMockClient(t.controller)
-	svc := store.NewService(client, t.logger)
+	svc := object.NewService(client, t.logger)
 
 	protoResp := &objectProto.DeleteByKeyObjectResponse{
 		Success: true,
@@ -171,9 +171,9 @@ func (t *StoreServiceTest) TestDeleteObjectByKeySuccess() {
 	t.Equal(expected, actual)
 }
 
-func (t *StoreServiceTest) TestDeleteObjectByKeyInvalidArgument() {
+func (t *ObjectServiceTest) TestDeleteObjectByKeyInvalidArgument() {
 	client := objectMock.NewMockClient(t.controller)
-	svc := store.NewService(client, t.logger)
+	svc := object.NewService(client, t.logger)
 
 	clientErr := apperror.BadRequest
 
@@ -184,9 +184,9 @@ func (t *StoreServiceTest) TestDeleteObjectByKeyInvalidArgument() {
 	t.Equal(apperror.BadRequest, err)
 }
 
-func (t *StoreServiceTest) TestDeleteObjectByKeyInternalError() {
+func (t *ObjectServiceTest) TestDeleteObjectByKeyInternalError() {
 	client := objectMock.NewMockClient(t.controller)
-	svc := store.NewService(client, t.logger)
+	svc := object.NewService(client, t.logger)
 
 	clientErr := apperror.InternalServer
 
