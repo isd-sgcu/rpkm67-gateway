@@ -32,3 +32,6 @@ coverage.html
 
 tmp
 staff.json
+internal/group/test/group.handler_test.go
+go.mod
+go.mod

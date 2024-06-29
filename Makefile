@@ -16,6 +16,7 @@ mock-gen:
 	mockgen -source ./internal/selection/selection.client.go -destination ./mocks/selection/selection.client.go
 	mockgen -source ./internal/router/context.go -destination ./mocks/router/context.mock.go
 	mockgen -source ./internal/validator/validator.go -destination ./mocks/validator/validator.mock.go
+	mockgen -source ./internal/group/group.handler.go -destination ./mocks/group/group.handler.go
 
 test:
 	go vet ./...

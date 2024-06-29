@@ -13,6 +13,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.6.0
 	github.com/isd-sgcu/rpkm67-go-proto v0.1.5
+	github.com/isd-sgcu/rpkm67-go-proto/tree/armei-be v0.1.5
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.9.0
 	github.com/swaggo/files v1.0.1
