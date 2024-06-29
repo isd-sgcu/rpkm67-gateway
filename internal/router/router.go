@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/isd-sgcu/rpkm67-gateway/config"
+	_ "github.com/isd-sgcu/rpkm67-gateway/docs"
 	"github.com/isd-sgcu/rpkm67-gateway/middleware"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
