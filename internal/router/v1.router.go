@@ -7,30 +7,30 @@ import (
 
 func (r *Router) V1Get(path string, handler func(c Context)) {
 	r.V1.GET(path, func(c *gin.Context) {
-		handler(NewContext(c, constant.GET, path))
+		handler(NewContext(c, constant.GET, path, r.requestMetrics))
 	})
 }
 
 func (r *Router) V1Post(path string, handler func(c Context)) {
 	r.V1.POST(path, func(c *gin.Context) {
-		handler(NewContext(c, constant.POST, path))
+		handler(NewContext(c, constant.POST, path, r.requestMetrics))
 	})
 }
 
 func (r *Router) V1Put(path string, handler func(c Context)) {
 	r.V1.PUT(path, func(c *gin.Context) {
-		handler(NewContext(c, constant.PUT, path))
+		handler(NewContext(c, constant.PUT, path, r.requestMetrics))
 	})
 }
 
 func (r *Router) V1Patch(path string, handler func(c Context)) {
 	r.V1.PATCH(path, func(c *gin.Context) {
-		handler(NewContext(c, constant.PATCH, path))
+		handler(NewContext(c, constant.PATCH, path, r.requestMetrics))
 	})
 }
 
 func (r *Router) V1Delete(path string, handler func(c Context)) {
 	r.V1.DELETE(path, func(c *gin.Context) {
-		handler(NewContext(c, constant.DELETE, path))
+		handler(NewContext(c, constant.DELETE, path, r.requestMetrics))
 	})
 }

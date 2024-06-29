@@ -6,6 +6,7 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/constant"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/metrics"
 )
 
 type Context interface {
@@ -25,45 +26,55 @@ type contextImpl struct {
 	*gin.Context
 	httpMethod constant.Method
 	path       string
+	reqMetrics metrics.RequestMetrics
 }
 
-func NewContext(c *gin.Context, httpMethod constant.Method, path string) Context {
+func NewContext(c *gin.Context, httpMethod constant.Method, path string, reqMetrics metrics.RequestMetrics) Context {
 	return &contextImpl{
 		Context:    c,
 		httpMethod: httpMethod,
 		path:       path,
+		reqMetrics: reqMetrics,
 	}
 }
 
 func (c *contextImpl) JSON(statusCode int, obj interface{}) {
+	c.reqMetrics.AddRequest(c.path, c.httpMethod, statusCode)
 	c.Context.JSON(statusCode, obj)
 }
 
 func (c *contextImpl) ResponseError(err *apperror.AppError) {
+	c.reqMetrics.AddRequest(c.path, c.httpMethod, err.HttpCode)
 	c.JSON(err.HttpCode, gin.H{"error": err.Error()})
 }
 
 func (c *contextImpl) BadRequestError(err string) {
+	c.reqMetrics.AddRequest(c.path, c.httpMethod, apperror.BadRequest.HttpCode)
 	c.JSON(apperror.BadRequest.HttpCode, gin.H{"error": err})
 }
 
 func (c *contextImpl) UnauthorizedError(err string) {
+	c.reqMetrics.AddRequest(c.path, c.httpMethod, apperror.Unauthorized.HttpCode)
 	c.JSON(apperror.Unauthorized.HttpCode, gin.H{"error": err})
 }
 
 func (c *contextImpl) ForbiddenError(err string) {
+	c.reqMetrics.AddRequest(c.path, c.httpMethod, apperror.Forbidden.HttpCode)
 	c.JSON(apperror.Forbidden.HttpCode, gin.H{"error": err})
 }
 
 func (c *contextImpl) NotFoundError(err string) {
+	c.reqMetrics.AddRequest(c.path, c.httpMethod, apperror.NotFound.HttpCode)
 	c.JSON(apperror.NotFound.HttpCode, gin.H{"error": err})
 }
 
 func (c *contextImpl) InternalServerError(err string) {
+	c.reqMetrics.AddRequest(c.path, c.httpMethod, apperror.InternalServer.HttpCode)
 	c.JSON(apperror.InternalServer.HttpCode, gin.H{"error": err})
 }
 
 func (c *contextImpl) ServiceUnavailableError(err string) {
+	c.reqMetrics.AddRequest(c.path, c.httpMethod, apperror.ServiceUnavailable.HttpCode)
 	c.JSON(apperror.ServiceUnavailable.HttpCode, gin.H{"error": err})
 }
 

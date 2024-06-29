@@ -78,7 +78,7 @@ func main() {
 	metricsReg := metrics.NewRegistry(prometheus.NewRegistry(), requestMetrics)
 	metricsHdr := metrics.NewHandler(metricsReg, logger)
 
-	r := router.New(conf, corsHandler, authMiddleware)
+	r := router.New(conf, corsHandler, authMiddleware, requestMetrics)
 
 	r.V1Get("/auth/google-url", authHdr.GetGoogleLoginUrl)
 	r.V1Post("/auth/verify-google", authHdr.VerifyGoogleLogin)
