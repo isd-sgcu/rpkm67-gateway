@@ -144,7 +144,7 @@ services:
     volumes:
       - ./volumes/grafana:/var/lib/grafana
     ports:
-      - "3006:3006"
+      - "3006:3000"
 
 networks:
   rpkm67:
