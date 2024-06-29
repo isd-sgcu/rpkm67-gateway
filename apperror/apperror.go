@@ -12,11 +12,12 @@ func (e *AppError) Error() string {
 }
 
 var (
-	InternalServer     = &AppError{"Internal error", http.StatusInternalServerError}
-	ServiceUnavailable = &AppError{"Internal error", http.StatusServiceUnavailable}
-	Unauthorized       = &AppError{"Unauthorized", http.StatusUnauthorized}
 	BadRequest         = &AppError{"Bad request", http.StatusBadRequest}
-	InvalidToken       = &AppError{"Invalid token", http.StatusUnauthorized}
+	NotFound           = &AppError{"Not found", http.StatusNotFound}
+	InternalServer     = &AppError{"Internal error", http.StatusInternalServerError}
+	Unauthorized       = &AppError{"Unauthorized", http.StatusUnauthorized}
+	Forbidden          = &AppError{"Forbidden", http.StatusForbidden}
+	ServiceUnavailable = &AppError{"Internal error", http.StatusServiceUnavailable}
 )
 
 func BadRequestError(message string) *AppError {
@@ -29,4 +30,16 @@ func NotFoundError(message string) *AppError {
 
 func InternalServerError(message string) *AppError {
 	return &AppError{message, http.StatusInternalServerError}
+}
+
+func UnauthorizedError(message string) *AppError {
+	return &AppError{message, http.StatusUnauthorized}
+}
+
+func ForbiddenError(message string) *AppError {
+	return &AppError{message, http.StatusForbidden}
+}
+
+func ServiceUnavailableError(message string) *AppError {
+	return &AppError{message, http.StatusServiceUnavailable}
 }
