@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
+	"github.com/isd-sgcu/rpkm67-gateway/constant"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 )
 
@@ -22,10 +23,16 @@ type Context interface {
 
 type contextImpl struct {
 	*gin.Context
+	httpMethod constant.Method
+	path       string
 }
 
-func NewContext(c *gin.Context) Context {
-	return &contextImpl{c}
+func NewContext(c *gin.Context, httpMethod constant.Method, path string) Context {
+	return &contextImpl{
+		Context:    c,
+		httpMethod: httpMethod,
+		path:       path,
+	}
 }
 
 func (c *contextImpl) JSON(statusCode int, obj interface{}) {
