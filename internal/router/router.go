@@ -30,7 +30,7 @@ func New(conf *config.Config, corsHandler config.CorsHandler, authMiddleware mid
 	v1NonAuth := r.Group("/api/v1")
 
 	if conf.App.IsDevelopment() {
-		v1.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+		v1NonAuth.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
 	return &Router{r, v1, v1NonAuth, requestMetrics}
