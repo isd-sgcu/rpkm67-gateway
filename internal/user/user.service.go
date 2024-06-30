@@ -69,6 +69,19 @@ func (s *serviceImpl) UpdatePicture(req *dto.UpdateUserPictureRequest) (*dto.Upd
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	user, err := s.client.FindOne(ctx, &userProto.FindOneUserRequest{Id: req.Id})
+	if err != nil {
+		s.log.Named("UpdatePicture").Error("FindOne: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
+	}
+
+	if user.User.PhotoKey != "" {
+		if _, err := s.objSvc.DeleteByKey(&dto.DeleteObjectRequest{Key: user.User.PhotoKey}); err != nil {
+			s.log.Named("UpdatePicture").Error("Delete: ", zap.Error(err))
+			return nil, apperror.HandleServiceError(err)
+		}
+	}
+
 	uploadReq := &dto.UploadObjectRequest{
 		Filename: req.File.Filename,
 		Data:     req.File.Data,
