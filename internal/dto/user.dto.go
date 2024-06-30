@@ -49,8 +49,6 @@ type UpdateUserProfileBody struct {
 	FoodAllergy string `json:"food_allergy"`
 	DrugAllergy string `json:"drug_allergy"`
 	Illness     string `json:"illness"`
-	PhotoKey    string `json:"photo_key"`
-	PhotoUrl    string `json:"photo_url"`
 	Baan        string `json:"baan"`
 	ReceiveGift int    `json:"receive_gift"`
 	GroupId     string `json:"group_id"`
@@ -70,8 +68,6 @@ type UpdateUserProfileRequest struct {
 	FoodAllergy string `json:"food_allergy"`
 	DrugAllergy string `json:"drug_allergy"`
 	Illness     string `json:"illness"`
-	PhotoKey    string `json:"photo_key"`
-	PhotoUrl    string `json:"photo_url"`
 	Baan        string `json:"baan"`
 	ReceiveGift int    `json:"receive_gift"`
 	GroupId     string `json:"group_id"`
