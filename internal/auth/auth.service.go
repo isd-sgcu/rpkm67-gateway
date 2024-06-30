@@ -44,6 +44,7 @@ func (s *serviceImpl) Validate(req *dto.ValidateRequest) (*dto.ValidateResponse,
 		Role:   res.Role,
 	}, nil
 }
+
 func (s *serviceImpl) RefreshToken(req *dto.RefreshTokenRequest) (*dto.Credential, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

@@ -15,6 +15,82 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/google-url": {
+            "get": {
+                "description": "get google login url",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get Google login url",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetGoogleLoginUrlResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/verify-google/{code}": {
+            "get": {
+                "description": "returns user's credential",
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Verify Google login",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code from google login",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VerifyGoogleLoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
         "/checkin": {
             "post": {
                 "description": "Create a check-in using email, event and user_id",
@@ -131,6 +207,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/count": {
+            "post": {
+                "description": "Add 1 to count metrics by name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "count"
+                ],
+                "summary": "Count clicks",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Name of the count metric",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CountResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
         "/stamp/{userId}": {
             "get": {
                 "description": "Find stamp by user id",
@@ -213,44 +327,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/count": {
-            "post": {
-                "description": "Add 1 to count metrics by name",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "count"
-                ],
-                "summary": "Count clicks",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Name of the count metric",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/dto.CountResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/apperror.AppError"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -312,6 +388,23 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.Credential": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3BiZX..."
+                },
+                "expires_in": {
+                    "type": "integer",
+                    "example": 3600
+                },
+                "refresh_token": {
+                    "type": "string",
+                    "example": "e7e84d54-7518-4..."
+                }
+            }
+        },
         "dto.FindByEmailCheckInResponse": {
             "type": "object",
             "properties": {
@@ -339,6 +432,14 @@ const docTemplate = `{
             "properties": {
                 "stamp": {
                     "$ref": "#/definitions/dto.Stamp"
+                }
+            }
+        },
+        "dto.GetGoogleLoginUrlResponse": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
                 }
             }
         },
@@ -374,7 +475,7 @@ const docTemplate = `{
                 "activity_id": {
                     "type": "string"
                 },
-                "pin": {
+                "pin_code": {
                     "type": "string"
                 }
             }
@@ -386,6 +487,25 @@ const docTemplate = `{
                     "$ref": "#/definitions/dto.Stamp"
                 }
             }
+        },
+        "dto.VerifyGoogleLoginResponse": {
+            "type": "object",
+            "properties": {
+                "credential": {
+                    "$ref": "#/definitions/dto.Credential"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Type \"Bearer\" followed by a space and JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

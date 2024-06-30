@@ -50,6 +50,14 @@ func (h *handlerImpl) RefreshToken(c context.Ctx) {
 	c.JSON(200, credential)
 }
 
+// GetGoogleLoginUrl godoc
+// @Summary Get Google login url
+// @Description get google login url
+// @Tags auth
+// @Produce json
+// @Success 200 {object} dto.GetGoogleLoginUrlResponse
+// @Failure 500 {object} apperror.AppError
+// @Router /auth/google-url [get]
 func (h *handlerImpl) GetGoogleLoginUrl(c context.Ctx) {
 	res, appErr := h.svc.GetGoogleLoginUrl()
 	if appErr != nil {
@@ -60,6 +68,18 @@ func (h *handlerImpl) GetGoogleLoginUrl(c context.Ctx) {
 	c.JSON(200, res)
 }
 
+// VerifyGoogleLogin godoc
+// @Summary Verify Google login
+// @Description returns user's credential
+// @Tags auth
+// @Accept plain
+// @Produce json
+// @Param code path string true "Code from google login"
+// @Success 200 {object} dto.VerifyGoogleLoginResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /auth/verify-google/{code} [get]
 func (h *handlerImpl) VerifyGoogleLogin(c context.Ctx) {
 	code := c.Query("code")
 	if code == "" {

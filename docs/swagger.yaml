@@ -37,6 +37,18 @@ definitions:
       checkin:
         $ref: '#/definitions/dto.CheckIn'
     type: object
+  dto.Credential:
+    properties:
+      access_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3BiZX...
+        type: string
+      expires_in:
+        example: 3600
+        type: integer
+      refresh_token:
+        example: e7e84d54-7518-4...
+        type: string
+    type: object
   dto.FindByEmailCheckInResponse:
     properties:
       checkins:
@@ -55,6 +67,11 @@ definitions:
     properties:
       stamp:
         $ref: '#/definitions/dto.Stamp'
+    type: object
+  dto.GetGoogleLoginUrlResponse:
+    properties:
+      url:
+        type: string
     type: object
   dto.Stamp:
     properties:
@@ -77,13 +94,20 @@ definitions:
     properties:
       activity_id:
         type: string
-      pin:
+      pin_code:
         type: string
     type: object
   dto.StampByUserIdResponse:
     properties:
       stamp:
         $ref: '#/definitions/dto.Stamp'
+    type: object
+  dto.VerifyGoogleLoginResponse:
+    properties:
+      credential:
+        $ref: '#/definitions/dto.Credential'
+      user_id:
+        type: string
     type: object
 host: localhost:3001
 info:
@@ -92,6 +116,56 @@ info:
   title: RPKM67 API
   version: "1.0"
 paths:
+  /auth/google-url:
+    get:
+      description: get google login url
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetGoogleLoginUrlResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Get Google login url
+      tags:
+      - auth
+  /auth/verify-google/{code}:
+    get:
+      consumes:
+      - text/plain
+      description: returns user's credential
+      parameters:
+      - description: Code from google login
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VerifyGoogleLoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Verify Google login
+      tags:
+      - auth
   /checkin:
     post:
       consumes:
@@ -168,6 +242,31 @@ paths:
       summary: Find check-ins by email
       tags:
       - checkin
+  /count:
+    post:
+      consumes:
+      - application/json
+      description: Add 1 to count metrics by name
+      parameters:
+      - description: Name of the count metric
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CountResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Count clicks
+      tags:
+      - count
   /stamp/{userId}:
     get:
       consumes:
@@ -223,29 +322,10 @@ paths:
       summary: Stamp by user id
       tags:
       - stamp
-  /count:
-    post:
-      consumes:
-      - application/json
-      description: Add 1 to count metrics by name
-      parameters:
-      - description: Name of the count metric
-        in: path
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/dto.CountResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/apperror.AppError'
-      summary: Count clicks
-      tags:
-      - count
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
