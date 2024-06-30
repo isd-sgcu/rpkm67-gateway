@@ -14,6 +14,7 @@ type clientImpl struct {
 type Client interface {
 	Create(ctx context.Context, in *userProto.CreateUserRequest, opts ...grpc.CallOption) (*userProto.CreateUserResponse, error)
 	FindOne(ctx context.Context, in *userProto.FindOneUserRequest, opts ...grpc.CallOption) (*userProto.FindOneUserResponse, error)
+	FindByEmail(ctx context.Context, in *userProto.FindByEmailRequest, opts ...grpc.CallOption) (*userProto.FindByEmailResponse, error)
 	Update(ctx context.Context, in *userProto.UpdateUserRequest, opts ...grpc.CallOption) (*userProto.UpdateUserResponse, error)
 }
 
@@ -29,6 +30,10 @@ func (c *clientImpl) Create(ctx context.Context, in *userProto.CreateUserRequest
 
 func (c *clientImpl) FindOne(ctx context.Context, in *userProto.FindOneUserRequest, opts ...grpc.CallOption) (*userProto.FindOneUserResponse, error) {
 	return c.client.FindOne(ctx, in, opts...)
+}
+
+func (c *clientImpl) FindByEmail(ctx context.Context, in *userProto.FindByEmailRequest, opts ...grpc.CallOption) (*userProto.FindByEmailResponse, error) {
+	return c.client.FindByEmail(ctx, in, opts...)
 }
 
 func (c *clientImpl) Update(ctx context.Context, in *userProto.UpdateUserRequest, opts ...grpc.CallOption) (*userProto.UpdateUserResponse, error) {
