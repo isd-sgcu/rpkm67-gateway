@@ -30,7 +30,7 @@ func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) H
 	}
 }
 
-// Upload godoc
+// Create godoc
 // @Summary Create a check-in
 // @Description Create a check-in using email, event and user_id
 // @Tags checkin
@@ -77,7 +77,7 @@ func (h *handlerImpl) Create(c context.Ctx) {
 	})
 }
 
-// Get godoc
+// FindByEmail godoc
 // @Summary Find check-ins by email
 // @Description Find check-ins by email
 // @Tags checkin
@@ -111,7 +111,7 @@ func (h *handlerImpl) FindByEmail(c context.Ctx) {
 	})
 }
 
-// Get godoc
+// FindByUserID godoc
 // @Summary Find check-ins by user_id
 // @Description Find check-ins by user_id
 // @Tags checkin

@@ -34,6 +34,20 @@ func NewHandler(svc Service, maxFileSize int, allowedContentType map[string]stru
 	}
 }
 
+// FindOne godoc
+// @Summary Find user by id
+// @Description Find user by id
+// @Tags user
+// @Accept plain
+// @Produce json
+// @Param id path string true "User ID"
+// @Security     BearerAuth
+// @Success 200 {object} dto.FindOneUserResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /user/{id} [get]
 func (h *handlerImpl) FindOne(c context.Ctx) {
 	id := c.Param("id")
 	if id == "" {

@@ -7,6 +7,14 @@ definitions:
       id:
         type: string
     type: object
+  constant.Role:
+    enum:
+    - user
+    - staff
+    type: string
+    x-enum-varnames:
+    - USER
+    - STAFF
   dto.CheckIn:
     properties:
       email:
@@ -68,6 +76,11 @@ definitions:
       stamp:
         $ref: '#/definitions/dto.Stamp'
     type: object
+  dto.FindOneUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/dto.User'
+    type: object
   dto.GetGoogleLoginUrlResponse:
     properties:
       url:
@@ -108,6 +121,53 @@ definitions:
     properties:
       stamp:
         $ref: '#/definitions/dto.Stamp'
+    type: object
+  dto.User:
+    properties:
+      baan:
+        type: string
+      check_ins:
+        items:
+          $ref: '#/definitions/dto.CheckIn'
+        type: array
+      drug_allergy:
+        type: string
+      email:
+        type: string
+      faculty:
+        type: string
+      firstname:
+        type: string
+      food_allergy:
+        type: string
+      group_id:
+        type: string
+      id:
+        type: string
+      illness:
+        type: string
+      lastname:
+        type: string
+      nickname:
+        type: string
+      parent:
+        type: string
+      parent_tel:
+        type: string
+      photo_key:
+        type: string
+      photo_url:
+        type: string
+      receive_gift:
+        type: integer
+      role:
+        $ref: '#/definitions/constant.Role'
+      tel:
+        type: string
+      title:
+        type: string
+      year:
+        type: integer
     type: object
   dto.VerifyGoogleLoginResponse:
     properties:
@@ -363,6 +423,45 @@ paths:
       summary: Stamp by user id
       tags:
       - stamp
+  /user/{id}:
+    get:
+      consumes:
+      - text/plain
+      description: Find user by id
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FindOneUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Find user by id
+      tags:
+      - user
 securityDefinitions:
   BearerAuth:
     description: Type "Bearer" followed by a space and JWT token.

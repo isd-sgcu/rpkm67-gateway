@@ -379,6 +379,67 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Find user by id",
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Find user by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.FindOneUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -392,6 +453,17 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "constant.Role": {
+            "type": "string",
+            "enum": [
+                "user",
+                "staff"
+            ],
+            "x-enum-varnames": [
+                "USER",
+                "STAFF"
+            ]
         },
         "dto.CheckIn": {
             "type": "object",
@@ -487,6 +559,14 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.FindOneUserResponse": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/dto.User"
+                }
+            }
+        },
         "dto.GetGoogleLoginUrlResponse": {
             "type": "object",
             "properties": {
@@ -548,6 +628,77 @@ const docTemplate = `{
             "properties": {
                 "stamp": {
                     "$ref": "#/definitions/dto.Stamp"
+                }
+            }
+        },
+        "dto.User": {
+            "type": "object",
+            "properties": {
+                "baan": {
+                    "type": "string"
+                },
+                "check_ins": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.CheckIn"
+                    }
+                },
+                "drug_allergy": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "faculty": {
+                    "type": "string"
+                },
+                "firstname": {
+                    "type": "string"
+                },
+                "food_allergy": {
+                    "type": "string"
+                },
+                "group_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "illness": {
+                    "type": "string"
+                },
+                "lastname": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "parent": {
+                    "type": "string"
+                },
+                "parent_tel": {
+                    "type": "string"
+                },
+                "photo_key": {
+                    "type": "string"
+                },
+                "photo_url": {
+                    "type": "string"
+                },
+                "receive_gift": {
+                    "type": "integer"
+                },
+                "role": {
+                    "$ref": "#/definitions/constant.Role"
+                },
+                "tel": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "year": {
+                    "type": "integer"
                 }
             }
         },
