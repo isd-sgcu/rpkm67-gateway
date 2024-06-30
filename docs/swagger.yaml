@@ -18,6 +18,11 @@ definitions:
       user_id:
         type: string
     type: object
+  dto.CountResponse:
+    properties:
+      success:
+        type: boolean
+    type: object
   dto.CreateCheckInRequest:
     properties:
       email:
@@ -218,4 +223,29 @@ paths:
       summary: Stamp by user id
       tags:
       - stamp
+  /count:
+    post:
+      consumes:
+      - application/json
+      description: Add 1 to count metrics by name
+      parameters:
+      - description: Name of the count metric
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CountResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Count clicks
+      tags:
+      - count
 swagger: "2.0"

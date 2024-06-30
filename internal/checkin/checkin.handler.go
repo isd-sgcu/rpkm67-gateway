@@ -16,18 +16,18 @@ type Handler interface {
 	FindByUserID(c router.Context)
 }
 
+type handlerImpl struct {
+	svc      Service
+	validate validator.DtoValidator
+	log      *zap.Logger
+}
+
 func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
 		svc:      svc,
 		validate: validate,
 		log:      log,
 	}
-}
-
-type handlerImpl struct {
-	svc      Service
-	validate validator.DtoValidator
-	log      *zap.Logger
 }
 
 // Upload godoc

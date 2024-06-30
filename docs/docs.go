@@ -213,6 +213,44 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/count": {
+            "post": {
+                "description": "Add 1 to count metrics by name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "count"
+                ],
+                "summary": "Count clicks",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Name of the count metric",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CountResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -241,6 +279,14 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.CountResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean"
                 }
             }
         },

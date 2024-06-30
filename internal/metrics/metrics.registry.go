@@ -13,11 +13,12 @@ type registryImpl struct {
 	reg *prometheus.Registry
 }
 
-func NewRegistry(registry *prometheus.Registry, requestMetrics RequestMetrics) Registry {
+func NewRegistry(registry *prometheus.Registry, requestMetrics RequestMetrics, countMetrics CountMetrics) Registry {
 	registry.MustRegister(
 		collectors.NewGoCollector(),
 		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}),
 		requestMetrics.GetCounterVec(),
+		countMetrics.GetCounterVec(),
 	)
 
 	return &registryImpl{

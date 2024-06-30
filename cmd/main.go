@@ -7,6 +7,7 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/constant"
 	auth "github.com/isd-sgcu/rpkm67-gateway/internal/auth"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/checkin"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/count"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/metrics"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/object"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/pin"
@@ -80,14 +81,22 @@ func main() {
 	stampSvc := stamp.NewService(stampProto, pinSvc, logger)
 	stampHdr := stamp.NewHandler(stampSvc, validate, logger)
 
-	requestsCounter := prometheus.NewCounterVec(prometheus.CounterOpts{
+	requestCounter := prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: "api_requests_total",
-		Help: "Total number of API requests by domain, method, status code",
-	}, []string{"domain", "method", "status_code"})
-	requestMetrics := metrics.NewRequestMetrics(requestsCounter)
+		Help: "Total number of API requests by path, method, status code",
+	}, []string{"path", "method", "status_code"})
+	requestMetrics := metrics.NewRequestMetrics(requestCounter)
 
-	metricsReg := metrics.NewRegistry(prometheus.NewRegistry(), requestMetrics)
+	countCounter := prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "count_total",
+		Help: "Total number of clicks count by name",
+	}, []string{"name"})
+	countMetrics := metrics.NewCountMetrics(countCounter)
+
+	metricsReg := metrics.NewRegistry(prometheus.NewRegistry(), requestMetrics, countMetrics)
 	metricsHdr := metrics.NewHandler(metricsReg, logger)
+
+	countHdr := count.NewHandler(countMetrics, logger)
 
 	r := router.New(conf, corsHandler, authMiddleware, requestMetrics)
 
@@ -106,7 +115,9 @@ func main() {
 	r.V1Get("/stamp/:userId", stampHdr.FindByUserId)
 	r.V1Post("/stamp/:userId", stampHdr.StampByUserId)
 
-	r.V1.GET("metrics", metricsHdr.ExposeMetrics)
+	r.V1Post("/count/:name", countHdr.Count)
+
+	r.V1.GET("/metrics", metricsHdr.ExposeMetrics)
 
 	if err := r.Run(fmt.Sprintf(":%v", conf.App.Port)); err != nil {
 		logger.Fatal("unable to start server")
