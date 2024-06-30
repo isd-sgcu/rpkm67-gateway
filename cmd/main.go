@@ -103,7 +103,7 @@ func main() {
 	requestMetrics := metrics.NewRequestMetrics(requestCounter)
 
 	countCounter := prometheus.NewCounterVec(prometheus.CounterOpts{
-		Name: "count_total",
+		Name: "count_clicks_total",
 		Help: "Total number of clicks count by name",
 	}, []string{"name"})
 	countMetrics := metrics.NewCountMetrics(countCounter)
