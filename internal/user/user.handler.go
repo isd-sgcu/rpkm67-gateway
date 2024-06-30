@@ -134,8 +134,6 @@ func (h *handlerImpl) createUpdateUserRequestDto(id string, body *dto.UpdateUser
 		FoodAllergy: body.FoodAllergy,
 		DrugAllergy: body.DrugAllergy,
 		Illness:     body.Illness,
-		PhotoKey:    body.PhotoKey,
-		PhotoUrl:    body.PhotoUrl,
 		Baan:        body.Baan,
 		ReceiveGift: body.ReceiveGift,
 		GroupId:     body.GroupId,

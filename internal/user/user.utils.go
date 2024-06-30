@@ -44,8 +44,6 @@ func CreateUpdateUserRequestProto(req *dto.UpdateUserProfileRequest) *userProto.
 		FoodAllergy: req.FoodAllergy,
 		DrugAllergy: req.DrugAllergy,
 		Illness:     req.Illness,
-		PhotoKey:    req.PhotoKey,
-		PhotoUrl:    req.PhotoUrl,
 		Baan:        req.Baan,
 		ReceiveGift: int32(req.ReceiveGift),
 		GroupId:     req.GroupId,
