@@ -35,6 +35,8 @@ mock-gen:
 	mockgen -source ./internal/checkin/checkin.client.go -destination ./mocks/checkin/checkin.client.go
 	mockgen -source ./internal/object/object.service.go -destination ./mocks/object/object.service.go
 	mockgen -source ./internal/object/object.client.go -destination ./mocks/object/object.client.go
+	mockgen -source ./internal/stamp/stamp.service.go -destination ./mocks/stamp/stamp.service.go
+	mockgen -source ./internal/stamp/stamp.client.go -destination ./mocks/stamp/stamp.client.go
 	mockgen -source ./internal/router/context.go -destination ./mocks/router/context.mock.go
 	mockgen -source ./internal/validator/validator.go -destination ./mocks/validator/validator.mock.go
 

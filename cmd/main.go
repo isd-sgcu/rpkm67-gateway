@@ -10,13 +10,17 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/count"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/metrics"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/object"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/pin"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/stamp"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/user"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"github.com/isd-sgcu/rpkm67-gateway/logger"
 	"github.com/isd-sgcu/rpkm67-gateway/middleware"
 	authProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/auth/v1"
 	userProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/user/v1"
+	pinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/pin/v1"
+	stampProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/stamp/v1"
 	checkinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/checkin/checkin/v1"
 	objectProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/store/object/v1"
 	"github.com/prometheus/client_golang/prometheus"
@@ -70,6 +74,13 @@ func main() {
 	checkinSvc := checkin.NewService(checkinClient, logger)
 	checkinHdr := checkin.NewHandler(checkinSvc, validate, logger)
 
+	pinClient := pinProto.NewPinServiceClient(authConn)
+	pinSvc := pin.NewService(pinClient, logger)
+
+	stampProto := stampProto.NewStampServiceClient(authConn)
+	stampSvc := stamp.NewService(stampProto, pinSvc, logger)
+	stampHdr := stamp.NewHandler(stampSvc, validate, logger)
+
 	requestCounter := prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: "api_requests_total",
 		Help: "Total number of API requests by path, method, status code",
@@ -100,6 +111,9 @@ func main() {
 	r.V1Post("/checkin", checkinHdr.Create)
 	r.V1Get("/checkin/:userId", checkinHdr.FindByUserID)
 	r.V1Get("/checkin/email/:email", checkinHdr.FindByEmail)
+
+	r.V1Get("/stamp/:userId", stampHdr.FindByUserId)
+	r.V1Post("/stamp/:userId", stampHdr.StampByUserId)
 
 	r.V1Post("/count/:name", countHdr.Count)
 
