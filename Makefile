@@ -51,4 +51,4 @@ model:
 	go get github.com/isd-sgcu/rpkm67-model@latest
 
 swagger:
-	swag init -d ./internal/checkin -g ../../cmd/main.go -o ./docs -md ./docs/markdown --parseDependency --parseInternal
+	swag init -d ./internal -g ../cmd/main.go -o ./docs -md ./docs/markdown --parseDependency --parseInternal
