@@ -3,6 +3,7 @@ package user
 import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	userProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/user/v1"
+	"github.com/isd-sgcu/rpkm67-model/constant"
 )
 
 func ProtoToDto(in *userProto.User) *dto.User {
@@ -21,6 +22,7 @@ func ProtoToDto(in *userProto.User) *dto.User {
 		FoodAllergy: in.FoodAllergy,
 		DrugAllergy: in.DrugAllergy,
 		Illness:     in.Illness,
+		Role:        constant.Role(in.Role),
 		PhotoKey:    in.PhotoKey,
 		PhotoUrl:    in.PhotoUrl,
 		Baan:        in.Baan,
