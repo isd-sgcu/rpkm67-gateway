@@ -57,9 +57,19 @@ func main() {
 		logger.Sugar().Fatalf("cannot connect to auth service", err)
 	}
 
+	backendConn, err := grpc.NewClient(conf.Svc.Backend, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		logger.Sugar().Fatalf("cannot connect to backend service", err)
+	}
+
 	checkinConn, err := grpc.NewClient(conf.Svc.CheckIn, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		logger.Sugar().Fatalf("cannot connect to checkin service", err)
+	}
+
+	storeConn, err := grpc.NewClient(conf.Svc.Store, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		logger.Sugar().Fatalf("cannot connect to store service", err)
 	}
 
 	authClient := authProto.NewAuthServiceClient(authConn)
@@ -67,24 +77,24 @@ func main() {
 	authHdr := auth.NewHandler(authSvc, validate, logger)
 	authMiddleware := middleware.NewAuthMiddleware(authSvc)
 
-	objClient := objectProto.NewObjectServiceClient(authConn)
+	objClient := objectProto.NewObjectServiceClient(storeConn)
 	objSvc := object.NewService(objClient, logger)
 
 	userClient := userProto.NewUserServiceClient(authConn)
 	userSvc := user.NewService(userClient, objSvc, logger)
 	userHdr := user.NewHandler(userSvc, conf.App.MaxFileSizeMb, constant.AllowedContentType, validate, logger)
 
-	checkinClient := checkinProto.NewCheckInServiceClient(checkinConn)
-	checkinSvc := checkin.NewService(checkinClient, logger)
-	checkinHdr := checkin.NewHandler(checkinSvc, validate, logger)
-
-	pinClient := pinProto.NewPinServiceClient(authConn)
+	pinClient := pinProto.NewPinServiceClient(backendConn)
 	pinSvc := pin.NewService(pinClient, logger)
 	pinHdr := pin.NewHandler(pinSvc, validate, logger)
 
-	stampProto := stampProto.NewStampServiceClient(authConn)
+	stampProto := stampProto.NewStampServiceClient(backendConn)
 	stampSvc := stamp.NewService(stampProto, pinSvc, constant.PinRequiredActivity, logger)
 	stampHdr := stamp.NewHandler(stampSvc, validate, logger)
+
+	checkinClient := checkinProto.NewCheckInServiceClient(checkinConn)
+	checkinSvc := checkin.NewService(checkinClient, logger)
+	checkinHdr := checkin.NewHandler(checkinSvc, validate, logger)
 
 	requestCounter := prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: "api_requests_total",
