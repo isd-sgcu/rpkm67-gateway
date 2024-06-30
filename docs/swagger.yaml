@@ -57,6 +57,13 @@ definitions:
         example: e7e84d54-7518-4...
         type: string
     type: object
+  dto.FindAllPinResponse:
+    properties:
+      pins:
+        items:
+          $ref: '#/definitions/dto.Pin'
+        type: array
+    type: object
   dto.FindByEmailCheckInResponse:
     properties:
       checkins:
@@ -86,12 +93,24 @@ definitions:
       url:
         type: string
     type: object
+  dto.Pin:
+    properties:
+      activity_id:
+        type: string
+      code:
+        type: string
+    type: object
   dto.RefreshTokenRequest:
     properties:
       refresh_token:
         type: string
     required:
     - refresh_token
+    type: object
+  dto.ResetPinResponse:
+    properties:
+      success:
+        type: boolean
     type: object
   dto.Stamp:
     properties:
@@ -333,6 +352,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
       summary: Create a check-in
       tags:
       - checkin
@@ -358,6 +379,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
       summary: Find check-ins by user_id
       tags:
       - checkin
@@ -383,6 +406,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
       summary: Find check-ins by email
       tags:
       - checkin
@@ -411,6 +436,60 @@ paths:
       summary: Count clicks
       tags:
       - count
+  /pin:
+    get:
+      description: Staff only
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FindAllPinResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Find all pins
+      tags:
+      - pin
+  /pin/reset/{activityId}:
+    post:
+      consumes:
+      - text/plain
+      description: Staff only
+      parameters:
+      - description: should be `workshop-1` to `workshop-5`
+        in: path
+        name: activityId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResetPinResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Reset a pin
+      tags:
+      - pin
   /stamp/{userId}:
     get:
       consumes:

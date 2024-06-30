@@ -131,7 +131,7 @@ func main() {
 	r.V1Post("/stamp/:userId", stampHdr.StampByUserId)
 
 	r.V1Get("/pin", pinHdr.FindAll)
-	r.V1Post("/pin/:id", pinHdr.ResetPin)
+	r.V1Post("/pin/reset/:activityId", pinHdr.ResetPin)
 
 	r.V1NonAuthPost("/count/:name", countHdr.Count)
 

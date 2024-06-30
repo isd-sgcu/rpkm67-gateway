@@ -145,6 +145,11 @@ const docTemplate = `{
         },
         "/checkin": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create a check-in using email, event and user_id",
                 "consumes": [
                     "application/json"
@@ -185,6 +190,11 @@ const docTemplate = `{
         },
         "/checkin/email/{email}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Find check-ins by email",
                 "consumes": [
                     "text/plain"
@@ -223,6 +233,11 @@ const docTemplate = `{
         },
         "/checkin/{userId}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Find check-ins by user_id",
                 "consumes": [
                     "text/plain"
@@ -290,6 +305,92 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/pin": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Staff only",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pin"
+                ],
+                "summary": "Find all pins",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.FindAllPinResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/pin/reset/{activityId}": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Staff only",
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pin"
+                ],
+                "summary": "Reset a pin",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "should be ` + "`" + `workshop-1` + "`" + ` to ` + "`" + `workshop-5` + "`" + `",
+                        "name": "activityId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResetPinResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/apperror.AppError"
                         }
@@ -667,6 +768,17 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.FindAllPinResponse": {
+            "type": "object",
+            "properties": {
+                "pins": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Pin"
+                    }
+                }
+            }
+        },
         "dto.FindByEmailCheckInResponse": {
             "type": "object",
             "properties": {
@@ -713,6 +825,17 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.Pin": {
+            "type": "object",
+            "properties": {
+                "activity_id": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.RefreshTokenRequest": {
             "type": "object",
             "required": [
@@ -721,6 +844,14 @@ const docTemplate = `{
             "properties": {
                 "refresh_token": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.ResetPinResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean"
                 }
             }
         },

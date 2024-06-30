@@ -13,7 +13,7 @@ type FindAllPinResponse struct {
 }
 
 type ResetPinRequest struct {
-	ActivityId string `json:"activity_id" validate:"required"`
+	ActivityId string `json:"activity_id"`
 }
 
 type ResetPinResponse struct {
