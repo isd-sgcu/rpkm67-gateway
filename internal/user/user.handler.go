@@ -70,6 +70,21 @@ func (h *handlerImpl) FindOne(c context.Ctx) {
 	c.JSON(http.StatusOK, &dto.FindOneUserResponse{User: res.User})
 }
 
+// UpdateProfile godoc
+// @Summary Update profile fields of user by id
+// @Description Updates only field that are in input, used for both user profile and update reward status
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param id path string true "User ID"
+// @Param body body dto.UpdateUserProfileBody true "update user request"
+// @Security     BearerAuth
+// @Success 200 {object} dto.UpdateUserProfileResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /user/profile/{id} [post]
 func (h *handlerImpl) UpdateProfile(c context.Ctx) {
 	id := c.Param("id")
 	if id == "" {
@@ -103,6 +118,21 @@ func (h *handlerImpl) UpdateProfile(c context.Ctx) {
 	c.JSON(http.StatusOK, &dto.UpdateUserProfileResponse{Success: res.Success})
 }
 
+// UpdatePicture godoc
+// @Summary Update user's picture fields by id
+// @Description Updates only field that are in input, used for both user picture update
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param id path string true "User ID"
+// @Param file formData file true "image to upload"
+// @Security     BearerAuth
+// @Success 200 {object} dto.UpdateUserPictureResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /user/picture/{id} [post]
 func (h *handlerImpl) UpdatePicture(c context.Ctx) {
 	id := c.Param("id")
 	if id == "" {

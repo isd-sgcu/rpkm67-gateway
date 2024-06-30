@@ -122,6 +122,49 @@ definitions:
       stamp:
         $ref: '#/definitions/dto.Stamp'
     type: object
+  dto.UpdateUserPictureResponse:
+    properties:
+      success:
+        type: boolean
+    type: object
+  dto.UpdateUserProfileBody:
+    properties:
+      baan:
+        type: string
+      drug_allergy:
+        type: string
+      faculty:
+        type: string
+      firstname:
+        type: string
+      food_allergy:
+        type: string
+      group_id:
+        type: string
+      illness:
+        type: string
+      lastname:
+        type: string
+      nickname:
+        type: string
+      parent:
+        type: string
+      parent_tel:
+        type: string
+      receive_gift:
+        type: integer
+      tel:
+        type: string
+      title:
+        type: string
+      year:
+        type: integer
+    type: object
+  dto.UpdateUserProfileResponse:
+    properties:
+      success:
+        type: boolean
+    type: object
   dto.User:
     properties:
       baan:
@@ -460,6 +503,97 @@ paths:
       security:
       - BearerAuth: []
       summary: Find user by id
+      tags:
+      - user
+  /user/picture/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Updates only field that are in input, used for both user picture
+        update
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: image to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UpdateUserPictureResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Update user's picture fields by id
+      tags:
+      - user
+  /user/profile/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Updates only field that are in input, used for both user profile
+        and update reward status
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: update user request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserProfileBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UpdateUserProfileResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Update profile fields of user by id
       tags:
       - user
 securityDefinitions:
