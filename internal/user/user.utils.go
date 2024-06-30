@@ -8,6 +8,7 @@ import (
 func ProtoToDto(in *userProto.User) *dto.User {
 	return &dto.User{
 		Id:          in.Id,
+		Email:       in.Email,
 		Nickname:    in.Nickname,
 		Title:       in.Title,
 		Firstname:   in.Firstname,
