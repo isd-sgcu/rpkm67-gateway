@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"strings"
+
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
@@ -27,6 +29,18 @@ func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) H
 	}
 }
 
+// RefreshToken godoc
+// @Summary Refresh access token with refresh token
+// @Description get both new access token and refresh token
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param body body dto.RefreshTokenRequest true "refresh token"
+// @Success 200 {object} dto.Credential
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /auth/refresh [post]
 func (h *handlerImpl) RefreshToken(c context.Ctx) {
 	req := &dto.RefreshTokenRequest{}
 	if err := c.Bind(req); err != nil {
@@ -37,7 +51,7 @@ func (h *handlerImpl) RefreshToken(c context.Ctx) {
 
 	if errorList := h.validate.Validate(req); errorList != nil {
 		h.log.Named("auth hdr").Error("validation error", zap.Strings("errorList", errorList))
-		c.BadRequestError("validation error")
+		c.BadRequestError("validation error: " + strings.Join(errorList, ","))
 		return
 	}
 

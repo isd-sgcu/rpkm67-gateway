@@ -107,7 +107,7 @@ func main() {
 
 	r.V1NonAuthGet("/auth/google-url", authHdr.GetGoogleLoginUrl)
 	r.V1NonAuthGet("/auth/verify-google", authHdr.VerifyGoogleLogin)
-	r.V1Post("/auth/refresh", authHdr.RefreshToken)
+	r.V1NonAuthPost("/auth/refresh", authHdr.RefreshToken)
 
 	r.V1Get("/user/:id", userHdr.FindOne)
 	r.V1Patch("/user/profile/:id", userHdr.UpdateProfile)

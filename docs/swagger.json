@@ -35,6 +35,58 @@
                 }
             }
         },
+        "/auth/refresh": {
+            "post": {
+                "description": "get both new access token and refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh access token with refresh token",
+                "parameters": [
+                    {
+                        "description": "refresh token",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RefreshTokenRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Credential"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/verify-google/{code}": {
             "get": {
                 "description": "returns user's credential",
@@ -433,6 +485,17 @@
             "type": "object",
             "properties": {
                 "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RefreshTokenRequest": {
+            "type": "object",
+            "required": [
+                "refresh_token"
+            ],
+            "properties": {
+                "refresh_token": {
                     "type": "string"
                 }
             }

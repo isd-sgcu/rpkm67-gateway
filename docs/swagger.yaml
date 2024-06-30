@@ -73,6 +73,13 @@ definitions:
       url:
         type: string
     type: object
+  dto.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
   dto.Stamp:
     properties:
       id:
@@ -131,6 +138,40 @@ paths:
           schema:
             $ref: '#/definitions/apperror.AppError'
       summary: Get Google login url
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: get both new access token and refresh token
+      parameters:
+      - description: refresh token
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Credential'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Refresh access token with refresh token
       tags:
       - auth
   /auth/verify-google/{code}:
