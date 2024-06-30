@@ -77,6 +77,20 @@ func (mr *MockCtxMockRecorder) FormFile(key, allowedContentType, maxFileSize int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FormFile", reflect.TypeOf((*MockCtx)(nil).FormFile), key, allowedContentType, maxFileSize)
 }
 
+// GetHeader mocks base method.
+func (m *MockCtx) GetHeader(key string) string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetHeader", key)
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// GetHeader indicates an expected call of GetHeader.
+func (mr *MockCtxMockRecorder) GetHeader(key interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHeader", reflect.TypeOf((*MockCtx)(nil).GetHeader), key)
+}
+
 // GetString mocks base method.
 func (m *MockCtx) GetString(key string) string {
 	m.ctrl.T.Helper()

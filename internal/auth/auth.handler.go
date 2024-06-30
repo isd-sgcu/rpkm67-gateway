@@ -8,11 +8,9 @@ import (
 )
 
 type Handler interface {
-	Validate(c context.Ctx)
 	RefreshToken(c context.Ctx)
 	GetGoogleLoginUrl(c context.Ctx)
 	VerifyGoogleLogin(c context.Ctx)
-	Test(c context.Ctx)
 }
 
 type handlerImpl struct {
@@ -29,10 +27,27 @@ func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) H
 	}
 }
 
-func (h *handlerImpl) Validate(c context.Ctx) {
-}
-
 func (h *handlerImpl) RefreshToken(c context.Ctx) {
+	req := &dto.RefreshTokenRequest{}
+	if err := c.Bind(req); err != nil {
+		h.log.Named("auth hdr").Error("failed to bind request body", zap.Error(err))
+		c.BadRequestError(err.Error())
+		return
+	}
+
+	if errorList := h.validate.Validate(req); errorList != nil {
+		h.log.Named("auth hdr").Error("validation error", zap.Strings("errorList", errorList))
+		c.BadRequestError("validation error")
+		return
+	}
+
+	credential, appErr := h.svc.RefreshToken(req)
+	if appErr != nil {
+		c.ResponseError(appErr)
+		return
+	}
+
+	c.JSON(200, credential)
 }
 
 func (h *handlerImpl) GetGoogleLoginUrl(c context.Ctx) {
@@ -46,9 +61,6 @@ func (h *handlerImpl) GetGoogleLoginUrl(c context.Ctx) {
 }
 
 func (h *handlerImpl) VerifyGoogleLogin(c context.Ctx) {
-}
-
-func (h *handlerImpl) Test(c context.Ctx) {
 	code := c.Query("code")
 	if code == "" {
 		c.BadRequestError("url parameter 'code' not found")
@@ -65,7 +77,6 @@ func (h *handlerImpl) Test(c context.Ctx) {
 	}
 
 	c.JSON(200, credential)
-
 }
 
 // func (h *handlerImpl) SignUp(c context.Ctx) {

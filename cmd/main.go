@@ -101,9 +101,9 @@ func main() {
 
 	r := router.New(conf, corsHandler, authMiddleware, requestMetrics)
 
-	r.V1Get("/auth/google-url", authHdr.GetGoogleLoginUrl)
-	r.V1Post("/auth/verify-google", authHdr.VerifyGoogleLogin)
-	r.V1Get("/auth/test", authHdr.Test)
+	r.V1NonAuthGet("/auth/google-url", authHdr.GetGoogleLoginUrl)
+	r.V1NonAuthGet("/auth/verify-google", authHdr.VerifyGoogleLogin)
+	r.V1Post("/auth/refresh", authHdr.RefreshToken)
 
 	r.V1Get("/user/:id", userHdr.FindOne)
 	r.V1Patch("/user/profile/:id", userHdr.UpdateProfile)

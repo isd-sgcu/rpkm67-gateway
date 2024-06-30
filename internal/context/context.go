@@ -21,6 +21,7 @@ type Ctx interface {
 	PostForm(key string) string
 	FormFile(key string, allowedContentType map[string]struct{}, maxFileSize int64) (*dto.DecomposedFile, error)
 	GetString(key string) string
+	GetHeader(key string) string
 }
 
 type contextImpl struct {
@@ -118,4 +119,8 @@ func (c *contextImpl) FormFile(key string, allowedContentType map[string]struct{
 
 func (c *contextImpl) GetString(key string) string {
 	return c.Context.GetString(key)
+}
+
+func (c *contextImpl) GetHeader(key string) string {
+	return c.Context.GetHeader(key)
 }
