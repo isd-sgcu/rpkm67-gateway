@@ -81,7 +81,7 @@ func (h *handlerImpl) StampByUserId(c router.Context) {
 		return
 	}
 
-	body := &dto.StampByUserIdRequest{}
+	body := &dto.StampByUserIdBodyRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("StampByUserId").Error("Bind: failed to bind request body", zap.Error(err))
 		c.BadRequestError(err.Error())
@@ -95,7 +95,7 @@ func (h *handlerImpl) StampByUserId(c router.Context) {
 	}
 
 	req := &dto.StampByUserIdRequest{
-		UserID:     body.UserID,
+		UserID:     userId,
 		ActivityId: body.ActivityId,
 		Pin:        body.Pin,
 	}
