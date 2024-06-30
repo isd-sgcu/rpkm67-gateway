@@ -46,6 +46,40 @@ definitions:
           $ref: '#/definitions/dto.CheckIn'
         type: array
     type: object
+  dto.FindByUserIdStampResponse:
+    properties:
+      stamp:
+        $ref: '#/definitions/dto.Stamp'
+    type: object
+  dto.Stamp:
+    properties:
+      id:
+        type: string
+      point_a:
+        type: integer
+      point_b:
+        type: integer
+      point_c:
+        type: integer
+      point_d:
+        type: integer
+      stamp:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.StampByUserIdBodyRequest:
+    properties:
+      activity_id:
+        type: string
+      pin:
+        type: string
+    type: object
+  dto.StampByUserIdResponse:
+    properties:
+      stamp:
+        $ref: '#/definitions/dto.Stamp'
+    type: object
 host: localhost:3001
 info:
   contact: {}
@@ -129,4 +163,59 @@ paths:
       summary: Find check-ins by email
       tags:
       - checkin
+  /stamp/{userId}:
+    get:
+      consumes:
+      - text/plain
+      description: Find stamp by user id
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FindByUserIdStampResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Find stamp by user id
+      tags:
+      - stamp
+    post:
+      consumes:
+      - application/json
+      description: Stamp by user id
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: Stamp by user id request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.StampByUserIdBodyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StampByUserIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Stamp by user id
+      tags:
+      - stamp
 swagger: "2.0"

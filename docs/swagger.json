@@ -124,6 +124,89 @@
                     }
                 }
             }
+        },
+        "/stamp/{userId}": {
+            "get": {
+                "description": "Find stamp by user id",
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stamp"
+                ],
+                "summary": "Find stamp by user id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.FindByUserIdStampResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Stamp by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stamp"
+                ],
+                "summary": "Stamp by user id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Stamp by user id request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.StampByUserIdBodyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.StampByUserIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -196,6 +279,59 @@
                     "items": {
                         "$ref": "#/definitions/dto.CheckIn"
                     }
+                }
+            }
+        },
+        "dto.FindByUserIdStampResponse": {
+            "type": "object",
+            "properties": {
+                "stamp": {
+                    "$ref": "#/definitions/dto.Stamp"
+                }
+            }
+        },
+        "dto.Stamp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "point_a": {
+                    "type": "integer"
+                },
+                "point_b": {
+                    "type": "integer"
+                },
+                "point_c": {
+                    "type": "integer"
+                },
+                "point_d": {
+                    "type": "integer"
+                },
+                "stamp": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.StampByUserIdBodyRequest": {
+            "type": "object",
+            "properties": {
+                "activity_id": {
+                    "type": "string"
+                },
+                "pin": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.StampByUserIdResponse": {
+            "type": "object",
+            "properties": {
+                "stamp": {
+                    "$ref": "#/definitions/dto.Stamp"
                 }
             }
         }
