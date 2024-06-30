@@ -41,7 +41,7 @@ func NewHandler(svc Service, maxFileSize int, allowedContentType map[string]stru
 // @Accept plain
 // @Produce json
 // @Param id path string true "User ID"
-// @Security     BearerAuth
+// @Security BearerAuth
 // @Success 200 {object} dto.FindOneUserResponse
 // @Failure 400 {object} apperror.AppError
 // @Failure 401 {object} apperror.AppError
@@ -78,7 +78,7 @@ func (h *handlerImpl) FindOne(c context.Ctx) {
 // @Produce json
 // @Param id path string true "User ID"
 // @Param body body dto.UpdateUserProfileBody true "update user request"
-// @Security     BearerAuth
+// @Security BearerAuth
 // @Success 200 {object} dto.UpdateUserProfileResponse
 // @Failure 400 {object} apperror.AppError
 // @Failure 401 {object} apperror.AppError
@@ -126,7 +126,7 @@ func (h *handlerImpl) UpdateProfile(c context.Ctx) {
 // @Produce json
 // @Param id path string true "User ID"
 // @Param file formData file true "image to upload"
-// @Security     BearerAuth
+// @Security BearerAuth
 // @Success 200 {object} dto.UpdateUserPictureResponse
 // @Failure 400 {object} apperror.AppError
 // @Failure 401 {object} apperror.AppError

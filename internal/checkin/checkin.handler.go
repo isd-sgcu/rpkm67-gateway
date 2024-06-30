@@ -37,6 +37,7 @@ func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) H
 // @Accept json
 // @Produce json
 // @Param create body dto.CreateCheckInRequest true "Create CheckIn Request"
+// @Security BearerAuth
 // @Success 201 {object} dto.CreateCheckInResponse
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin [post]
@@ -84,6 +85,7 @@ func (h *handlerImpl) Create(c context.Ctx) {
 // @Accept plain
 // @Produce json
 // @Param email path string true "Email"
+// @Security BearerAuth
 // @Success 200 {object} dto.FindByEmailCheckInResponse
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/email/{email} [get]
@@ -118,6 +120,7 @@ func (h *handlerImpl) FindByEmail(c context.Ctx) {
 // @Accept plain
 // @Produce json
 // @Param userId path string true "User ID"
+// @Security BearerAuth
 // @Success 200 {object} dto.FindByUserIdCheckInResponse
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/{userId} [get]
