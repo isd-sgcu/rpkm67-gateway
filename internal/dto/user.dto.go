@@ -78,7 +78,7 @@ type UpdateUserProfileRequest struct {
 }
 
 type UpdateUserProfileResponse struct {
-	User *User `json:"user"`
+	Success bool `json:"success"`
 }
 
 type UpdateUserPictureRequest struct {
@@ -87,5 +87,5 @@ type UpdateUserPictureRequest struct {
 }
 
 type UpdateUserPictureResponse struct {
-	User *User `json:"user"`
+	Success bool `json:"success"`
 }

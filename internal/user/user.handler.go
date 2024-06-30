@@ -86,7 +86,7 @@ func (h *handlerImpl) UpdateProfile(c context.Ctx) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &dto.UpdateUserProfileResponse{User: res.User})
+	c.JSON(http.StatusOK, &dto.UpdateUserProfileResponse{Success: res.Success})
 }
 
 func (h *handlerImpl) UpdatePicture(c context.Ctx) {
@@ -116,7 +116,7 @@ func (h *handlerImpl) UpdatePicture(c context.Ctx) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &dto.UpdateUserPictureResponse{User: res.User})
+	c.JSON(http.StatusOK, &dto.UpdateUserPictureResponse{Success: res.Success})
 }
 
 func (h *handlerImpl) createUpdateUserRequestDto(id string, body *dto.UpdateUserProfileBody) *dto.UpdateUserProfileRequest {

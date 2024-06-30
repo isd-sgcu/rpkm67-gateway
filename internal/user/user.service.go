@@ -61,7 +61,7 @@ func (s *serviceImpl) UpdateProfile(req *dto.UpdateUserProfileRequest) (*dto.Upd
 	}
 
 	return &dto.UpdateUserProfileResponse{
-		User: ProtoToDto(res.User),
+		Success: res.Success,
 	}, nil
 }
 
@@ -106,6 +106,6 @@ func (s *serviceImpl) UpdatePicture(req *dto.UpdateUserPictureRequest) (*dto.Upd
 	}
 
 	return &dto.UpdateUserPictureResponse{
-		User: ProtoToDto(res.User),
+		Success: res.Success,
 	}, nil
 }
