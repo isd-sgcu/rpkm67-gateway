@@ -35,6 +35,21 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 	return m.recorder
 }
 
+// CheckPin mocks base method.
+func (m *MockService) CheckPin(req *dto.CheckPinRequest) (*dto.CheckPinResponse, *apperror.AppError) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckPin", req)
+	ret0, _ := ret[0].(*dto.CheckPinResponse)
+	ret1, _ := ret[1].(*apperror.AppError)
+	return ret0, ret1
+}
+
+// CheckPin indicates an expected call of CheckPin.
+func (mr *MockServiceMockRecorder) CheckPin(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckPin", reflect.TypeOf((*MockService)(nil).CheckPin), req)
+}
+
 // FindAll mocks base method.
 func (m *MockService) FindAll(req *dto.FindAllPinRequest) (*dto.FindAllPinResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()

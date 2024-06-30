@@ -20,6 +20,7 @@ import (
 type StampServiceTest struct {
 	suite.Suite
 	controller                *gomock.Controller
+	pinReqAct                 map[string]struct{}
 	logger                    *zap.Logger
 	stampProto                *stampProto.Stamp
 	stampDto                  *dto.Stamp
@@ -38,6 +39,9 @@ func (t *StampServiceTest) SetupTest() {
 	t.logger = zap.NewNop()
 
 	pin := faker.Word()
+	t.pinReqAct = map[string]struct{}{
+		pin: {},
+	}
 
 	t.stampProto = &stampProto.Stamp{
 		Id:     faker.UUIDDigit(),
@@ -62,13 +66,13 @@ func (t *StampServiceTest) SetupTest() {
 	t.stampByUserIdDtoRequest = &dto.StampByUserIdRequest{
 		UserID:     t.stampDto.UserID,
 		ActivityId: t.stampByUserIdProtoRequest.ActivityId,
-		Pin:        pin,
+		PinCode:    pin,
 	}
 }
 
 func (t *StampServiceTest) TestFindByUserIdSuccess() {
 	client := stampMock.NewMockClient(t.controller)
-	svc := stamp.NewService(client, nil, t.logger)
+	svc := stamp.NewService(client, nil, t.pinReqAct, t.logger)
 
 	protoResp := &stampProto.FindByUserIdStampResponse{
 		Stamp: t.stampProto,
@@ -83,7 +87,7 @@ func (t *StampServiceTest) TestFindByUserIdSuccess() {
 
 func (t *StampServiceTest) TestFindByUserIdStampInvalidArgument() {
 	client := stampMock.NewMockClient(t.controller)
-	svc := stamp.NewService(client, nil, t.logger)
+	svc := stamp.NewService(client, nil, t.pinReqAct, t.logger)
 
 	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
 
@@ -97,7 +101,7 @@ func (t *StampServiceTest) TestFindByUserIdStampInvalidArgument() {
 
 func (t *StampServiceTest) TestFindByUserIdStampInternalError() {
 	client := stampMock.NewMockClient(t.controller)
-	svc := stamp.NewService(client, nil, t.logger)
+	svc := stamp.NewService(client, nil, t.pinReqAct, t.logger)
 
 	clientErr := apperror.InternalServer
 
@@ -112,21 +116,14 @@ func (t *StampServiceTest) TestFindByUserIdStampInternalError() {
 func (t *StampServiceTest) TestStampByUserIdSuccess() {
 	client := stampMock.NewMockClient(t.controller)
 	pinSvc := pinMock.NewMockService(t.controller)
-	svc := stamp.NewService(client, pinSvc, t.logger)
+	svc := stamp.NewService(client, pinSvc, t.pinReqAct, t.logger)
 
-	pins := &dto.FindAllPinResponse{
-		Pins: []*dto.Pin{
-			{
-				Code: t.stampByUserIdDtoRequest.Pin,
-			},
-		},
-	}
 	protoResp := &stampProto.StampByUserIdResponse{
 		Stamp: t.stampProto,
 	}
 
+	pinSvc.EXPECT().CheckPin(gomock.Any()).Return(&dto.CheckPinResponse{IsMatch: true}, nil)
 	client.EXPECT().StampByUserId(gomock.Any(), t.stampByUserIdProtoRequest).Return(protoResp, nil)
-	pinSvc.EXPECT().FindAll(gomock.Any()).Return(pins, nil)
 
 	actual, err := svc.StampByUserId(t.stampByUserIdDtoRequest)
 
@@ -134,39 +131,27 @@ func (t *StampServiceTest) TestStampByUserIdSuccess() {
 	t.Equal(t.stampDto, actual.Stamp)
 }
 
-func (t *StampServiceTest) TestStampByUserIdPinNotFound() {
+func (t *StampServiceTest) TestStampByUserIdPinNotMatch() {
 	client := stampMock.NewMockClient(t.controller)
 	pinSvc := pinMock.NewMockService(t.controller)
-	svc := stamp.NewService(client, pinSvc, t.logger)
+	svc := stamp.NewService(client, pinSvc, t.pinReqAct, t.logger)
 
-	pins := &dto.FindAllPinResponse{
-		Pins: []*dto.Pin{},
-	}
-
-	pinSvc.EXPECT().FindAll(gomock.Any()).Return(pins, nil)
+	pinSvc.EXPECT().CheckPin(gomock.Any()).Return(&dto.CheckPinResponse{IsMatch: false}, nil)
 
 	actual, err := svc.StampByUserId(t.stampByUserIdDtoRequest)
 
 	t.Nil(actual)
-	t.Equal(apperror.BadRequest, err)
+	t.Equal(apperror.BadRequestError("invalid pin code"), err)
 }
 
 func (t *StampServiceTest) TestStampByUserIdInvalidArgument() {
 	client := stampMock.NewMockClient(t.controller)
 	pinSvc := pinMock.NewMockService(t.controller)
-	svc := stamp.NewService(client, pinSvc, t.logger)
-
-	pins := &dto.FindAllPinResponse{
-		Pins: []*dto.Pin{
-			{
-				Code: t.stampByUserIdDtoRequest.Pin,
-			},
-		},
-	}
+	svc := stamp.NewService(client, pinSvc, t.pinReqAct, t.logger)
 
 	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
 
-	pinSvc.EXPECT().FindAll(gomock.Any()).Return(pins, nil)
+	pinSvc.EXPECT().CheckPin(gomock.Any()).Return(&dto.CheckPinResponse{IsMatch: true}, nil)
 	client.EXPECT().StampByUserId(gomock.Any(), t.stampByUserIdProtoRequest).Return(nil, clientErr)
 
 	actual, err := svc.StampByUserId(t.stampByUserIdDtoRequest)
@@ -178,18 +163,11 @@ func (t *StampServiceTest) TestStampByUserIdInvalidArgument() {
 func (t *StampServiceTest) TestStampByUserIdStampInternalError() {
 	client := stampMock.NewMockClient(t.controller)
 	pinSvc := pinMock.NewMockService(t.controller)
-	svc := stamp.NewService(client, pinSvc, t.logger)
+	svc := stamp.NewService(client, pinSvc, t.pinReqAct, t.logger)
 
-	pins := &dto.FindAllPinResponse{
-		Pins: []*dto.Pin{
-			{
-				Code: t.stampByUserIdDtoRequest.Pin,
-			},
-		},
-	}
 	clientErr := apperror.InternalServer
 
-	pinSvc.EXPECT().FindAll(gomock.Any()).Return(pins, nil)
+	pinSvc.EXPECT().CheckPin(gomock.Any()).Return(&dto.CheckPinResponse{IsMatch: true}, nil)
 	client.EXPECT().StampByUserId(gomock.Any(), t.stampByUserIdProtoRequest).Return(nil, clientErr)
 
 	actual, err := svc.StampByUserId(t.stampByUserIdDtoRequest)

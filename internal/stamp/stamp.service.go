@@ -17,16 +17,18 @@ type Service interface {
 }
 
 type serviceImpl struct {
-	client stampProto.StampServiceClient
-	pinSvc pin.Service
-	logger *zap.Logger
+	client              stampProto.StampServiceClient
+	pinSvc              pin.Service
+	pinRequiredActivity map[string]struct{}
+	logger              *zap.Logger
 }
 
-func NewService(client stampProto.StampServiceClient, pinSvc pin.Service, logger *zap.Logger) Service {
+func NewService(client stampProto.StampServiceClient, pinSvc pin.Service, pinRequiredActivity map[string]struct{}, logger *zap.Logger) Service {
 	return &serviceImpl{
-		client: client,
-		pinSvc: pinSvc,
-		logger: logger,
+		client:              client,
+		pinSvc:              pinSvc,
+		pinRequiredActivity: pinRequiredActivity,
+		logger:              logger,
 	}
 }
 
@@ -51,22 +53,20 @@ func (s *serviceImpl) StampByUserId(req *dto.StampByUserIdRequest) (*dto.StampBy
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	pins, pinErr := s.pinSvc.FindAll(&dto.FindAllPinRequest{})
-	if pinErr != nil {
-		return nil, apperror.HandleServiceError(pinErr)
-	}
-
-	found := false
-	for _, pin := range pins.Pins {
-		if pin.Code == req.Pin {
-			found = true
-			break
+	if _, ok := s.pinRequiredActivity[req.ActivityId]; ok {
+		checkRes, checkErr := s.pinSvc.CheckPin(&dto.CheckPinRequest{
+			ActivityId: req.ActivityId,
+			Code:       req.PinCode,
+		})
+		if checkErr != nil {
+			s.logger.Named("StampByUserId").Error("CheckPin: ", zap.Error(checkErr))
+			return nil, apperror.HandleServiceError(checkErr)
 		}
-	}
 
-	if !found {
-		s.logger.Named("StampByUserId").Error("FindAllPin: Pin not found")
-		return nil, apperror.BadRequestError("Pin not found")
+		if !checkRes.IsMatch {
+			s.logger.Named("StampByUserId").Error("invalid pin code")
+			return nil, apperror.BadRequestError("invalid pin code")
+		}
 	}
 
 	res, err := s.client.StampByUserId(ctx, &stampProto.StampByUserIdRequest{

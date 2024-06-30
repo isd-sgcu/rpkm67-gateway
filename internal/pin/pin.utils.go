@@ -7,7 +7,7 @@ import (
 
 func ProtoToDto(in *pinProto.Pin) *dto.Pin {
 	return &dto.Pin{
-		WorkshopId: in.WorkshopId,
+		ActivityId: in.ActivityId,
 		Code:       in.Code,
 	}
 }

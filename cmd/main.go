@@ -78,7 +78,7 @@ func main() {
 	pinSvc := pin.NewService(pinClient, logger)
 
 	stampProto := stampProto.NewStampServiceClient(authConn)
-	stampSvc := stamp.NewService(stampProto, pinSvc, logger)
+	stampSvc := stamp.NewService(stampProto, pinSvc, constant.PinRequiredActivity, logger)
 	stampHdr := stamp.NewHandler(stampSvc, validate, logger)
 
 	requestCounter := prometheus.NewCounterVec(prometheus.CounterOpts{

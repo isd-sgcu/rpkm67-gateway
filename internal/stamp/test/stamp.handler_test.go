@@ -48,12 +48,12 @@ func (t *StampHandlerTest) SetupTest() {
 	}
 	t.stampByUserIdBodyReq = &dto.StampByUserIdBodyRequest{
 		ActivityId: faker.Word(),
-		Pin:        faker.Word(),
+		PinCode:    faker.Word(),
 	}
 	t.stampByUserIdReq = &dto.StampByUserIdRequest{
 		UserID:     faker.UUIDDigit(),
 		ActivityId: t.stampByUserIdBodyReq.ActivityId,
-		Pin:        t.stampByUserIdBodyReq.Pin,
+		PinCode:    t.stampByUserIdBodyReq.PinCode,
 	}
 }
 

@@ -97,7 +97,7 @@ func (h *handlerImpl) StampByUserId(c router.Context) {
 	req := &dto.StampByUserIdRequest{
 		UserID:     userId,
 		ActivityId: body.ActivityId,
-		Pin:        body.Pin,
+		PinCode:    body.PinCode,
 	}
 
 	res, appErr := h.svc.StampByUserId(req)

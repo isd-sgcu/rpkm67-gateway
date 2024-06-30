@@ -42,13 +42,13 @@ func (h *handlerImpl) FindAll(c router.Context) {
 }
 
 func (h *handlerImpl) ResetPin(c router.Context) {
-	workshopId := c.Param("workshop-id")
-	if workshopId == "" {
+	activityId := c.Param("workshop-id")
+	if activityId == "" {
 		c.BadRequestError("url parameter 'workshop-id' not found")
 	}
 
 	req := &dto.ResetPinRequest{
-		WorkshopId: workshopId,
+		ActivityId: activityId,
 	}
 
 	if errorList := h.validate.Validate(req); errorList != nil {

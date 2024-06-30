@@ -13,6 +13,7 @@ import (
 type Service interface {
 	FindAll(req *dto.FindAllPinRequest) (*dto.FindAllPinResponse, *apperror.AppError)
 	ResetPin(req *dto.ResetPinRequest) (*dto.ResetPinResponse, *apperror.AppError)
+	CheckPin(req *dto.CheckPinRequest) (*dto.CheckPinResponse, *apperror.AppError)
 }
 
 type serviceImpl struct {
@@ -47,7 +48,7 @@ func (s *serviceImpl) ResetPin(req *dto.ResetPinRequest) (*dto.ResetPinResponse,
 	defer cancel()
 
 	res, err := s.client.ResetPin(ctx, &pinProto.ResetPinRequest{
-		WorkshopId: req.WorkshopId,
+		ActivityId: req.ActivityId,
 	})
 	if err != nil {
 		s.log.Named("FindOneBaan").Error("FindOneBaan: ", zap.Error(err))
@@ -56,5 +57,23 @@ func (s *serviceImpl) ResetPin(req *dto.ResetPinRequest) (*dto.ResetPinResponse,
 
 	return &dto.ResetPinResponse{
 		Success: res.Success,
+	}, nil
+}
+
+func (s *serviceImpl) CheckPin(req *dto.CheckPinRequest) (*dto.CheckPinResponse, *apperror.AppError) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := s.client.CheckPin(ctx, &pinProto.CheckPinRequest{
+		ActivityId: req.ActivityId,
+		Code:       req.Code,
+	})
+	if err != nil {
+		s.log.Named("CheckPin").Error("CheckPin: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
+	}
+
+	return &dto.CheckPinResponse{
+		IsMatch: res.IsMatch,
 	}, nil
 }

@@ -1,7 +1,7 @@
 package dto
 
 type Pin struct {
-	WorkshopId string `json:"workshop_id"`
+	ActivityId string `json:"activity_id"`
 	Code       string `json:"code"`
 }
 
@@ -13,9 +13,18 @@ type FindAllPinResponse struct {
 }
 
 type ResetPinRequest struct {
-	WorkshopId string `json:"workshop_id" validate:"required"`
+	ActivityId string `json:"activity_id" validate:"required"`
 }
 
 type ResetPinResponse struct {
 	Success bool `json:"success"`
+}
+
+type CheckPinRequest struct {
+	ActivityId string `json:"activity_id"`
+	Code       string `json:"code"`
+}
+
+type CheckPinResponse struct {
+	IsMatch bool `json:"is_match"`
 }
