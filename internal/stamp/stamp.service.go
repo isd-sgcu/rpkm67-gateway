@@ -66,7 +66,7 @@ func (s *serviceImpl) StampByUserId(req *dto.StampByUserIdRequest) (*dto.StampBy
 
 	if !found {
 		s.logger.Named("StampByUserId").Error("FindAllPin: Pin not found")
-		return nil, apperror.BadRequest
+		return nil, apperror.BadRequestError("Pin not found")
 	}
 
 	res, err := s.client.StampByUserId(ctx, &stampProto.StampByUserIdRequest{
