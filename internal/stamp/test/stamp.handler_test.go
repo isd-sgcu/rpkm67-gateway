@@ -18,11 +18,12 @@ import (
 
 type StampHandlerTest struct {
 	suite.Suite
-	controller       *gomock.Controller
-	logger           *zap.Logger
-	stamp            *dto.Stamp
-	findByUserIdReq  *dto.FindByUserIdStampRequest
-	stampByUserIdReq *dto.StampByUserIdRequest
+	controller           *gomock.Controller
+	logger               *zap.Logger
+	stamp                *dto.Stamp
+	findByUserIdReq      *dto.FindByUserIdStampRequest
+	stampByUserIdReq     *dto.StampByUserIdRequest
+	stampByUserIdBodyReq *dto.StampByUserIdBodyRequest
 }
 
 func TestStampHandler(t *testing.T) {
@@ -45,8 +46,14 @@ func (t *StampHandlerTest) SetupTest() {
 	t.findByUserIdReq = &dto.FindByUserIdStampRequest{
 		UserID: faker.UUIDDigit(),
 	}
+	t.stampByUserIdBodyReq = &dto.StampByUserIdBodyRequest{
+		ActivityId: faker.Word(),
+		Pin:        faker.Word(),
+	}
 	t.stampByUserIdReq = &dto.StampByUserIdRequest{
-		UserID: faker.UUIDDigit(),
+		UserID:     faker.UUIDDigit(),
+		ActivityId: t.stampByUserIdBodyReq.ActivityId,
+		Pin:        t.stampByUserIdBodyReq.Pin,
 	}
 }
 
@@ -99,8 +106,8 @@ func (t *StampHandlerTest) TestStampByUserIdSuccess() {
 	}
 
 	context.EXPECT().Param("userId").Return(t.stampByUserIdReq.UserID)
-	context.EXPECT().Bind(&dto.StampByUserIdRequest{}).SetArg(0, *t.stampByUserIdReq)
-	validator.EXPECT().Validate(t.stampByUserIdReq).Return(nil)
+	context.EXPECT().Bind(&dto.StampByUserIdBodyRequest{}).SetArg(0, *t.stampByUserIdBodyReq)
+	validator.EXPECT().Validate(t.stampByUserIdBodyReq).Return(nil)
 
 	stampSvc.EXPECT().StampByUserId(t.stampByUserIdReq).Return(expectedResp, nil)
 	context.EXPECT().JSON(http.StatusOK, expectedResp)
@@ -123,7 +130,7 @@ func (t *StampHandlerTest) TestStampByUserIdBindError() {
 	handler := stamp.NewHandler(nil, nil, t.logger)
 
 	context.EXPECT().Param("userId").Return(t.stampByUserIdReq.UserID)
-	context.EXPECT().Bind(&dto.StampByUserIdRequest{}).Return(apperror.BadRequest)
+	context.EXPECT().Bind(&dto.StampByUserIdBodyRequest{}).Return(apperror.BadRequest)
 	context.EXPECT().BadRequestError(apperror.BadRequest.Error())
 
 	handler.StampByUserId(context)
@@ -136,8 +143,8 @@ func (t *StampHandlerTest) TestStampByUserIdServiceError() {
 	handler := stamp.NewHandler(stampSvc, validator, t.logger)
 
 	context.EXPECT().Param("userId").Return(t.stampByUserIdReq.UserID)
-	context.EXPECT().Bind(&dto.StampByUserIdRequest{}).SetArg(0, *t.stampByUserIdReq)
-	validator.EXPECT().Validate(t.stampByUserIdReq).Return(nil)
+	context.EXPECT().Bind(&dto.StampByUserIdBodyRequest{}).SetArg(0, *t.stampByUserIdBodyReq)
+	validator.EXPECT().Validate(t.stampByUserIdBodyReq).Return(nil)
 	stampSvc.EXPECT().StampByUserId(t.stampByUserIdReq).Return(nil, apperror.InternalServer)
 	context.EXPECT().ResponseError(apperror.InternalServer)
 
