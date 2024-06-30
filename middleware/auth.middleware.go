@@ -38,7 +38,7 @@ func (m *authMiddlewareImpl) Validate(c *gin.Context) {
 	tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
 	res, err := m.authSvc.Validate(&dto.ValidateRequest{AccessToken: tokenString})
 	if err != nil {
-		returnError(c, err)
+		returnError(c, apperror.UnauthorizedError("Invalid access token"))
 		c.Abort()
 		return
 	}
@@ -53,8 +53,7 @@ func returnError(c *gin.Context, err *apperror.AppError) {
 	c.JSON(
 		err.HttpCode,
 		gin.H{
-			"instance": c.Request.URL.Path,
-			"title":    err.Id,
+			"error": err.Id,
 		},
 	)
 }
