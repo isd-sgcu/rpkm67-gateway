@@ -76,6 +76,7 @@ func main() {
 
 	pinClient := pinProto.NewPinServiceClient(authConn)
 	pinSvc := pin.NewService(pinClient, logger)
+	pinHdr := pin.NewHandler(pinSvc, validate, logger)
 
 	stampProto := stampProto.NewStampServiceClient(authConn)
 	stampSvc := stamp.NewService(stampProto, pinSvc, constant.PinRequiredActivity, logger)
@@ -115,7 +116,10 @@ func main() {
 	r.V1Get("/stamp/:userId", stampHdr.FindByUserId)
 	r.V1Post("/stamp/:userId", stampHdr.StampByUserId)
 
-	r.V1Post("/count/:name", countHdr.Count)
+	r.V1Get("/pin", pinHdr.FindAll)
+	r.V1Post("/pin/:id", pinHdr.ResetPin)
+
+	r.V1NonAuthPost("/count/:name", countHdr.Count)
 
 	r.V1NonAuth.GET("/metrics", metricsHdr.ExposeMetrics)
 

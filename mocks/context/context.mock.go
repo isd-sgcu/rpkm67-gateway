@@ -77,6 +77,20 @@ func (mr *MockCtxMockRecorder) FormFile(key, allowedContentType, maxFileSize int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FormFile", reflect.TypeOf((*MockCtx)(nil).FormFile), key, allowedContentType, maxFileSize)
 }
 
+// GetString mocks base method.
+func (m *MockCtx) GetString(key string) string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetString", key)
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// GetString indicates an expected call of GetString.
+func (mr *MockCtxMockRecorder) GetString(key interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetString", reflect.TypeOf((*MockCtx)(nil).GetString), key)
+}
+
 // InternalServerError mocks base method.
 func (m *MockCtx) InternalServerError(err string) {
 	m.ctrl.T.Helper()

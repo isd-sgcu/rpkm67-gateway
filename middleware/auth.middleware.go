@@ -1,9 +1,12 @@
 package middleware
 
 import (
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/auth"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 )
 
 type AuthMiddleware interface {
@@ -19,30 +22,32 @@ func NewAuthMiddleware(authSvc auth.Service) AuthMiddleware {
 }
 
 func (m *authMiddlewareImpl) Validate(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		returnError(c, apperror.UnauthorizedError("Authorization header not found"))
+		c.Abort()
+		return
+	}
 
+	if !strings.HasPrefix(authHeader, "Bearer ") {
+		returnError(c, apperror.UnauthorizedError("Authorization header must start with 'Bearer'"))
+		c.Abort()
+		return
+	}
+
+	tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
+	res, err := m.authSvc.Validate(&dto.ValidateRequest{AccessToken: tokenString})
+	if err != nil {
+		returnError(c, err)
+		c.Abort()
+		return
+	}
+
+	c.Set("userId", res.UserId)
+	c.Set("role", res.Role)
+
+	c.Next()
 }
-
-// func AuthMiddleware(conf *config.AppConfig) AuthMiddleware {
-// 	return func(c *gin.Context) {
-// 		authHeader := c.GetHeader("Authorization")
-// 		if authHeader == "" {
-// 			returnError(c, apperror.UnauthorizedError("Authorization header not found"))
-// 			c.Abort()
-// 			return
-// 		}
-
-// 		if !strings.HasPrefix(authHeader, "Bearer ") {
-// 			returnError(c, apperror.UnauthorizedError("Authorization header must start with 'Bearer'"))
-// 			c.Abort()
-// 			return
-// 		}
-
-// 		tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
-// 		token, err := auth..Validate(c, tokenString, cfg.OAuth2Config.ClientId)
-
-// 		c.Next()
-// 	}
-// }
 
 func returnError(c *gin.Context, err *apperror.AppError) {
 	c.JSON(

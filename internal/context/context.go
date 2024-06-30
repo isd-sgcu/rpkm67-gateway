@@ -20,6 +20,7 @@ type Ctx interface {
 	Query(key string) string
 	PostForm(key string) string
 	FormFile(key string, allowedContentType map[string]struct{}, maxFileSize int64) (*dto.DecomposedFile, error)
+	GetString(key string) string
 }
 
 type contextImpl struct {
@@ -113,4 +114,8 @@ func (c *contextImpl) FormFile(key string, allowedContentType map[string]struct{
 		Filename: file.Filename,
 		Data:     data,
 	}, nil
+}
+
+func (c *contextImpl) GetString(key string) string {
+	return c.Context.GetString(key)
 }

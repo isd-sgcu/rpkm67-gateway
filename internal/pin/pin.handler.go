@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
@@ -30,6 +31,11 @@ func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) H
 }
 
 func (h *handlerImpl) FindAll(c context.Ctx) {
+	if c.GetString("role") != "staff" {
+		c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
+		return
+	}
+
 	req := &dto.FindAllPinRequest{}
 	res, appErr := h.svc.FindAll(req)
 	if appErr != nil {
@@ -42,6 +48,11 @@ func (h *handlerImpl) FindAll(c context.Ctx) {
 }
 
 func (h *handlerImpl) ResetPin(c context.Ctx) {
+	if c.GetString("role") != "staff" {
+		c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
+		return
+	}
+
 	activityId := c.Param("workshop-id")
 	if activityId == "" {
 		c.BadRequestError("url parameter 'workshop-id' not found")
