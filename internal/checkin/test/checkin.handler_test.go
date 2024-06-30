@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 
 	checkinMock "github.com/isd-sgcu/rpkm67-gateway/mocks/checkin"
-	routerMock "github.com/isd-sgcu/rpkm67-gateway/mocks/router"
+	contextMock "github.com/isd-sgcu/rpkm67-gateway/mocks/context"
 	validatorMock "github.com/isd-sgcu/rpkm67-gateway/mocks/validator"
 )
 
@@ -55,7 +55,7 @@ func (t *CheckInHandlerTest) SetupTest() {
 func (t *CheckInHandlerTest) TestCreateCheckinSuccess() {
 	checkinSvc := checkinMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := contextMock.NewMockCtx(t.controller)
 	handler := checkin.NewHandler(checkinSvc, validator, t.logger)
 
 	expectedResp := &dto.CreateCheckInResponse{
@@ -75,7 +75,7 @@ func (t *CheckInHandlerTest) TestCreateCheckinSuccess() {
 }
 
 func (t *CheckInHandlerTest) TestCreateCheckinBindError() {
-	context := routerMock.NewMockContext(t.controller)
+	context := contextMock.NewMockCtx(t.controller)
 	handler := checkin.NewHandler(nil, nil, t.logger)
 
 	context.EXPECT().Bind(&dto.CreateCheckInRequest{}).Return(apperror.BadRequest)
@@ -87,7 +87,7 @@ func (t *CheckInHandlerTest) TestCreateCheckinBindError() {
 func (t *CheckInHandlerTest) TestCreateCheckinValidationError() {
 	checkinSvc := checkinMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := contextMock.NewMockCtx(t.controller)
 	handler := checkin.NewHandler(checkinSvc, validator, t.logger)
 
 	expectedError := []string{"error1", "error2"}
@@ -102,7 +102,7 @@ func (t *CheckInHandlerTest) TestCreateCheckinValidationError() {
 func (t *CheckInHandlerTest) TestCreateCheckinServiceError() {
 	checkinSvc := checkinMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := contextMock.NewMockCtx(t.controller)
 	handler := checkin.NewHandler(checkinSvc, validator, t.logger)
 
 	context.EXPECT().Bind(&dto.CreateCheckInRequest{}).SetArg(0, *t.createCheckinReq)
@@ -116,7 +116,7 @@ func (t *CheckInHandlerTest) TestCreateCheckinServiceError() {
 
 func (t *CheckInHandlerTest) TestFindByEmailCheckinSuccess() {
 	checkinSvc := checkinMock.NewMockService(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := contextMock.NewMockCtx(t.controller)
 	handler := checkin.NewHandler(checkinSvc, nil, t.logger)
 
 	expectedResp := &dto.FindByEmailCheckInResponse{
@@ -131,7 +131,7 @@ func (t *CheckInHandlerTest) TestFindByEmailCheckinSuccess() {
 }
 
 func (t *CheckInHandlerTest) TestFindByEmailCheckInParamEmpty() {
-	context := routerMock.NewMockContext(t.controller)
+	context := contextMock.NewMockCtx(t.controller)
 	handler := checkin.NewHandler(nil, nil, t.logger)
 
 	context.EXPECT().Param("email").Return("")
@@ -142,7 +142,7 @@ func (t *CheckInHandlerTest) TestFindByEmailCheckInParamEmpty() {
 
 func (t *CheckInHandlerTest) TestFindByEmailCheckinServiceError() {
 	checkinSvc := checkinMock.NewMockService(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := contextMock.NewMockCtx(t.controller)
 	handler := checkin.NewHandler(checkinSvc, nil, t.logger)
 
 	context.EXPECT().Param("email").Return(t.checkin.Email)
@@ -154,7 +154,7 @@ func (t *CheckInHandlerTest) TestFindByEmailCheckinServiceError() {
 
 func (t *CheckInHandlerTest) TestFindByUserIdCheckinSuccess() {
 	checkinSvc := checkinMock.NewMockService(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := contextMock.NewMockCtx(t.controller)
 	handler := checkin.NewHandler(checkinSvc, nil, t.logger)
 
 	expectedResp := &dto.FindByUserIdCheckInResponse{
@@ -169,7 +169,7 @@ func (t *CheckInHandlerTest) TestFindByUserIdCheckinSuccess() {
 }
 
 func (t *CheckInHandlerTest) TestFindByUserIdCheckinParamEmpty() {
-	context := routerMock.NewMockContext(t.controller)
+	context := contextMock.NewMockCtx(t.controller)
 	handler := checkin.NewHandler(nil, nil, t.logger)
 
 	expectedErr := apperror.BadRequestError("user_id should not be empty").Error()
@@ -182,7 +182,7 @@ func (t *CheckInHandlerTest) TestFindByUserIdCheckinParamEmpty() {
 
 func (t *CheckInHandlerTest) TestFindByUserIdCheckinServiceError() {
 	checkinSvc := checkinMock.NewMockService(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := contextMock.NewMockCtx(t.controller)
 	handler := checkin.NewHandler(checkinSvc, nil, t.logger)
 
 	context.EXPECT().Param("userId").Return(t.checkin.UserID)

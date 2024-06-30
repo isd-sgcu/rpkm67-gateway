@@ -8,7 +8,7 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/selection"
-	routerMock "github.com/isd-sgcu/rpkm67-gateway/mocks/router"
+	ctxMock "github.com/isd-sgcu/rpkm67-gateway/mocks/context"
 	selectionMock "github.com/isd-sgcu/rpkm67-gateway/mocks/selection"
 	validatorMock "github.com/isd-sgcu/rpkm67-gateway/mocks/validator"
 	"github.com/stretchr/testify/suite"
@@ -55,7 +55,7 @@ func (t *SelectionHandlerTest) SetupTest() {
 func (t *SelectionHandlerTest) TestCreateSelectionSuccess() {
 	selectionSvc := selectionMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := selection.NewHandler(selectionSvc, validator, t.logger)
 
 	expectedResp := &dto.CreateSelectionResponse{
@@ -71,7 +71,7 @@ func (t *SelectionHandlerTest) TestCreateSelectionSuccess() {
 }
 
 func (t *SelectionHandlerTest) TestCreateSelectionBindError() {
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := selection.NewHandler(nil, nil, t.logger)
 
 	context.EXPECT().Bind(&dto.CreateSelectionRequest{}).Return(apperror.BadRequest)
@@ -83,7 +83,7 @@ func (t *SelectionHandlerTest) TestCreateSelectionBindError() {
 func (t *SelectionHandlerTest) TestCreateSelectionServiceError() {
 	selectionSvc := selectionMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := selection.NewHandler(selectionSvc, validator, t.logger)
 
 	context.EXPECT().Bind(&dto.CreateSelectionRequest{}).SetArg(0, *t.CreateSelectionReq)
@@ -97,7 +97,7 @@ func (t *SelectionHandlerTest) TestCreateSelectionServiceError() {
 func (t *SelectionHandlerTest) TestFindByStudentIdSelectionSuccess() {
 	selectionSvc := selectionMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := selection.NewHandler(selectionSvc, validator, t.logger)
 
 	expectedResp := &dto.FindByGroupIdSelectionResponse{
@@ -113,7 +113,7 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionSuccess() {
 }
 
 func (t *SelectionHandlerTest) TestFindByStudentIdSelectionUrlParamEmpty() {
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := selection.NewHandler(nil, nil, t.logger)
 
 	expectedErr := apperror.BadRequestError("url parameter 'id' not found")
@@ -127,7 +127,7 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionUrlParamEmpty() {
 func (t *SelectionHandlerTest) TestFindByStudentIdSelectionServiceError() {
 	selectionSvc := selectionMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := selection.NewHandler(selectionSvc, validator, t.logger)
 
 	context.EXPECT().Param("id").Return(t.Selection.GroupId)
@@ -141,7 +141,7 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionServiceError() {
 func (t *SelectionHandlerTest) TestDeleteSelectionSuccess() {
 	selectionSvc := selectionMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := selection.NewHandler(selectionSvc, validator, t.logger)
 
 	expectedResp := &dto.DeleteSelectionResponse{
@@ -157,7 +157,7 @@ func (t *SelectionHandlerTest) TestDeleteSelectionSuccess() {
 }
 
 func (t *SelectionHandlerTest) TestDeleteSelectionBindError() {
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := selection.NewHandler(nil, nil, t.logger)
 
 	context.EXPECT().Bind(&dto.DeleteSelectionRequest{}).Return(apperror.BadRequest)
@@ -169,7 +169,7 @@ func (t *SelectionHandlerTest) TestDeleteSelectionBindError() {
 func (t *SelectionHandlerTest) TestDeleteSelectionServiceError() {
 	selectionSvc := selectionMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := selection.NewHandler(selectionSvc, validator, t.logger)
 
 	context.EXPECT().Bind(&dto.DeleteSelectionRequest{}).SetArg(0, *t.DeleteSelectionReq)

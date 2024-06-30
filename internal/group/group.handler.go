@@ -4,20 +4,20 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
-	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"go.uber.org/zap"
 )
 
 type Handler interface {
-	FindOne(c router.Context)
-	FindByToken(c router.Context)
-	Update(c router.Context)
-	Join(c router.Context)
-	DeleteMember(c router.Context)
-	Leave(c router.Context)
-	SelectBaan(c router.Context)
+	FindOne(c context.Ctx)
+	FindByToken(c context.Ctx)
+	Update(c context.Ctx)
+	Join(c context.Ctx)
+	DeleteMember(c context.Ctx)
+	Leave(c context.Ctx)
+	SelectBaan(c context.Ctx)
 }
 
 func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
@@ -34,7 +34,7 @@ type handlerImpl struct {
 	log      *zap.Logger
 }
 
-func (h *handlerImpl) DeleteMember(c router.Context) {
+func (h *handlerImpl) DeleteMember(c context.Ctx) {
 	body := &dto.DeleteMemberGroupRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("DeleteMember").Error("Bind: failed to bind request body", zap.Error(err))
@@ -65,7 +65,7 @@ func (h *handlerImpl) DeleteMember(c router.Context) {
 	})
 }
 
-func (h *handlerImpl) FindByToken(c router.Context) {
+func (h *handlerImpl) FindByToken(c context.Ctx) {
 	body := &dto.FindByTokenGroupRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("FindByToken").Error("Bind: failed to bind request body", zap.Error(err))
@@ -97,7 +97,7 @@ func (h *handlerImpl) FindByToken(c router.Context) {
 	})
 }
 
-func (h *handlerImpl) FindOne(c router.Context) {
+func (h *handlerImpl) FindOne(c context.Ctx) {
 	userId := c.Param("id")
 	if userId == "" {
 		c.BadRequestError("url parameter 'user_id' not found")
@@ -125,7 +125,7 @@ func (h *handlerImpl) FindOne(c router.Context) {
 	})
 }
 
-func (h *handlerImpl) Join(c router.Context) {
+func (h *handlerImpl) Join(c context.Ctx) {
 	body := &dto.JoinGroupRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Join").Error("Bind: failed to bind request body", zap.Error(err))
@@ -156,7 +156,7 @@ func (h *handlerImpl) Join(c router.Context) {
 	})
 }
 
-func (h *handlerImpl) Leave(c router.Context) {
+func (h *handlerImpl) Leave(c context.Ctx) {
 	body := &dto.LeaveGroupRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Leave").Error("Bind: failed to bind request body", zap.Error(err))
@@ -186,7 +186,7 @@ func (h *handlerImpl) Leave(c router.Context) {
 	})
 }
 
-func (h *handlerImpl) SelectBaan(c router.Context) {
+func (h *handlerImpl) SelectBaan(c context.Ctx) {
 	body := &dto.SelectBaanRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("SelectBaan").Error("Bind: failed to bind request body", zap.Error(err))
@@ -217,7 +217,7 @@ func (h *handlerImpl) SelectBaan(c router.Context) {
 	})
 }
 
-func (h *handlerImpl) Update(c router.Context) {
+func (h *handlerImpl) Update(c context.Ctx) {
 	body := &dto.UpdateGroupRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Update").Error("Bind: failed to bind request body", zap.Error(err))

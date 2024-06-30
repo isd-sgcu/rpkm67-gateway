@@ -13,6 +13,7 @@ import (
 type Router struct {
 	*gin.Engine
 	V1             *gin.RouterGroup
+	V1NonAuth      *gin.RouterGroup
 	requestMetrics metrics.RequestMetrics
 }
 
@@ -24,10 +25,13 @@ func New(conf *config.Config, corsHandler config.CorsHandler, authMiddleware mid
 	r := gin.Default()
 	r.Use(gin.HandlerFunc(corsHandler))
 	v1 := r.Group("/api/v1")
+	v1.Use(gin.HandlerFunc(authMiddleware.Validate))
+
+	v1NonAuth := r.Group("/api/v1")
 
 	if conf.App.IsDevelopment() {
 		v1.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
-	return &Router{r, v1, requestMetrics}
+	return &Router{r, v1, v1NonAuth, requestMetrics}
 }

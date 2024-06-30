@@ -4,16 +4,16 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
-	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"go.uber.org/zap"
 )
 
 type Handler interface {
-	CreateSelection(c router.Context)
-	FindByGroupIdSelection(c router.Context)
-	DeleteSelection(c router.Context)
+	CreateSelection(c context.Ctx)
+	FindByGroupIdSelection(c context.Ctx)
+	DeleteSelection(c context.Ctx)
 }
 
 func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
@@ -30,7 +30,7 @@ type handlerImpl struct {
 	log      *zap.Logger
 }
 
-func (h *handlerImpl) CreateSelection(c router.Context) {
+func (h *handlerImpl) CreateSelection(c context.Ctx) {
 	body := &dto.CreateSelectionRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("CreateSelection").Error("Bind: failed to bind request body", zap.Error(err))
@@ -54,7 +54,7 @@ func (h *handlerImpl) CreateSelection(c router.Context) {
 	c.JSON(http.StatusCreated, &dto.CreateSelectionResponse{Selection: res.Selection})
 }
 
-func (h *handlerImpl) FindByGroupIdSelection(c router.Context) {
+func (h *handlerImpl) FindByGroupIdSelection(c context.Ctx) {
 	groupId := c.Param("id")
 	if groupId == "" {
 		h.log.Named("FindByGroupIdSelection").Error("Param: id not found")
@@ -82,7 +82,7 @@ func (h *handlerImpl) FindByGroupIdSelection(c router.Context) {
 	c.JSON(http.StatusOK, &dto.FindByGroupIdSelectionResponse{Selections: res.Selections})
 }
 
-func (h *handlerImpl) DeleteSelection(c router.Context) {
+func (h *handlerImpl) DeleteSelection(c context.Ctx) {
 	body := &dto.DeleteSelectionRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("UpdateSelection").Error("Bind: ", zap.Error(err))

@@ -9,7 +9,7 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/stamp"
-	routerMock "github.com/isd-sgcu/rpkm67-gateway/mocks/router"
+	ctxMock "github.com/isd-sgcu/rpkm67-gateway/mocks/context"
 	stampMock "github.com/isd-sgcu/rpkm67-gateway/mocks/stamp"
 	validatorMock "github.com/isd-sgcu/rpkm67-gateway/mocks/validator"
 	"github.com/stretchr/testify/suite"
@@ -59,7 +59,7 @@ func (t *StampHandlerTest) SetupTest() {
 
 func (t *StampHandlerTest) TestFindByUserIdSuccess() {
 	stampSvc := stampMock.NewMockService(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := stamp.NewHandler(stampSvc, nil, t.logger)
 
 	expectedResp := &dto.FindByUserIdStampResponse{
@@ -74,7 +74,7 @@ func (t *StampHandlerTest) TestFindByUserIdSuccess() {
 }
 
 func (t *StampHandlerTest) TestFindByUserIdMissingParamUserId() {
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := stamp.NewHandler(nil, nil, t.logger)
 
 	context.EXPECT().Param("userId").Return("")
@@ -85,7 +85,7 @@ func (t *StampHandlerTest) TestFindByUserIdMissingParamUserId() {
 
 func (t *StampHandlerTest) TestFindByUserIdServiceError() {
 	stampSvc := stampMock.NewMockService(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := stamp.NewHandler(stampSvc, nil, t.logger)
 
 	context.EXPECT().Param("userId").Return(t.findByUserIdReq.UserID)
@@ -98,7 +98,7 @@ func (t *StampHandlerTest) TestFindByUserIdServiceError() {
 func (t *StampHandlerTest) TestStampByUserIdSuccess() {
 	stampSvc := stampMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := stamp.NewHandler(stampSvc, validator, t.logger)
 
 	expectedResp := &dto.StampByUserIdResponse{
@@ -116,7 +116,7 @@ func (t *StampHandlerTest) TestStampByUserIdSuccess() {
 }
 
 func (t *StampHandlerTest) TestStampByUserIdMissingParamUserId() {
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := stamp.NewHandler(nil, nil, t.logger)
 
 	context.EXPECT().Param("userId").Return("")
@@ -126,7 +126,7 @@ func (t *StampHandlerTest) TestStampByUserIdMissingParamUserId() {
 }
 
 func (t *StampHandlerTest) TestStampByUserIdBindError() {
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := stamp.NewHandler(nil, nil, t.logger)
 
 	context.EXPECT().Param("userId").Return(t.stampByUserIdReq.UserID)
@@ -139,7 +139,7 @@ func (t *StampHandlerTest) TestStampByUserIdBindError() {
 func (t *StampHandlerTest) TestStampByUserIdServiceError() {
 	stampSvc := stampMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := routerMock.NewMockContext(t.controller)
+	context := ctxMock.NewMockCtx(t.controller)
 	handler := stamp.NewHandler(stampSvc, validator, t.logger)
 
 	context.EXPECT().Param("userId").Return(t.stampByUserIdReq.UserID)

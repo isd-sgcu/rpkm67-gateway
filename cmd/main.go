@@ -42,7 +42,6 @@ func main() {
 
 	logger := logger.New(&conf.App)
 	corsHandler := config.MakeCorsConfig(conf)
-	authMiddleware := middleware.NewAuthMiddleware(&conf.App)
 
 	validate, err := validator.NewDtoValidator()
 	if err != nil {
@@ -62,6 +61,7 @@ func main() {
 	authClient := authProto.NewAuthServiceClient(authConn)
 	authSvc := auth.NewService(authClient, logger)
 	authHdr := auth.NewHandler(authSvc, validate, logger)
+	authMiddleware := middleware.NewAuthMiddleware(authSvc)
 
 	objClient := objectProto.NewObjectServiceClient(authConn)
 	objSvc := object.NewService(objClient, logger)
@@ -117,7 +117,7 @@ func main() {
 
 	r.V1Post("/count/:name", countHdr.Count)
 
-	r.V1.GET("/metrics", metricsHdr.ExposeMetrics)
+	r.V1NonAuth.GET("/metrics", metricsHdr.ExposeMetrics)
 
 	if err := r.Run(fmt.Sprintf(":%v", conf.App.Port)); err != nil {
 		logger.Fatal("unable to start server")

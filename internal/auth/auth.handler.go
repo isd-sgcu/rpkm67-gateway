@@ -1,18 +1,18 @@
 package auth
 
 import (
+	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
-	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"go.uber.org/zap"
 )
 
 type Handler interface {
-	Validate(c router.Context)
-	RefreshToken(c router.Context)
-	GetGoogleLoginUrl(c router.Context)
-	VerifyGoogleLogin(c router.Context)
-	Test(c router.Context)
+	Validate(c context.Ctx)
+	RefreshToken(c context.Ctx)
+	GetGoogleLoginUrl(c context.Ctx)
+	VerifyGoogleLogin(c context.Ctx)
+	Test(c context.Ctx)
 }
 
 type handlerImpl struct {
@@ -29,13 +29,13 @@ func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) H
 	}
 }
 
-func (h *handlerImpl) Validate(c router.Context) {
+func (h *handlerImpl) Validate(c context.Ctx) {
 }
 
-func (h *handlerImpl) RefreshToken(c router.Context) {
+func (h *handlerImpl) RefreshToken(c context.Ctx) {
 }
 
-func (h *handlerImpl) GetGoogleLoginUrl(c router.Context) {
+func (h *handlerImpl) GetGoogleLoginUrl(c context.Ctx) {
 	res, appErr := h.svc.GetGoogleLoginUrl()
 	if appErr != nil {
 		c.ResponseError(appErr)
@@ -45,10 +45,10 @@ func (h *handlerImpl) GetGoogleLoginUrl(c router.Context) {
 	c.JSON(200, res)
 }
 
-func (h *handlerImpl) VerifyGoogleLogin(c router.Context) {
+func (h *handlerImpl) VerifyGoogleLogin(c context.Ctx) {
 }
 
-func (h *handlerImpl) Test(c router.Context) {
+func (h *handlerImpl) Test(c context.Ctx) {
 	code := c.Query("code")
 	if code == "" {
 		c.BadRequestError("url parameter 'code' not found")
@@ -68,7 +68,7 @@ func (h *handlerImpl) Test(c router.Context) {
 
 }
 
-// func (h *handlerImpl) SignUp(c router.Context) {
+// func (h *handlerImpl) SignUp(c context.Ctx) {
 // 	body := &dto.SignUpRequest{}
 // 	if err := c.Bind(body); err != nil {
 // 		h.log.Named("auth hdr").Error("failed to bind request body", zap.Error(err))

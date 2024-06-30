@@ -4,16 +4,16 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
-	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"go.uber.org/zap"
 )
 
 type Handler interface {
-	FindOne(c router.Context)
-	UpdateProfile(c router.Context)
-	UpdatePicture(c router.Context)
+	FindOne(c context.Ctx)
+	UpdateProfile(c context.Ctx)
+	UpdatePicture(c context.Ctx)
 }
 
 type handlerImpl struct {
@@ -34,7 +34,7 @@ func NewHandler(svc Service, maxFileSize int, allowedContentType map[string]stru
 	}
 }
 
-func (h *handlerImpl) FindOne(c router.Context) {
+func (h *handlerImpl) FindOne(c context.Ctx) {
 	id := c.Param("id")
 	if id == "" {
 		h.log.Named("FindOne").Error("Param: id not found")
@@ -56,7 +56,7 @@ func (h *handlerImpl) FindOne(c router.Context) {
 	c.JSON(http.StatusOK, &dto.FindOneUserResponse{User: res.User})
 }
 
-func (h *handlerImpl) UpdateProfile(c router.Context) {
+func (h *handlerImpl) UpdateProfile(c context.Ctx) {
 	id := c.Param("id")
 	if id == "" {
 		h.log.Named("UpdateProfile").Error("Param: id not found")
@@ -89,7 +89,7 @@ func (h *handlerImpl) UpdateProfile(c router.Context) {
 	c.JSON(http.StatusOK, &dto.UpdateUserProfileResponse{User: res.User})
 }
 
-func (h *handlerImpl) UpdatePicture(c router.Context) {
+func (h *handlerImpl) UpdatePicture(c context.Ctx) {
 	id := c.Param("id")
 	if id == "" {
 		h.log.Named("UpdatePicture").Error("Param: id not found")

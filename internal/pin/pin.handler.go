@@ -4,15 +4,15 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
-	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"go.uber.org/zap"
 )
 
 type Handler interface {
-	FindAll(c router.Context)
-	ResetPin(c router.Context)
+	FindAll(c context.Ctx)
+	ResetPin(c context.Ctx)
 }
 
 type handlerImpl struct {
@@ -29,7 +29,7 @@ func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) H
 	}
 }
 
-func (h *handlerImpl) FindAll(c router.Context) {
+func (h *handlerImpl) FindAll(c context.Ctx) {
 	req := &dto.FindAllPinRequest{}
 	res, appErr := h.svc.FindAll(req)
 	if appErr != nil {
@@ -41,7 +41,7 @@ func (h *handlerImpl) FindAll(c router.Context) {
 	c.JSON(http.StatusOK, &dto.FindAllPinResponse{Pins: res.Pins})
 }
 
-func (h *handlerImpl) ResetPin(c router.Context) {
+func (h *handlerImpl) ResetPin(c context.Ctx) {
 	activityId := c.Param("workshop-id")
 	if activityId == "" {
 		c.BadRequestError("url parameter 'workshop-id' not found")

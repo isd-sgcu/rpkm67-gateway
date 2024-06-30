@@ -4,15 +4,15 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
-	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"go.uber.org/zap"
 )
 
 type Handler interface {
-	FindByUserId(c router.Context)
-	StampByUserId(c router.Context)
+	FindByUserId(c context.Ctx)
+	StampByUserId(c context.Ctx)
 }
 
 type handlerImpl struct {
@@ -39,7 +39,7 @@ func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) H
 // @Success 200 {object} dto.FindByUserIdStampResponse
 // @Failure 400 {object} apperror.AppError
 // @Router /stamp/{userId} [get]
-func (h *handlerImpl) FindByUserId(c router.Context) {
+func (h *handlerImpl) FindByUserId(c context.Ctx) {
 	userId := c.Param("userId")
 	if userId == "" {
 		h.log.Named("FindByUserId").Error("FindByUserId: userId is empty")
@@ -73,7 +73,7 @@ func (h *handlerImpl) FindByUserId(c router.Context) {
 // @Success 200 {object} dto.StampByUserIdResponse
 // @Failure 400 {object} apperror.AppError
 // @Router /stamp/{userId} [post]
-func (h *handlerImpl) StampByUserId(c router.Context) {
+func (h *handlerImpl) StampByUserId(c context.Ctx) {
 	userId := c.Param("userId")
 	if userId == "" {
 		h.log.Named("StampByUserId").Error("StampByUserId: userId is empty")

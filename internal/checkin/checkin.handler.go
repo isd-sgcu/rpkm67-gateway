@@ -4,16 +4,16 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
-	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"go.uber.org/zap"
 )
 
 type Handler interface {
-	Create(c router.Context)
-	FindByEmail(c router.Context)
-	FindByUserID(c router.Context)
+	Create(c context.Ctx)
+	FindByEmail(c context.Ctx)
+	FindByUserID(c context.Ctx)
 }
 
 type handlerImpl struct {
@@ -40,7 +40,7 @@ func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) H
 // @Success 201 {object} dto.CreateCheckInResponse
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin [post]
-func (h *handlerImpl) Create(c router.Context) {
+func (h *handlerImpl) Create(c context.Ctx) {
 	body := &dto.CreateCheckInRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Create").Error("Bind: failed to bind request body", zap.Error(err))
@@ -87,7 +87,7 @@ func (h *handlerImpl) Create(c router.Context) {
 // @Success 200 {object} dto.FindByEmailCheckInResponse
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/email/{email} [get]
-func (h *handlerImpl) FindByEmail(c router.Context) {
+func (h *handlerImpl) FindByEmail(c context.Ctx) {
 	email := c.Param("email")
 	if email == "" {
 		h.log.Named("FindByEmail").Error("FindByEmail: email should not be empty")
@@ -121,7 +121,7 @@ func (h *handlerImpl) FindByEmail(c router.Context) {
 // @Success 200 {object} dto.FindByUserIdCheckInResponse
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/{userId} [get]
-func (h *handlerImpl) FindByUserID(c router.Context) {
+func (h *handlerImpl) FindByUserID(c context.Ctx) {
 	userId := c.Param("userId")
 	if userId == "" {
 		h.log.Named("FindByUserID").Error("FindByUserID: user_id should not be empty")

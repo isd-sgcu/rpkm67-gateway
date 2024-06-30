@@ -3,14 +3,14 @@ package count
 import (
 	"net/http"
 
+	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/metrics"
-	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
 	"go.uber.org/zap"
 )
 
 type Handler interface {
-	Count(c router.Context)
+	Count(c context.Ctx)
 }
 
 type handlerImpl struct {
@@ -35,7 +35,7 @@ func NewHandler(countMetrics metrics.CountMetrics, log *zap.Logger) Handler {
 // @Success 201 {object} dto.CountResponse
 // @Failure 400 {object} apperror.AppError
 // @Router /count [post]
-func (h *handlerImpl) Count(c router.Context) {
+func (h *handlerImpl) Count(c context.Ctx) {
 	name := c.Param("name")
 	if name == "" {
 		h.log.Named("Count").Error("Param: url parameter 'name' not found")

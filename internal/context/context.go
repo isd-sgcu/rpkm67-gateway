@@ -1,4 +1,4 @@
-package router
+package context
 
 import (
 	"github.com/gin-gonic/gin"
@@ -9,7 +9,7 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/metrics"
 )
 
-type Context interface {
+type Ctx interface {
 	JSON(statusCode int, obj interface{})
 	ResponseError(err *apperror.AppError)
 	BadRequestError(err string)
@@ -29,7 +29,7 @@ type contextImpl struct {
 	reqMetrics metrics.RequestMetrics
 }
 
-func NewContext(c *gin.Context, httpMethod constant.Method, path string, reqMetrics metrics.RequestMetrics) Context {
+func NewContext(c *gin.Context, httpMethod constant.Method, path string, reqMetrics metrics.RequestMetrics) Ctx {
 	return &contextImpl{
 		Context:    c,
 		httpMethod: httpMethod,
