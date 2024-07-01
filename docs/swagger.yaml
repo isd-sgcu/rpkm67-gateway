@@ -224,6 +224,8 @@ definitions:
         type: integer
       role:
         $ref: '#/definitions/constant.Role'
+      stamp:
+        $ref: '#/definitions/dto.Stamp'
       tel:
         type: string
       title:
@@ -512,20 +514,23 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
       summary: Find stamp by user id
       tags:
       - stamp
     post:
       consumes:
       - application/json
-      description: Stamp by user id
+      description: Stamp of activity id by user id
       parameters:
       - description: User ID
         in: path
         name: userId
         required: true
         type: string
-      - description: Stamp by user id request
+      - description: 'activity_id is body can ONLY be: `workshop-1` to `workshop-5`,
+          `landmark-1` to `landmark-4`, `club-1` to `club-2`'
         in: body
         name: body
         required: true
@@ -542,6 +547,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
       summary: Stamp by user id
       tags:
       - stamp

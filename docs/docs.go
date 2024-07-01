@@ -400,6 +400,11 @@ const docTemplate = `{
         },
         "/stamp/{userId}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Find stamp by user id",
                 "consumes": [
                     "text/plain"
@@ -436,7 +441,12 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Stamp by user id",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Stamp of activity id by user id",
                 "consumes": [
                     "application/json"
                 ],
@@ -456,7 +466,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Stamp by user id request",
+                        "description": "activity_id is body can ONLY be: ` + "`" + `workshop-1` + "`" + ` to ` + "`" + `workshop-5` + "`" + `, ` + "`" + `landmark-1` + "`" + ` to ` + "`" + `landmark-4` + "`" + `, ` + "`" + `club-1` + "`" + ` to ` + "`" + `club-2` + "`" + `",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -1025,6 +1035,9 @@ const docTemplate = `{
                 },
                 "role": {
                     "$ref": "#/definitions/constant.Role"
+                },
+                "stamp": {
+                    "$ref": "#/definitions/dto.Stamp"
                 },
                 "tel": {
                     "type": "string"
