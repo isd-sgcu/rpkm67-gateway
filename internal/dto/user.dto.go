@@ -26,6 +26,7 @@ type User struct {
 	ReceiveGift int           `json:"receive_gift"`
 	GroupId     string        `json:"group_id"`
 	CheckIns    []*CheckIn    `json:"check_ins"`
+	Stamp       *Stamp        `json:"stamp"`
 }
 
 type FindOneUserRequest struct {

@@ -58,8 +58,16 @@ github.com/isd-sgcu/rpkm67-go-proto v0.2.0 h1:tPfNgCuqS4g0f+2hzcpY+8hYXSa7DZDPvR
 github.com/isd-sgcu/rpkm67-go-proto v0.2.0/go.mod h1:Z5SYz5kEe4W+MdqPouF0zEOiaqvg+s9I1S5d0q6e+Jw=
 github.com/isd-sgcu/rpkm67-go-proto v0.2.2 h1:FP2EBqRp+/z2DUSXygOC7SgmS1T3ZRlm4gqRhpU7qbw=
 github.com/isd-sgcu/rpkm67-go-proto v0.2.2/go.mod h1:Z5SYz5kEe4W+MdqPouF0zEOiaqvg+s9I1S5d0q6e+Jw=
+github.com/isd-sgcu/rpkm67-go-proto v0.2.3 h1:u4ROlwsTmzcXgW3ED2UobPvF1OF+jykHH9AEH8F3XcU=
+github.com/isd-sgcu/rpkm67-go-proto v0.2.3/go.mod h1:Z5SYz5kEe4W+MdqPouF0zEOiaqvg+s9I1S5d0q6e+Jw=
+github.com/isd-sgcu/rpkm67-go-proto v0.2.5 h1:lNpRUnPr6QiLBnexeCM2MvlNHeUlJ/jbKdrYWj1/qtk=
+github.com/isd-sgcu/rpkm67-go-proto v0.2.5/go.mod h1:Z5SYz5kEe4W+MdqPouF0zEOiaqvg+s9I1S5d0q6e+Jw=
 github.com/isd-sgcu/rpkm67-model v0.0.4 h1:tk6z6pXnhWBoG2SaSIoyLxNnwRaXwdbSIEEa/cSi8EY=
 github.com/isd-sgcu/rpkm67-model v0.0.4/go.mod h1:dxgLSkrFpbQOXsrzqgepZoEOyZUIG2LBGtm5gsuBbVc=
+github.com/isd-sgcu/rpkm67-model v0.0.5 h1:S+uza3ps1CP+JzgGILg6WwqlFJFaBsOIsuNBiJWJug8=
+github.com/isd-sgcu/rpkm67-model v0.0.5/go.mod h1:dxgLSkrFpbQOXsrzqgepZoEOyZUIG2LBGtm5gsuBbVc=
+github.com/isd-sgcu/rpkm67-model v0.0.6 h1:pYlqOmeXGQIfHdOhyAta4kXkqnoLc4X3KWcAjPrAuds=
+github.com/isd-sgcu/rpkm67-model v0.0.6/go.mod h1:dxgLSkrFpbQOXsrzqgepZoEOyZUIG2LBGtm5gsuBbVc=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/josharian/intern v1.0.0 h1:vlS4z54oSdjm0bgjRigI+G1HpF+tI+9rE5LLzOg8HmY=

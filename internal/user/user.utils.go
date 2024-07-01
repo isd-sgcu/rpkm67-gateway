@@ -28,6 +28,13 @@ func ProtoToDto(in *userProto.User) *dto.User {
 		Baan:        in.Baan,
 		ReceiveGift: int(in.ReceiveGift),
 		GroupId:     in.GroupId,
+		Stamp: &dto.Stamp{
+			PointA: in.Stamp.PointA,
+			PointB: in.Stamp.PointB,
+			PointC: in.Stamp.PointC,
+			PointD: in.Stamp.PointD,
+			Stamp:  in.Stamp.Stamp,
+		},
 	}
 }
 
