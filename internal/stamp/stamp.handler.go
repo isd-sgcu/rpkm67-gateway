@@ -36,6 +36,7 @@ func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) H
 // @Accept plain
 // @Produce json
 // @Param userId path string true "User ID"
+// @Security BearerAuth
 // @Success 200 {object} dto.FindByUserIdStampResponse
 // @Failure 400 {object} apperror.AppError
 // @Router /stamp/{userId} [get]
@@ -64,12 +65,13 @@ func (h *handlerImpl) FindByUserId(c context.Ctx) {
 
 // StampByUserId godoc
 // @Summary Stamp by user id
-// @Description Stamp by user id
+// @Description Stamp of activity id by user id
 // @Tags stamp
 // @Accept json
 // @Produce json
 // @Param userId path string true "User ID"
-// @Param body body dto.StampByUserIdBodyRequest true "Stamp by user id request"
+// @Param body body dto.StampByUserIdBodyRequest true "activity_id is body can ONLY be: `workshop-1` to `workshop-5`, `landmark-1` to `landmark-4`, `club-1` to `club-2`"
+// @Security BearerAuth
 // @Success 200 {object} dto.StampByUserIdResponse
 // @Failure 400 {object} apperror.AppError
 // @Router /stamp/{userId} [post]

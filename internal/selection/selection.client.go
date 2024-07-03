@@ -10,6 +10,7 @@ import (
 type Client interface {
 	Create(ctx context.Context, in *selProto.CreateSelectionRequest, opts ...grpc.CallOption) (*selProto.CreateSelectionResponse, error)
 	FindByGroupId(ctx context.Context, in *selProto.FindByGroupIdSelectionRequest, opts ...grpc.CallOption) (*selProto.FindByGroupIdSelectionResponse, error)
+	Update(ctx context.Context, in *selProto.UpdateSelectionRequest, opts ...grpc.CallOption) (*selProto.UpdateSelectionResponse, error)
 	Delete(ctx context.Context, in *selProto.DeleteSelectionRequest, opts ...grpc.CallOption) (*selProto.DeleteSelectionResponse, error)
 	CountByBaanId(ctx context.Context, in *selProto.CountByBaanIdSelectionRequest, opts ...grpc.CallOption) (*selProto.CountByBaanIdSelectionResponse, error)
 }
@@ -30,6 +31,10 @@ func (c *clientImpl) Create(ctx context.Context, in *selProto.CreateSelectionReq
 
 func (c *clientImpl) FindByGroupId(ctx context.Context, in *selProto.FindByGroupIdSelectionRequest, opts ...grpc.CallOption) (*selProto.FindByGroupIdSelectionResponse, error) {
 	return c.client.FindByGroupId(ctx, in, opts...)
+}
+
+func (c *clientImpl) Update(ctx context.Context, in *selProto.UpdateSelectionRequest, opts ...grpc.CallOption) (*selProto.UpdateSelectionResponse, error) {
+	return c.client.Update(ctx, in, opts...)
 }
 
 func (c *clientImpl) Delete(ctx context.Context, in *selProto.DeleteSelectionRequest, opts ...grpc.CallOption) (*selProto.DeleteSelectionResponse, error) {

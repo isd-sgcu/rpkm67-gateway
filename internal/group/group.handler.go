@@ -17,7 +17,6 @@ type Handler interface {
 	Join(c context.Ctx)
 	DeleteMember(c context.Ctx)
 	Leave(c context.Ctx)
-	SelectBaan(c context.Ctx)
 }
 
 func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
@@ -183,37 +182,6 @@ func (h *handlerImpl) Leave(c context.Ctx) {
 
 	c.JSON(http.StatusOK, &dto.LeaveGroupResponse{
 		Group: res.Group,
-	})
-}
-
-func (h *handlerImpl) SelectBaan(c context.Ctx) {
-	body := &dto.SelectBaanRequest{}
-	if err := c.Bind(body); err != nil {
-		h.log.Named("SelectBaan").Error("Bind: failed to bind request body", zap.Error(err))
-		c.BadRequestError(err.Error())
-		return
-	}
-
-	if errorList := h.validate.Validate(body); errorList != nil {
-		h.log.Named("SelectBaan").Error("Validate: ", zap.Strings("errorList", errorList))
-		c.BadRequestError(strings.Join(errorList, ", "))
-		return
-	}
-
-	req := &dto.SelectBaanRequest{
-		UserId: body.UserId,
-		Baans:  body.Baans,
-	}
-
-	res, appErr := h.svc.SelectBaan(req)
-	if appErr != nil {
-		h.log.Named("SelectBaan").Error("SelectBaan: ", zap.Error(appErr))
-		c.ResponseError(appErr)
-		return
-	}
-
-	c.JSON(http.StatusOK, &dto.SelectBaanResponse{
-		Success: res.Success,
 	})
 }
 

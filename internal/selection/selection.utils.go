@@ -30,3 +30,14 @@ func ProtoToDtoList(selections []*selectionProto.Selection) []*dto.Selection {
 	}
 	return out
 }
+
+func ProtoToDtoBaanCounts(baanCounts []*selectionProto.BaanCount) []*dto.BaanCount {
+	out := make([]*dto.BaanCount, 0, len(baanCounts))
+	for _, baanCount := range baanCounts {
+		out = append(out, &dto.BaanCount{
+			BaanId: baanCount.BaanId,
+			Count:  int(baanCount.Count),
+		})
+	}
+	return out
+}

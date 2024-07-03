@@ -81,7 +81,7 @@ func (t *SelectionServiceTest) TestCreateSelectionSuccess() {
 	}
 
 	client.EXPECT().Create(gomock.Any(), t.CreateSelectionProtoRequest).Return(protoResp, nil)
-	actual, err := svc.CreateSelection(t.CreateSelectionDtoRequest)
+	actual, err := svc.Create(t.CreateSelectionDtoRequest)
 
 	t.Nil(err)
 	t.Equal(expected, actual)
@@ -96,7 +96,7 @@ func (t *SelectionServiceTest) TestCreateSelectionInvalidArgument() {
 	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
 
 	client.EXPECT().Create(gomock.Any(), protoReq).Return(nil, clientErr)
-	actual, err := svc.CreateSelection(t.CreateSelectionDtoRequest)
+	actual, err := svc.Create(t.CreateSelectionDtoRequest)
 
 	t.Nil(actual)
 	t.Equal(expected, err)
@@ -111,7 +111,7 @@ func (t *SelectionServiceTest) TestCreateSelectionInternalError() {
 	clientErr := apperror.InternalServer
 
 	client.EXPECT().Create(gomock.Any(), protoReq).Return(nil, clientErr)
-	actual, err := svc.CreateSelection(t.CreateSelectionDtoRequest)
+	actual, err := svc.Create(t.CreateSelectionDtoRequest)
 
 	t.Nil(actual)
 	t.Equal(expected, err)
@@ -129,7 +129,7 @@ func (t *SelectionServiceTest) TestFindByGroupIdSelectionSuccess() {
 	}
 
 	client.EXPECT().FindByGroupId(gomock.Any(), t.FindByGroupIdSelectionProtoRequest).Return(protoResp, nil)
-	actual, err := svc.FindByGroupIdSelection(t.FindByGroupIdSelectionDtoRequest)
+	actual, err := svc.FindByGroupId(t.FindByGroupIdSelectionDtoRequest)
 
 	t.Nil(err)
 	t.Equal(expected, actual)
@@ -144,7 +144,7 @@ func (t *SelectionServiceTest) TestFindByGroupIdSelectionInvalidArgument() {
 	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
 
 	client.EXPECT().FindByGroupId(gomock.Any(), protoReq).Return(nil, clientErr)
-	actual, err := svc.FindByGroupIdSelection(t.FindByGroupIdSelectionDtoRequest)
+	actual, err := svc.FindByGroupId(t.FindByGroupIdSelectionDtoRequest)
 
 	t.Nil(actual)
 	t.Equal(expected, err)
@@ -159,7 +159,7 @@ func (t *SelectionServiceTest) TestFindByGroupIdSelectionInternalError() {
 	clientErr := status.Error(codes.Internal, apperror.InternalServer.Error())
 
 	client.EXPECT().FindByGroupId(gomock.Any(), protoReq).Return(nil, clientErr)
-	actual, err := svc.FindByGroupIdSelection(t.FindByGroupIdSelectionDtoRequest)
+	actual, err := svc.FindByGroupId(t.FindByGroupIdSelectionDtoRequest)
 
 	t.Nil(actual)
 	t.Equal(expected, err)

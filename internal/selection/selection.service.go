@@ -11,9 +11,11 @@ import (
 )
 
 type Service interface {
-	CreateSelection(req *dto.CreateSelectionRequest) (*dto.CreateSelectionResponse, *apperror.AppError)
-	FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequest) (*dto.FindByGroupIdSelectionResponse, *apperror.AppError)
-	DeleteSelection(req *dto.DeleteSelectionRequest) (*dto.DeleteSelectionResponse, *apperror.AppError)
+	Create(req *dto.CreateSelectionRequest) (*dto.CreateSelectionResponse, *apperror.AppError)
+	FindByGroupId(req *dto.FindByGroupIdSelectionRequest) (*dto.FindByGroupIdSelectionResponse, *apperror.AppError)
+	Update(req *dto.UpdateSelectionRequest) (*dto.UpdateSelectionResponse, *apperror.AppError)
+	Delete(req *dto.DeleteSelectionRequest) (*dto.DeleteSelectionResponse, *apperror.AppError)
+	CountByBaanId() (*dto.CountByBaanIdSelectionResponse, *apperror.AppError)
 }
 
 type serviceImpl struct {
@@ -28,7 +30,7 @@ func NewService(client Client, log *zap.Logger) Service {
 	}
 }
 
-func (s *serviceImpl) CreateSelection(req *dto.CreateSelectionRequest) (*dto.CreateSelectionResponse, *apperror.AppError) {
+func (s *serviceImpl) Create(req *dto.CreateSelectionRequest) (*dto.CreateSelectionResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -37,7 +39,7 @@ func (s *serviceImpl) CreateSelection(req *dto.CreateSelectionRequest) (*dto.Cre
 		BaanId:  req.BaanId,
 	})
 	if err != nil {
-		s.log.Named("CreateSelection").Error("Create: ", zap.Error(err))
+		s.log.Named("Create").Error("Create: ", zap.Error(err))
 		return nil, apperror.HandleServiceError(err)
 	}
 
@@ -46,7 +48,7 @@ func (s *serviceImpl) CreateSelection(req *dto.CreateSelectionRequest) (*dto.Cre
 	}, nil
 }
 
-func (s *serviceImpl) FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequest) (*dto.FindByGroupIdSelectionResponse, *apperror.AppError) {
+func (s *serviceImpl) FindByGroupId(req *dto.FindByGroupIdSelectionRequest) (*dto.FindByGroupIdSelectionResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -54,7 +56,7 @@ func (s *serviceImpl) FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequ
 		GroupId: req.GroupId,
 	})
 	if err != nil {
-		s.log.Named("FindByGroupIdSelection").Error("FindByGroupId: ", zap.Error(err))
+		s.log.Named("FindByGroupId").Error("FindByGroupId: ", zap.Error(err))
 		return nil, apperror.HandleServiceError(err)
 	}
 
@@ -63,7 +65,24 @@ func (s *serviceImpl) FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequ
 	}, nil
 }
 
-func (s *serviceImpl) DeleteSelection(req *dto.DeleteSelectionRequest) (*dto.DeleteSelectionResponse, *apperror.AppError) {
+func (s *serviceImpl) Update(req *dto.UpdateSelectionRequest) (*dto.UpdateSelectionResponse, *apperror.AppError) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := s.client.Update(ctx, &selectionProto.UpdateSelectionRequest{
+		Selection: DtoToProto(req.Selection),
+	})
+	if err != nil {
+		s.log.Named("Update").Error("Update: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
+	}
+
+	return &dto.UpdateSelectionResponse{
+		Success: res.Success,
+	}, nil
+}
+
+func (s *serviceImpl) Delete(req *dto.DeleteSelectionRequest) (*dto.DeleteSelectionResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -71,11 +90,26 @@ func (s *serviceImpl) DeleteSelection(req *dto.DeleteSelectionRequest) (*dto.Del
 		GroupId: req.Id,
 	})
 	if err != nil {
-		s.log.Named("UpdateSelection").Error("Update: ", zap.Error(err))
+		s.log.Named("Delete").Error("Delete: ", zap.Error(err))
 		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.DeleteSelectionResponse{
 		Success: res.Success,
+	}, nil
+}
+
+func (s *serviceImpl) CountByBaanId() (*dto.CountByBaanIdSelectionResponse, *apperror.AppError) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := s.client.CountByBaanId(ctx, &selectionProto.CountByBaanIdSelectionRequest{})
+	if err != nil {
+		s.log.Named("CountByBaanId").Error("CountByBaanId: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
+	}
+
+	return &dto.CountByBaanIdSelectionResponse{
+		BaanCounts: ProtoToDtoBaanCounts(res.BaanCounts),
 	}, nil
 }

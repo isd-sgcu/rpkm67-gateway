@@ -66,12 +66,3 @@ type LeaveGroupRequest struct {
 type LeaveGroupResponse struct {
 	Group *Group `json:"group"`
 }
-
-type SelectBaanRequest struct {
-	UserId string   `json:"user_id"`
-	Baans  []string `json:"baans"`
-}
-
-type SelectBaanResponse struct {
-	Success bool `json:"success"`
-}
