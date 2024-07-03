@@ -117,7 +117,7 @@ func main() {
 	r := router.New(conf, corsHandler, authMiddleware, requestMetrics)
 
 	r.V1NonAuthGet("/auth/google-url", authHdr.GetGoogleLoginUrl)
-	r.V1NonAuthGet("/auth/verify-google", authHdr.VerifyGoogleLogin)
+	r.V1NonAuthGet("/auth/verify-google/:code", authHdr.VerifyGoogleLogin)
 	r.V1NonAuthPost("/auth/refresh", authHdr.RefreshToken)
 
 	r.V1Get("/user/:id", userHdr.FindOne)
