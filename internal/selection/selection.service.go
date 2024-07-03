@@ -13,7 +13,9 @@ import (
 type Service interface {
 	Create(req *dto.CreateSelectionRequest) (*dto.CreateSelectionResponse, *apperror.AppError)
 	FindByGroupId(req *dto.FindByGroupIdSelectionRequest) (*dto.FindByGroupIdSelectionResponse, *apperror.AppError)
+	Update(req *dto.UpdateSelectionRequest) (*dto.UpdateSelectionResponse, *apperror.AppError)
 	Delete(req *dto.DeleteSelectionRequest) (*dto.DeleteSelectionResponse, *apperror.AppError)
+	CountByBaanId() (*dto.CountByBaanIdSelectionResponse, *apperror.AppError)
 }
 
 type serviceImpl struct {
@@ -63,6 +65,23 @@ func (s *serviceImpl) FindByGroupId(req *dto.FindByGroupIdSelectionRequest) (*dt
 	}, nil
 }
 
+func (s *serviceImpl) Update(req *dto.UpdateSelectionRequest) (*dto.UpdateSelectionResponse, *apperror.AppError) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := s.client.Update(ctx, &selectionProto.UpdateSelectionRequest{
+		Selection: DtoToProto(req.Selection),
+	})
+	if err != nil {
+		s.log.Named("Update").Error("Update: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
+	}
+
+	return &dto.UpdateSelectionResponse{
+		Success: res.Success,
+	}, nil
+}
+
 func (s *serviceImpl) Delete(req *dto.DeleteSelectionRequest) (*dto.DeleteSelectionResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -77,5 +96,20 @@ func (s *serviceImpl) Delete(req *dto.DeleteSelectionRequest) (*dto.DeleteSelect
 
 	return &dto.DeleteSelectionResponse{
 		Success: res.Success,
+	}, nil
+}
+
+func (s *serviceImpl) CountByBaanId() (*dto.CountByBaanIdSelectionResponse, *apperror.AppError) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := s.client.CountByBaanId(ctx, &selectionProto.CountByBaanIdSelectionRequest{})
+	if err != nil {
+		s.log.Named("CountByBaanId").Error("CountByBaanId: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
+	}
+
+	return &dto.CountByBaanIdSelectionResponse{
+		BaanCounts: ProtoToDtoBaanCounts(res.BaanCounts),
 	}, nil
 }

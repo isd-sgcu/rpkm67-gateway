@@ -35,6 +35,21 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 	return m.recorder
 }
 
+// CountByBaanId mocks base method.
+func (m *MockService) CountByBaanId() (*dto.CountByBaanIdSelectionResponse, *apperror.AppError) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CountByBaanId")
+	ret0, _ := ret[0].(*dto.CountByBaanIdSelectionResponse)
+	ret1, _ := ret[1].(*apperror.AppError)
+	return ret0, ret1
+}
+
+// CountByBaanId indicates an expected call of CountByBaanId.
+func (mr *MockServiceMockRecorder) CountByBaanId() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountByBaanId", reflect.TypeOf((*MockService)(nil).CountByBaanId))
+}
+
 // Create mocks base method.
 func (m *MockService) Create(req *dto.CreateSelectionRequest) (*dto.CreateSelectionResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
@@ -78,4 +93,19 @@ func (m *MockService) FindByGroupId(req *dto.FindByGroupIdSelectionRequest) (*dt
 func (mr *MockServiceMockRecorder) FindByGroupId(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByGroupId", reflect.TypeOf((*MockService)(nil).FindByGroupId), req)
+}
+
+// Update mocks base method.
+func (m *MockService) Update(req *dto.UpdateSelectionRequest) (*dto.UpdateSelectionResponse, *apperror.AppError) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", req)
+	ret0, _ := ret[0].(*dto.UpdateSelectionResponse)
+	ret1, _ := ret[1].(*apperror.AppError)
+	return ret0, ret1
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockServiceMockRecorder) Update(req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockService)(nil).Update), req)
 }

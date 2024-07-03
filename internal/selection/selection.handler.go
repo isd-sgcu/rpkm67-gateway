@@ -13,7 +13,9 @@ import (
 type Handler interface {
 	Create(c context.Ctx)
 	FindByGroupId(c context.Ctx)
+	Update(c context.Ctx)
 	Delete(c context.Ctx)
+	CountByBaanId(c context.Ctx)
 }
 
 func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
@@ -82,6 +84,32 @@ func (h *handlerImpl) FindByGroupId(c context.Ctx) {
 	c.JSON(http.StatusOK, &dto.FindByGroupIdSelectionResponse{Selections: res.Selections})
 }
 
+func (h *handlerImpl) Update(c context.Ctx) {
+	body := &dto.UpdateSelectionRequest{}
+	if err := c.Bind(body); err != nil {
+		h.log.Named("Update").Error("Bind: failed to bind request body", zap.Error(err))
+		c.BadRequestError(err.Error())
+		return
+	}
+
+	if errorList := h.validate.Validate(body); errorList != nil {
+		h.log.Named("Update").Error("Validate: ", zap.Strings("errorList", errorList))
+		c.BadRequestError(strings.Join(errorList, ", "))
+		return
+	}
+
+	res, appErr := h.svc.Update(body)
+	if appErr != nil {
+		h.log.Named("Update").Error("Update: ", zap.Error(appErr))
+		c.ResponseError(appErr)
+		return
+	}
+
+	c.JSON(http.StatusOK, &dto.UpdateSelectionResponse{
+		Success: res.Success,
+	})
+}
+
 func (h *handlerImpl) Delete(c context.Ctx) {
 	body := &dto.DeleteSelectionRequest{}
 	if err := c.Bind(body); err != nil {
@@ -105,5 +133,18 @@ func (h *handlerImpl) Delete(c context.Ctx) {
 
 	c.JSON(http.StatusOK, &dto.DeleteSelectionResponse{
 		Success: res.Success,
+	})
+}
+
+func (h *handlerImpl) CountByBaanId(c context.Ctx) {
+	res, appErr := h.svc.CountByBaanId()
+	if appErr != nil {
+		h.log.Named("CountByBaanId").Error("CountByBaanId: ", zap.Error(appErr))
+		c.ResponseError(appErr)
+		return
+	}
+
+	c.JSON(http.StatusOK, &dto.CountByBaanIdSelectionResponse{
+		BaanCounts: res.BaanCounts,
 	})
 }
