@@ -75,7 +75,6 @@ func main() {
 	authClient := authProto.NewAuthServiceClient(authConn)
 	authSvc := auth.NewService(authClient, logger)
 	authHdr := auth.NewHandler(authSvc, validate, logger)
-	authMiddleware := middleware.NewAuthMiddleware(authSvc)
 
 	objClient := objectProto.NewObjectServiceClient(storeConn)
 	objSvc := object.NewService(objClient, logger)
@@ -112,6 +111,8 @@ func main() {
 	metricsHdr := metrics.NewHandler(metricsReg, logger)
 
 	countHdr := count.NewHandler(countMetrics, logger)
+
+	authMiddleware := middleware.NewAuthMiddleware(authSvc, requestMetrics)
 
 	r := router.New(conf, corsHandler, authMiddleware, requestMetrics)
 
