@@ -88,16 +88,16 @@ func (h *handlerImpl) GetGoogleLoginUrl(c context.Ctx) {
 // @Tags auth
 // @Accept plain
 // @Produce json
-// @Param code path string true "Code from google login"
+// @Query code path string true "Code from google login"
 // @Success 200 {object} dto.VerifyGoogleLoginResponse
 // @Failure 400 {object} apperror.AppError
 // @Failure 401 {object} apperror.AppError
 // @Failure 500 {object} apperror.AppError
-// @Router /auth/verify-google/{code} [get]
+// @Router /auth/verify-google [get]
 func (h *handlerImpl) VerifyGoogleLogin(c context.Ctx) {
-	code := c.Param("code")
+	code := c.Query("code")
 	if code == "" {
-		c.BadRequestError("url parameter 'code' not found")
+		c.BadRequestError("query parameter 'code' not found")
 	}
 
 	req := &dto.VerifyGoogleLoginRequest{
