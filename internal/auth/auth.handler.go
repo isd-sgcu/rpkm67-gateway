@@ -88,7 +88,7 @@ func (h *handlerImpl) GetGoogleLoginUrl(c context.Ctx) {
 // @Tags auth
 // @Accept plain
 // @Produce json
-// @Query code path string true "Code from google login"
+// @Param code query string true "Code from google login"
 // @Success 200 {object} dto.VerifyGoogleLoginResponse
 // @Failure 400 {object} apperror.AppError
 // @Failure 401 {object} apperror.AppError

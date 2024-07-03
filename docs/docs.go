@@ -93,7 +93,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/verify-google/{code}": {
+        "/auth/verify-google": {
             "get": {
                 "description": "returns user's credential",
                 "consumes": [
@@ -111,7 +111,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Code from google login",
                         "name": "code",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],

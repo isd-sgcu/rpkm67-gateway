@@ -298,14 +298,14 @@ paths:
       summary: Refresh access token with refresh token
       tags:
       - auth
-  /auth/verify-google/{code}:
+  /auth/verify-google:
     get:
       consumes:
       - text/plain
       description: returns user's credential
       parameters:
       - description: Code from google login
-        in: path
+        in: query
         name: code
         required: true
         type: string
