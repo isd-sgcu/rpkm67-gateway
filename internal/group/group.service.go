@@ -17,7 +17,6 @@ type Service interface {
 	Join(req *dto.JoinGroupRequest) (*dto.JoinGroupResponse, *apperror.AppError)
 	DeleteMember(req *dto.DeleteMemberGroupRequest) (*dto.DeleteMemberGroupResponse, *apperror.AppError)
 	Leave(req *dto.LeaveGroupRequest) (*dto.LeaveGroupResponse, *apperror.AppError)
-	SelectBaan(req *dto.SelectBaanRequest) (*dto.SelectBaanResponse, *apperror.AppError)
 }
 
 type serviceImpl struct {
@@ -119,24 +118,6 @@ func (s *serviceImpl) Leave(req *dto.LeaveGroupRequest) (*dto.LeaveGroupResponse
 
 	return &dto.LeaveGroupResponse{
 		Group: GroupProtoToDto(res.Group),
-	}, nil
-}
-
-func (s *serviceImpl) SelectBaan(req *dto.SelectBaanRequest) (*dto.SelectBaanResponse, *apperror.AppError) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	res, err := s.client.SelectBaan(ctx, &groupProto.SelectBaanRequest{
-		UserId: req.UserId,
-		Baans:  req.Baans,
-	})
-	if err != nil {
-		s.log.Named("SelectBaan").Error("SelectBaan: ", zap.Error(err))
-		return nil, apperror.HandleServiceError(err)
-	}
-
-	return &dto.SelectBaanResponse{
-		Success: res.Success,
 	}, nil
 }
 
