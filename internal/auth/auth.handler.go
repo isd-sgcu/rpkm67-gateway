@@ -95,7 +95,7 @@ func (h *handlerImpl) GetGoogleLoginUrl(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /auth/verify-google/{code} [get]
 func (h *handlerImpl) VerifyGoogleLogin(c context.Ctx) {
-	code := c.Query("code")
+	code := c.Param("code")
 	if code == "" {
 		c.BadRequestError("url parameter 'code' not found")
 	}
