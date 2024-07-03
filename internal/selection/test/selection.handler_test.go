@@ -64,10 +64,10 @@ func (t *SelectionHandlerTest) TestCreateSelectionSuccess() {
 
 	context.EXPECT().Bind(&dto.CreateSelectionRequest{}).SetArg(0, *t.CreateSelectionReq)
 	validator.EXPECT().Validate(t.CreateSelectionReq).Return(nil)
-	selectionSvc.EXPECT().CreateSelection(t.CreateSelectionReq).Return(expectedResp, nil)
+	selectionSvc.EXPECT().Create(t.CreateSelectionReq).Return(expectedResp, nil)
 	context.EXPECT().JSON(http.StatusCreated, expectedResp)
 
-	handler.CreateSelection(context)
+	handler.Create(context)
 }
 
 func (t *SelectionHandlerTest) TestCreateSelectionBindError() {
@@ -77,7 +77,7 @@ func (t *SelectionHandlerTest) TestCreateSelectionBindError() {
 	context.EXPECT().Bind(&dto.CreateSelectionRequest{}).Return(apperror.BadRequest)
 	context.EXPECT().BadRequestError(apperror.BadRequest.Error())
 
-	handler.CreateSelection(context)
+	handler.Create(context)
 }
 
 func (t *SelectionHandlerTest) TestCreateSelectionServiceError() {
@@ -88,10 +88,10 @@ func (t *SelectionHandlerTest) TestCreateSelectionServiceError() {
 
 	context.EXPECT().Bind(&dto.CreateSelectionRequest{}).SetArg(0, *t.CreateSelectionReq)
 	validator.EXPECT().Validate(t.CreateSelectionReq).Return(nil)
-	selectionSvc.EXPECT().CreateSelection(t.CreateSelectionReq).Return(nil, apperror.InternalServer)
+	selectionSvc.EXPECT().Create(t.CreateSelectionReq).Return(nil, apperror.InternalServer)
 	context.EXPECT().ResponseError(apperror.InternalServer)
 
-	handler.CreateSelection(context)
+	handler.Create(context)
 }
 
 func (t *SelectionHandlerTest) TestFindByStudentIdSelectionSuccess() {
@@ -106,10 +106,10 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionSuccess() {
 
 	context.EXPECT().Param("id").Return(t.Selection.GroupId)
 	validator.EXPECT().Validate(t.FindByGroupIdSelectionReq).Return(nil)
-	selectionSvc.EXPECT().FindByGroupIdSelection(t.FindByGroupIdSelectionReq).Return(expectedResp, nil)
+	selectionSvc.EXPECT().FindByGroupId(t.FindByGroupIdSelectionReq).Return(expectedResp, nil)
 	context.EXPECT().JSON(http.StatusOK, expectedResp)
 
-	handler.FindByGroupIdSelection(context)
+	handler.FindByGroupId(context)
 }
 
 func (t *SelectionHandlerTest) TestFindByStudentIdSelectionUrlParamEmpty() {
@@ -121,7 +121,7 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionUrlParamEmpty() {
 	context.EXPECT().Param("id").Return("")
 	context.EXPECT().BadRequestError(expectedErr.Error())
 
-	handler.FindByGroupIdSelection(context)
+	handler.FindByGroupId(context)
 }
 
 func (t *SelectionHandlerTest) TestFindByStudentIdSelectionServiceError() {
@@ -132,10 +132,10 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionServiceError() {
 
 	context.EXPECT().Param("id").Return(t.Selection.GroupId)
 	validator.EXPECT().Validate(t.FindByGroupIdSelectionReq).Return(nil)
-	selectionSvc.EXPECT().FindByGroupIdSelection(t.FindByGroupIdSelectionReq).Return(nil, apperror.InternalServer)
+	selectionSvc.EXPECT().FindByGroupId(t.FindByGroupIdSelectionReq).Return(nil, apperror.InternalServer)
 	context.EXPECT().ResponseError(apperror.InternalServer)
 
-	handler.FindByGroupIdSelection(context)
+	handler.FindByGroupId(context)
 }
 
 func (t *SelectionHandlerTest) TestDeleteSelectionSuccess() {
@@ -150,10 +150,10 @@ func (t *SelectionHandlerTest) TestDeleteSelectionSuccess() {
 
 	context.EXPECT().Bind(&dto.DeleteSelectionRequest{}).SetArg(0, *t.DeleteSelectionReq)
 	validator.EXPECT().Validate(t.DeleteSelectionReq).Return(nil)
-	selectionSvc.EXPECT().DeleteSelection(t.DeleteSelectionReq).Return(expectedResp, nil)
+	selectionSvc.EXPECT().Delete(t.DeleteSelectionReq).Return(expectedResp, nil)
 	context.EXPECT().JSON(http.StatusOK, expectedResp)
 
-	handler.DeleteSelection(context)
+	handler.Delete(context)
 }
 
 func (t *SelectionHandlerTest) TestDeleteSelectionBindError() {
@@ -163,7 +163,7 @@ func (t *SelectionHandlerTest) TestDeleteSelectionBindError() {
 	context.EXPECT().Bind(&dto.DeleteSelectionRequest{}).Return(apperror.BadRequest)
 	context.EXPECT().BadRequestError(apperror.BadRequest.Error())
 
-	handler.DeleteSelection(context)
+	handler.Delete(context)
 }
 
 func (t *SelectionHandlerTest) TestDeleteSelectionServiceError() {
@@ -174,8 +174,8 @@ func (t *SelectionHandlerTest) TestDeleteSelectionServiceError() {
 
 	context.EXPECT().Bind(&dto.DeleteSelectionRequest{}).SetArg(0, *t.DeleteSelectionReq)
 	validator.EXPECT().Validate(t.DeleteSelectionReq).Return(nil)
-	selectionSvc.EXPECT().DeleteSelection(t.DeleteSelectionReq).Return(nil, apperror.InternalServer)
+	selectionSvc.EXPECT().Delete(t.DeleteSelectionReq).Return(nil, apperror.InternalServer)
 	context.EXPECT().ResponseError(apperror.InternalServer)
 
-	handler.DeleteSelection(context)
+	handler.Delete(context)
 }

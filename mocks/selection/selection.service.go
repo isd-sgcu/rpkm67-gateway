@@ -35,47 +35,47 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 	return m.recorder
 }
 
-// CreateSelection mocks base method.
-func (m *MockService) CreateSelection(req *dto.CreateSelectionRequest) (*dto.CreateSelectionResponse, *apperror.AppError) {
+// Create mocks base method.
+func (m *MockService) Create(req *dto.CreateSelectionRequest) (*dto.CreateSelectionResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateSelection", req)
+	ret := m.ctrl.Call(m, "Create", req)
 	ret0, _ := ret[0].(*dto.CreateSelectionResponse)
 	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 
-// CreateSelection indicates an expected call of CreateSelection.
-func (mr *MockServiceMockRecorder) CreateSelection(req interface{}) *gomock.Call {
+// Create indicates an expected call of Create.
+func (mr *MockServiceMockRecorder) Create(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSelection", reflect.TypeOf((*MockService)(nil).CreateSelection), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockService)(nil).Create), req)
 }
 
-// DeleteSelection mocks base method.
-func (m *MockService) DeleteSelection(req *dto.DeleteSelectionRequest) (*dto.DeleteSelectionResponse, *apperror.AppError) {
+// Delete mocks base method.
+func (m *MockService) Delete(req *dto.DeleteSelectionRequest) (*dto.DeleteSelectionResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteSelection", req)
+	ret := m.ctrl.Call(m, "Delete", req)
 	ret0, _ := ret[0].(*dto.DeleteSelectionResponse)
 	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 
-// DeleteSelection indicates an expected call of DeleteSelection.
-func (mr *MockServiceMockRecorder) DeleteSelection(req interface{}) *gomock.Call {
+// Delete indicates an expected call of Delete.
+func (mr *MockServiceMockRecorder) Delete(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSelection", reflect.TypeOf((*MockService)(nil).DeleteSelection), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockService)(nil).Delete), req)
 }
 
-// FindByGroupIdSelection mocks base method.
-func (m *MockService) FindByGroupIdSelection(req *dto.FindByGroupIdSelectionRequest) (*dto.FindByGroupIdSelectionResponse, *apperror.AppError) {
+// FindByGroupId mocks base method.
+func (m *MockService) FindByGroupId(req *dto.FindByGroupIdSelectionRequest) (*dto.FindByGroupIdSelectionResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByGroupIdSelection", req)
+	ret := m.ctrl.Call(m, "FindByGroupId", req)
 	ret0, _ := ret[0].(*dto.FindByGroupIdSelectionResponse)
 	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 
-// FindByGroupIdSelection indicates an expected call of FindByGroupIdSelection.
-func (mr *MockServiceMockRecorder) FindByGroupIdSelection(req interface{}) *gomock.Call {
+// FindByGroupId indicates an expected call of FindByGroupId.
+func (mr *MockServiceMockRecorder) FindByGroupId(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByGroupIdSelection", reflect.TypeOf((*MockService)(nil).FindByGroupIdSelection), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByGroupId", reflect.TypeOf((*MockService)(nil).FindByGroupId), req)
 }
