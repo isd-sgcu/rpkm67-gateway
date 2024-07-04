@@ -106,7 +106,7 @@ services:
     networks:
       - rpkm67
     volumes:
-      - ./volumes/postgres:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
@@ -142,10 +142,14 @@ services:
     networks:
       - rpkm67
     volumes:
-      - ./volumes/grafana:/var/lib/grafana
+      - grafana:/var/lib/grafana
     ports:
       - "3006:3000"
 
 networks:
   rpkm67:
     name: rpkm67
+
+volumes:
+  postgres:
+  grafana:
