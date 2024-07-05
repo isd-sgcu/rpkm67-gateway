@@ -87,8 +87,8 @@ func main() {
 	pinSvc := pin.NewService(pinClient, logger)
 	pinHdr := pin.NewHandler(pinSvc, validate, logger)
 
-	stampProto := stampProto.NewStampServiceClient(backendConn)
-	stampSvc := stamp.NewService(stampProto, pinSvc, constant.PinRequiredActivity, logger)
+	stampClient := stampProto.NewStampServiceClient(backendConn)
+	stampSvc := stamp.NewService(stampClient, pinSvc, constant.PinRequiredActivity, logger)
 	stampHdr := stamp.NewHandler(stampSvc, validate, logger)
 
 	checkinClient := checkinProto.NewCheckInServiceClient(checkinConn)
