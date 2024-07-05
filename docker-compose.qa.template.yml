@@ -26,7 +26,6 @@ services:
     environment:
       APP_PORT: 3002
       APP_ENV: development
-      SERVICE_BACKEND: localhost:3003
       DB_URL: postgres://root:1234@db:5432/rpkm67_db
       REDIS_HOST: cache
       REDIS_PORT: 6379
