@@ -5,6 +5,8 @@ services:
   #   image: ghcr.io/isd-sgcu/rpkm67-gateway:latest
   #   container_name: gateway
   #   restart: unless-stopped
+      # depends_on:
+      #     - db
   #   environment:
   #     APP_PORT: 3001
   #     APP_ENV: development
@@ -14,6 +16,7 @@ services:
   #     SERVICE_BACKEND: backend:3003
   #     SERVICE_CHECKIN: checkin:3004
   #     SERVICE_STORE: store:3005
+  #     DB_URL: postgres://root:1234@db:5432/rpkm67_db
   #   networks:
   #     - rpkm67
   #   ports:
@@ -23,6 +26,8 @@ services:
     image: ghcr.io/isd-sgcu/rpkm67-auth:latest
     container_name: auth
     restart: unless-stopped
+    depends_on:
+      - db
     environment:
       APP_PORT: 3002
       APP_ENV: development
@@ -48,6 +53,8 @@ services:
     image: ghcr.io/isd-sgcu/rpkm67-backend:latest
     container_name: backend
     restart: unless-stopped
+    depends_on:
+      - db
     environment:
       APP_PORT: 3003
       APP_ENV: development
@@ -68,6 +75,8 @@ services:
     image: ghcr.io/isd-sgcu/rpkm67-checkin:latest
     container_name: checkin
     restart: unless-stopped
+    depends_on:
+      - db
     environment:
       APP_PORT: 3004
       APP_ENV: development

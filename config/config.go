@@ -24,10 +24,15 @@ type CorsConfig struct {
 	AllowOrigins string
 }
 
+type DbConfig struct {
+	Url string
+}
+
 type Config struct {
 	App  AppConfig
 	Svc  ServiceConfig
 	Cors CorsConfig
+	Db   DbConfig
 }
 
 func LoadConfig() (*Config, error) {
@@ -60,10 +65,15 @@ func LoadConfig() (*Config, error) {
 		AllowOrigins: os.Getenv("CORS_ORIGINS"),
 	}
 
+	DbConfig := DbConfig{
+		Url: os.Getenv("DB_URL"),
+	}
+
 	return &Config{
 		App:  appConfig,
 		Svc:  serviceConfig,
 		Cors: corsConfig,
+		Db:   DbConfig,
 	}, nil
 }
 

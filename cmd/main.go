@@ -8,6 +8,7 @@ import (
 	auth "github.com/isd-sgcu/rpkm67-gateway/internal/auth"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/checkin"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/count"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/db"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/metrics"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/object"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/pin"
@@ -137,6 +138,11 @@ func main() {
 	r.V1NonAuthPost("/count/:name", countHdr.Count)
 
 	r.V1NonAuth.GET("/metrics", metricsHdr.ExposeMetrics)
+
+	// Comment out in prod
+	dbConn, err := db.InitDatabase(&conf.Db, conf.App.IsDevelopment())
+	dbHdr := db.NewHandler(dbConn, logger)
+	r.V1Get("/clean-db", dbHdr.CleanDb)
 
 	if err := r.Run(fmt.Sprintf(":%v", conf.App.Port)); err != nil {
 		logger.Fatal("unable to start server")
