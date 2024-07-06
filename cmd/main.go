@@ -141,8 +141,13 @@ func main() {
 
 	// Comment out in prod
 	dbConn, err := db.InitDatabase(&conf.Db, conf.App.IsDevelopment())
+	if err != nil {
+		logger.Fatal("unable to connect to database")
+	}
+
 	dbHdr := db.NewHandler(dbConn, logger)
-	r.V1Get("/clean-db", dbHdr.CleanDb)
+	r.V1NonAuthGet("/clean-db", dbHdr.CleanDb)
+	// Comment out in prod
 
 	if err := r.Run(fmt.Sprintf(":%v", conf.App.Port)); err != nil {
 		logger.Fatal("unable to start server")
