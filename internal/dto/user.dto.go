@@ -25,7 +25,6 @@ type User struct {
 	Baan        string        `json:"baan"`
 	ReceiveGift int           `json:"receive_gift"`
 	GroupId     string        `json:"group_id"`
-	CheckIns    []*CheckIn    `json:"check_ins"`
 	Stamp       *Stamp        `json:"stamp"`
 }
 
