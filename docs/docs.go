@@ -458,6 +458,74 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "only group leader can update this status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "group"
+                ],
+                "summary": "Update group isConfirmed status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "userId of request sender (must be group leader)",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "update confirm request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateConfirmGroupBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateConfirmGroupResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
             }
         },
         "/pin": {
@@ -640,7 +708,7 @@ const docTemplate = `{
             }
         },
         "/user/picture/{id}": {
-            "post": {
+            "put": {
                 "security": [
                     {
                         "BearerAuth": []
@@ -708,7 +776,7 @@ const docTemplate = `{
             }
         },
         "/user/profile/{id}": {
-            "post": {
+            "patch": {
                 "security": [
                     {
                         "BearerAuth": []
@@ -1011,6 +1079,9 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "is_confirmed": {
+                    "type": "boolean"
+                },
                 "leader_id": {
                     "type": "string"
                 },
@@ -1050,8 +1121,8 @@ const docTemplate = `{
         "dto.ResetPinResponse": {
             "type": "object",
             "properties": {
-                "success": {
-                    "type": "boolean"
+                "pin": {
+                    "$ref": "#/definitions/dto.Pin"
                 }
             }
         },
@@ -1097,6 +1168,25 @@ const docTemplate = `{
             "properties": {
                 "stamp": {
                     "$ref": "#/definitions/dto.Stamp"
+                }
+            }
+        },
+        "dto.UpdateConfirmGroupBody": {
+            "type": "object",
+            "required": [
+                "is_confirmed"
+            ],
+            "properties": {
+                "is_confirmed": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "dto.UpdateConfirmGroupResponse": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "$ref": "#/definitions/dto.Group"
                 }
             }
         },

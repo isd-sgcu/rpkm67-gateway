@@ -1,10 +1,11 @@
 package dto
 
 type Group struct {
-	Id       string      `json:"id"`
-	LeaderID string      `json:"leader_id"`
-	Token    string      `json:"token"`
-	Members  []*UserInfo `json:"members"`
+	Id          string      `json:"id"`
+	LeaderID    string      `json:"leader_id"`
+	Token       string      `json:"token"`
+	Members     []*UserInfo `json:"members"`
+	IsConfirmed bool        `json:"is_confirmed"`
 }
 
 type UserInfo struct {
@@ -33,8 +34,7 @@ type FindByTokenGroupResponse struct {
 }
 
 type UpdateConfirmGroupBody struct {
-	UserId      string `json:"user_id" validate:"required"`
-	IsConfirmed bool   `json:"is_confirmed" validate:"required"`
+	IsConfirmed bool `json:"is_confirmed" validate:"required"`
 }
 
 type UpdateConfirmGroupRequest struct {

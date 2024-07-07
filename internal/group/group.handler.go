@@ -114,7 +114,27 @@ func (h *handlerImpl) FindByToken(c context.Ctx) {
 	})
 }
 
+// UpdateConfirm godoc
+// @Summary Update group isConfirmed status
+// @Description only group leader can update this status
+// @Tags group
+// @Accept json
+// @Produce json
+// @Param userId path string true "userId of request sender (must be group leader)"
+// @Param body body dto.UpdateConfirmGroupBody true "update confirm request"
+// @Security BearerAuth
+// @Success 200 {object} dto.UpdateConfirmGroupResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /group/{userId} [put]
 func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
+	userId := c.Param("userId")
+	if userId == "" {
+		c.BadRequestError("url parameter 'user_id' not found")
+	}
+
 	body := &dto.UpdateConfirmGroupBody{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("UpdateConfirm").Error("Bind: failed to bind request body", zap.Error(err))
@@ -129,7 +149,7 @@ func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
 	}
 
 	req := &dto.UpdateConfirmGroupRequest{
-		LeaderId:    body.UserId,
+		LeaderId:    userId,
 		IsConfirmed: body.IsConfirmed,
 	}
 

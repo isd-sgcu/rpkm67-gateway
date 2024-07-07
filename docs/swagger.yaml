@@ -111,6 +111,8 @@ definitions:
     properties:
       id:
         type: string
+      is_confirmed:
+        type: boolean
       leader_id:
         type: string
       members:
@@ -136,8 +138,8 @@ definitions:
     type: object
   dto.ResetPinResponse:
     properties:
-      success:
-        type: boolean
+      pin:
+        $ref: '#/definitions/dto.Pin'
     type: object
   dto.Stamp:
     properties:
@@ -167,6 +169,18 @@ definitions:
     properties:
       stamp:
         $ref: '#/definitions/dto.Stamp'
+    type: object
+  dto.UpdateConfirmGroupBody:
+    properties:
+      is_confirmed:
+        type: boolean
+    required:
+    - is_confirmed
+    type: object
+  dto.UpdateConfirmGroupResponse:
+    properties:
+      group:
+        $ref: '#/definitions/dto.Group'
     type: object
   dto.UpdateUserPictureResponse:
     properties:
@@ -528,6 +542,50 @@ paths:
       summary: Find group by user id
       tags:
       - group
+    put:
+      consumes:
+      - application/json
+      description: only group leader can update this status
+      parameters:
+      - description: userId of request sender (must be group leader)
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: update confirm request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateConfirmGroupBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UpdateConfirmGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Update group isConfirmed status
+      tags:
+      - group
   /group/token/{token}:
     get:
       consumes:
@@ -721,7 +779,7 @@ paths:
       tags:
       - user
   /user/picture/{id}:
-    post:
+    put:
       consumes:
       - application/json
       description: Updates only field that are in input, used for both user picture
@@ -766,7 +824,7 @@ paths:
       tags:
       - user
   /user/profile/{id}:
-    post:
+    patch:
       consumes:
       - application/json
       description: Updates only field that are in input, used for both user profile
