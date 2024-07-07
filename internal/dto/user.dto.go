@@ -55,7 +55,7 @@ type UpdateUserProfileBody struct {
 }
 
 type UpdateUserProfileRequest struct {
-	Id          string `json:"id" validate:"required"`
+	Id          string `json:"id"`
 	Nickname    string `json:"nickname"`
 	Title       string `json:"title"`
 	Firstname   string `json:"firstname"`

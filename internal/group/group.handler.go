@@ -11,12 +11,13 @@ import (
 )
 
 type Handler interface {
-	FindOne(c context.Ctx)
+	FindByUserId(c context.Ctx)
 	FindByToken(c context.Ctx)
-	Update(c context.Ctx)
+	UpdateConfirm(c context.Ctx)
 	Join(c context.Ctx)
-	DeleteMember(c context.Ctx)
 	Leave(c context.Ctx)
+	SwitchGroup(c context.Ctx) // basically leave current group and join another group
+	DeleteMember(c context.Ctx)
 }
 
 func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
@@ -33,33 +34,30 @@ type handlerImpl struct {
 	log      *zap.Logger
 }
 
-func (h *handlerImpl) DeleteMember(c context.Ctx) {
-	body := &dto.DeleteMemberGroupRequest{}
-	if err := c.Bind(body); err != nil {
-		h.log.Named("DeleteMember").Error("Bind: failed to bind request body", zap.Error(err))
-		c.BadRequestError(err.Error())
-		return
+func (h *handlerImpl) FindByUserId(c context.Ctx) {
+	userId := c.Param("id")
+	if userId == "" {
+		c.BadRequestError("url parameter 'user_id' not found")
 	}
 
-	if errorList := h.validate.Validate(body); errorList != nil {
-		h.log.Named("DeleteMember").Error("Validate: ", zap.Strings("errorList", errorList))
+	req := &dto.FindByUserIdGroupRequest{
+		UserId: userId,
+	}
+
+	if errorList := h.validate.Validate(req); errorList != nil {
+		h.log.Named("FindOne").Error("Validate: ", zap.Strings("errorList", errorList))
 		c.BadRequestError(strings.Join(errorList, ", "))
 		return
 	}
 
-	req := &dto.DeleteMemberGroupRequest{
-		UserId:   body.UserId,
-		LeaderId: body.LeaderId,
-	}
-
-	res, appErr := h.svc.DeleteMember(req)
+	res, appErr := h.svc.FindByUserId(req)
 	if appErr != nil {
-		h.log.Named("DeleteMember").Error("DeleteMember: ", zap.Error(appErr))
+		h.log.Named("FindOne").Error("FindOne: ", zap.Error(appErr))
 		c.ResponseError(appErr)
 		return
 	}
 
-	c.JSON(http.StatusOK, &dto.DeleteMemberGroupResponse{
+	c.JSON(http.StatusOK, &dto.FindByUserIdGroupResponse{
 		Group: res.Group,
 	})
 }
@@ -96,30 +94,32 @@ func (h *handlerImpl) FindByToken(c context.Ctx) {
 	})
 }
 
-func (h *handlerImpl) FindOne(c context.Ctx) {
-	userId := c.Param("id")
-	if userId == "" {
-		c.BadRequestError("url parameter 'user_id' not found")
+func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
+	body := &dto.UpdateConfirmGroupRequest{}
+	if err := c.Bind(body); err != nil {
+		h.log.Named("Update").Error("Bind: failed to bind request body", zap.Error(err))
+		c.BadRequestError(err.Error())
+		return
 	}
 
-	req := &dto.FindOneGroupRequest{
-		UserId: userId,
-	}
-
-	if errorList := h.validate.Validate(req); errorList != nil {
-		h.log.Named("FindOne").Error("Validate: ", zap.Strings("errorList", errorList))
+	if errorList := h.validate.Validate(body); errorList != nil {
+		h.log.Named("Update").Error("Validate: ", zap.Strings("errorList", errorList))
 		c.BadRequestError(strings.Join(errorList, ", "))
 		return
 	}
 
-	res, appErr := h.svc.FindOne(req)
+	req := &dto.UpdateConfirmGroupRequest{
+		// Group: body.Group,
+	}
+
+	res, appErr := h.svc.UpdateConfirm(req)
 	if appErr != nil {
-		h.log.Named("FindOne").Error("FindOne: ", zap.Error(appErr))
+		h.log.Named("Update").Error("Update: ", zap.Error(appErr))
 		c.ResponseError(appErr)
 		return
 	}
 
-	c.JSON(http.StatusOK, &dto.FindOneGroupResponse{
+	c.JSON(http.StatusOK, &dto.UpdateConfirmGroupResponse{
 		Group: res.Group,
 	})
 }
@@ -185,32 +185,63 @@ func (h *handlerImpl) Leave(c context.Ctx) {
 	})
 }
 
-func (h *handlerImpl) Update(c context.Ctx) {
-	body := &dto.UpdateGroupRequest{}
+func (h *handlerImpl) SwitchGroup(c context.Ctx) {
+	body := &dto.LeaveGroupRequest{}
 	if err := c.Bind(body); err != nil {
-		h.log.Named("Update").Error("Bind: failed to bind request body", zap.Error(err))
+		h.log.Named("Leave").Error("Bind: failed to bind request body", zap.Error(err))
 		c.BadRequestError(err.Error())
 		return
 	}
 
 	if errorList := h.validate.Validate(body); errorList != nil {
-		h.log.Named("Update").Error("Validate: ", zap.Strings("errorList", errorList))
+		h.log.Named("Leave").Error("Validate: ", zap.Strings("errorList", errorList))
 		c.BadRequestError(strings.Join(errorList, ", "))
 		return
 	}
 
-	req := &dto.UpdateGroupRequest{
-		Group: body.Group,
+	req := &dto.LeaveGroupRequest{
+		UserId: body.UserId,
 	}
 
-	res, appErr := h.svc.Update(req)
+	res, appErr := h.svc.Leave(req)
 	if appErr != nil {
-		h.log.Named("Update").Error("Update: ", zap.Error(appErr))
+		h.log.Named("Leave").Error("Leave: ", zap.Error(appErr))
 		c.ResponseError(appErr)
 		return
 	}
 
-	c.JSON(http.StatusOK, &dto.UpdateGroupResponse{
+	c.JSON(http.StatusOK, &dto.LeaveGroupResponse{
+		Group: res.Group,
+	})
+}
+
+func (h *handlerImpl) DeleteMember(c context.Ctx) {
+	body := &dto.DeleteMemberGroupRequest{}
+	if err := c.Bind(body); err != nil {
+		h.log.Named("DeleteMember").Error("Bind: failed to bind request body", zap.Error(err))
+		c.BadRequestError(err.Error())
+		return
+	}
+
+	if errorList := h.validate.Validate(body); errorList != nil {
+		h.log.Named("DeleteMember").Error("Validate: ", zap.Strings("errorList", errorList))
+		c.BadRequestError(strings.Join(errorList, ", "))
+		return
+	}
+
+	req := &dto.DeleteMemberGroupRequest{
+		UserId:   body.UserId,
+		LeaderId: body.LeaderId,
+	}
+
+	res, appErr := h.svc.DeleteMember(req)
+	if appErr != nil {
+		h.log.Named("DeleteMember").Error("DeleteMember: ", zap.Error(appErr))
+		c.ResponseError(appErr)
+		return
+	}
+
+	c.JSON(http.StatusOK, &dto.DeleteMemberGroupResponse{
 		Group: res.Group,
 	})
 }

@@ -14,11 +14,11 @@ type UserInfo struct {
 	ImageUrl  string `json:"image_url"`
 }
 
-type FindOneGroupRequest struct {
+type FindByUserIdGroupRequest struct {
 	UserId string `json:"user_id"`
 }
 
-type FindOneGroupResponse struct {
+type FindByUserIdGroupResponse struct {
 	Group *Group `json:"group"`
 }
 
@@ -32,22 +32,40 @@ type FindByTokenGroupResponse struct {
 	Leader *UserInfo `json:"leader"`
 }
 
-type UpdateGroupRequest struct {
-	Group    *Group `json:"group"`
-	LeaderId string `json:"leader_id"`
+type UpdateConfirmGroupBody struct {
+	UserId      string `json:"user_id" validate:"required"`
+	IsConfirmed bool   `json:"is_confirmed" validate:"required"`
 }
 
-type UpdateGroupResponse struct {
+type UpdateConfirmGroupRequest struct {
+	LeaderId    string `json:"leader_id"`
+	IsConfirmed bool   `json:"is_confirmed"`
+}
+
+type UpdateConfirmGroupResponse struct {
 	Group *Group `json:"group"`
 }
 
 type JoinGroupRequest struct {
-	Token  string `json:"token"`
-	UserId string `json:"user_id"`
+	Token  string `json:"token" validate:"required"`
+	UserId string `json:"user_id" validate:"required"`
 }
 
 type JoinGroupResponse struct {
 	Group *Group `json:"group"`
+}
+
+type LeaveGroupRequest struct {
+	UserId string `json:"user_id" validate:"required"`
+}
+
+type LeaveGroupResponse struct {
+	Group *Group `json:"group"`
+}
+
+type DeleteMemberGroupBody struct {
+	RequestingUserId string `json:"requesting_user_id" validate:"required"`
+	DeletedUserId    string `json:"deleted_user_id" validate:"required"`
 }
 
 type DeleteMemberGroupRequest struct {
@@ -59,10 +77,7 @@ type DeleteMemberGroupResponse struct {
 	Group *Group `json:"group"`
 }
 
-type LeaveGroupRequest struct {
-	UserId string `json:"user_id"`
-}
-
-type LeaveGroupResponse struct {
-	Group *Group `json:"group"`
+type SwitchGroupBody struct {
+	UserId        string `json:"user_id" validate:"required"`
+	NewGroupToken string `json:"new_group_token" validate:"required"`
 }
