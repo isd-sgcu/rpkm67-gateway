@@ -72,11 +72,11 @@ func (s *serviceImpl) UpdateConfirm(req *dto.UpdateConfirmGroupRequest) (*dto.Up
 	defer cancel()
 
 	res, err := s.client.UpdateConfirm(ctx, &groupProto.UpdateConfirmGroupRequest{
-		// Group:    GroupDtoToProto(req.Group),
-		LeaderId: req.LeaderId,
+		LeaderId:    req.LeaderId,
+		IsConfirmed: req.IsConfirmed,
 	})
 	if err != nil {
-		s.log.Named("Update").Error("Update: ", zap.Error(err))
+		s.log.Named("UpdateConfirm").Error("UpdateConfirm: ", zap.Error(err))
 		return nil, apperror.HandleServiceError(err)
 	}
 
