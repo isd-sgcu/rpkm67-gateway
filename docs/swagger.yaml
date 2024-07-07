@@ -71,12 +71,26 @@ definitions:
           $ref: '#/definitions/dto.CheckIn'
         type: array
     type: object
+  dto.FindByTokenGroupResponse:
+    properties:
+      id:
+        type: string
+      leader:
+        $ref: '#/definitions/dto.UserInfo'
+      token:
+        type: string
+    type: object
   dto.FindByUserIdCheckInResponse:
     properties:
       checkins:
         items:
           $ref: '#/definitions/dto.CheckIn'
         type: array
+    type: object
+  dto.FindByUserIdGroupResponse:
+    properties:
+      group:
+        $ref: '#/definitions/dto.Group'
     type: object
   dto.FindByUserIdStampResponse:
     properties:
@@ -91,6 +105,19 @@ definitions:
   dto.GetGoogleLoginUrlResponse:
     properties:
       url:
+        type: string
+    type: object
+  dto.Group:
+    properties:
+      id:
+        type: string
+      leader_id:
+        type: string
+      members:
+        items:
+          $ref: '#/definitions/dto.UserInfo'
+        type: array
+      token:
         type: string
     type: object
   dto.Pin:
@@ -188,10 +215,6 @@ definitions:
     properties:
       baan:
         type: string
-      check_ins:
-        items:
-          $ref: '#/definitions/dto.CheckIn'
-        type: array
       drug_allergy:
         type: string
       email:
@@ -232,6 +255,17 @@ definitions:
         type: string
       year:
         type: integer
+    type: object
+  dto.UserInfo:
+    properties:
+      first_name:
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      last_name:
+        type: string
     type: object
   dto.VerifyGoogleLoginResponse:
     properties:
@@ -413,6 +447,23 @@ paths:
       summary: Find check-ins by email
       tags:
       - checkin
+  /clean-db:
+    get:
+      description: must be used only in development environment
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Credential'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Clean all data in database
+      tags:
+      - db
   /count:
     post:
       consumes:
@@ -438,6 +489,84 @@ paths:
       summary: Count clicks
       tags:
       - count
+  /group/{userId}:
+    get:
+      consumes:
+      - text/plain
+      description: user must be member of that group
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FindByUserIdGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Find group by user id
+      tags:
+      - group
+  /group/token/{token}:
+    get:
+      consumes:
+      - text/plain
+      description: Group leader invites member by giving them the token
+      parameters:
+      - description: token of group
+        in: path
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FindByTokenGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Find group by group's token
+      tags:
+      - group
   /pin:
     get:
       description: Staff only

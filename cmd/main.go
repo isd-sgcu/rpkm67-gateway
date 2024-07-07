@@ -131,8 +131,8 @@ func main() {
 	r.V1Patch("/user/profile/:id", userHdr.UpdateProfile)
 	r.V1Put("/user/picture/:id", userHdr.UpdatePicture)
 
-	r.V1Get("/group/token/:token", groupHdr.FindByToken)
 	r.V1Get("/group/:userId", groupHdr.FindByUserId)
+	r.V1Get("/group/token/:token", groupHdr.FindByToken)
 	r.V1Put("/group/:userId", groupHdr.UpdateConfirm)
 	r.V1Post("/group/join", groupHdr.Join)
 	r.V1Post("/group/leave", groupHdr.Leave)

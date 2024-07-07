@@ -34,8 +34,22 @@ type handlerImpl struct {
 	log      *zap.Logger
 }
 
+// FindByUserId godoc
+// @Summary Find group by user id
+// @Description user must be member of that group
+// @Tags group
+// @Accept plain
+// @Produce json
+// @Param userId path string true "User ID"
+// @Security BearerAuth
+// @Success 200 {object} dto.FindByUserIdGroupResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /group/{userId} [get]
 func (h *handlerImpl) FindByUserId(c context.Ctx) {
-	userId := c.Param("id")
+	userId := c.Param("userId")
 	if userId == "" {
 		c.BadRequestError("url parameter 'user_id' not found")
 	}
@@ -62,6 +76,20 @@ func (h *handlerImpl) FindByUserId(c context.Ctx) {
 	})
 }
 
+// FindByToken godoc
+// @Summary Find group by group's token
+// @Description Group leader invites member by giving them the token
+// @Tags group
+// @Accept plain
+// @Produce json
+// @Param token path string true "token of group"
+// @Security BearerAuth
+// @Success 200 {object} dto.FindByTokenGroupResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /group/token/{token} [get]
 func (h *handlerImpl) FindByToken(c context.Ctx) {
 	token := c.Param("token")
 	if token == "" {
