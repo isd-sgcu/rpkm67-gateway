@@ -45,14 +45,14 @@ func (h *handlerImpl) FindByUserId(c context.Ctx) {
 	}
 
 	if errorList := h.validate.Validate(req); errorList != nil {
-		h.log.Named("FindOne").Error("Validate: ", zap.Strings("errorList", errorList))
+		h.log.Named("FindByUserId").Error("Validate: ", zap.Strings("errorList", errorList))
 		c.BadRequestError(strings.Join(errorList, ", "))
 		return
 	}
 
 	res, appErr := h.svc.FindByUserId(req)
 	if appErr != nil {
-		h.log.Named("FindOne").Error("FindOne: ", zap.Error(appErr))
+		h.log.Named("FindByUserId").Error("FindByUserId: ", zap.Error(appErr))
 		c.ResponseError(appErr)
 		return
 	}
@@ -97,13 +97,13 @@ func (h *handlerImpl) FindByToken(c context.Ctx) {
 func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
 	body := &dto.UpdateConfirmGroupRequest{}
 	if err := c.Bind(body); err != nil {
-		h.log.Named("Update").Error("Bind: failed to bind request body", zap.Error(err))
+		h.log.Named("UpdateConfirm").Error("Bind: failed to bind request body", zap.Error(err))
 		c.BadRequestError(err.Error())
 		return
 	}
 
 	if errorList := h.validate.Validate(body); errorList != nil {
-		h.log.Named("Update").Error("Validate: ", zap.Strings("errorList", errorList))
+		h.log.Named("UpdateConfirm").Error("Validate: ", zap.Strings("errorList", errorList))
 		c.BadRequestError(strings.Join(errorList, ", "))
 		return
 	}
@@ -114,7 +114,7 @@ func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
 
 	res, appErr := h.svc.UpdateConfirm(req)
 	if appErr != nil {
-		h.log.Named("Update").Error("Update: ", zap.Error(appErr))
+		h.log.Named("UpdateConfirm").Error("Update: ", zap.Error(appErr))
 		c.ResponseError(appErr)
 		return
 	}
@@ -188,13 +188,13 @@ func (h *handlerImpl) Leave(c context.Ctx) {
 func (h *handlerImpl) SwitchGroup(c context.Ctx) {
 	body := &dto.LeaveGroupRequest{}
 	if err := c.Bind(body); err != nil {
-		h.log.Named("Leave").Error("Bind: failed to bind request body", zap.Error(err))
+		h.log.Named("SwitchGroup").Error("Bind: failed to bind request body", zap.Error(err))
 		c.BadRequestError(err.Error())
 		return
 	}
 
 	if errorList := h.validate.Validate(body); errorList != nil {
-		h.log.Named("Leave").Error("Validate: ", zap.Strings("errorList", errorList))
+		h.log.Named("SwitchGroup").Error("Validate: ", zap.Strings("errorList", errorList))
 		c.BadRequestError(strings.Join(errorList, ", "))
 		return
 	}
@@ -205,7 +205,7 @@ func (h *handlerImpl) SwitchGroup(c context.Ctx) {
 
 	res, appErr := h.svc.Leave(req)
 	if appErr != nil {
-		h.log.Named("Leave").Error("Leave: ", zap.Error(appErr))
+		h.log.Named("SwitchGroup").Error("Leave: ", zap.Error(appErr))
 		c.ResponseError(appErr)
 		return
 	}
