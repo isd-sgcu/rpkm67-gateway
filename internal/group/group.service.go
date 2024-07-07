@@ -72,7 +72,7 @@ func (s *serviceImpl) FindOne(req *dto.FindOneGroupRequest) (*dto.FindOneGroupRe
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res, err := s.client.FindOne(ctx, &groupProto.FindOneGroupRequest{
+	res, err := s.client.FindByUserId(ctx, &groupProto.FindByUserIdGroupRequest{
 		UserId: req.UserId,
 	})
 	if err != nil {
@@ -125,8 +125,8 @@ func (s *serviceImpl) Update(req *dto.UpdateGroupRequest) (*dto.UpdateGroupRespo
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res, err := s.client.Update(ctx, &groupProto.UpdateGroupRequest{
-		Group:    GroupDtoToProto(req.Group),
+	res, err := s.client.UpdateConfirm(ctx, &groupProto.UpdateConfirmGroupRequest{
+		// Group:    GroupDtoToProto(req.Group),
 		LeaderId: req.LeaderId,
 	})
 	if err != nil {

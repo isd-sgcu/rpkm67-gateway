@@ -90,5 +90,5 @@ func (h *handlerImpl) ResetPin(c context.Ctx) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &dto.ResetPinResponse{Success: res.Success})
+	c.JSON(http.StatusOK, &dto.ResetPinResponse{Pin: res.Pin})
 }
