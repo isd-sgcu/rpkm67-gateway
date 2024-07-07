@@ -63,21 +63,13 @@ func (h *handlerImpl) FindByUserId(c context.Ctx) {
 }
 
 func (h *handlerImpl) FindByToken(c context.Ctx) {
-	body := &dto.FindByTokenGroupRequest{}
-	if err := c.Bind(body); err != nil {
-		h.log.Named("FindByToken").Error("Bind: failed to bind request body", zap.Error(err))
-		c.BadRequestError(err.Error())
-		return
-	}
-
-	if errorList := h.validate.Validate(body); errorList != nil {
-		h.log.Named("FindByToken").Error("Validate: ", zap.Strings("errorList", errorList))
-		c.BadRequestError(strings.Join(errorList, ", "))
-		return
+	token := c.Param("token")
+	if token == "" {
+		c.BadRequestError("url parameter 'token' not found")
 	}
 
 	req := &dto.FindByTokenGroupRequest{
-		Token: body.Token,
+		Token: token,
 	}
 
 	res, appErr := h.svc.FindByToken(req)
@@ -95,7 +87,7 @@ func (h *handlerImpl) FindByToken(c context.Ctx) {
 }
 
 func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
-	body := &dto.UpdateConfirmGroupRequest{}
+	body := &dto.UpdateConfirmGroupBody{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("UpdateConfirm").Error("Bind: failed to bind request body", zap.Error(err))
 		c.BadRequestError(err.Error())
@@ -109,7 +101,8 @@ func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
 	}
 
 	req := &dto.UpdateConfirmGroupRequest{
-		// Group: body.Group,
+		LeaderId:    body.UserId,
+		IsConfirmed: body.IsConfirmed,
 	}
 
 	res, appErr := h.svc.UpdateConfirm(req)
@@ -186,7 +179,7 @@ func (h *handlerImpl) Leave(c context.Ctx) {
 }
 
 func (h *handlerImpl) SwitchGroup(c context.Ctx) {
-	body := &dto.LeaveGroupRequest{}
+	body := &dto.SwitchGroupBody{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("SwitchGroup").Error("Bind: failed to bind request body", zap.Error(err))
 		c.BadRequestError(err.Error())
@@ -199,24 +192,34 @@ func (h *handlerImpl) SwitchGroup(c context.Ctx) {
 		return
 	}
 
-	req := &dto.LeaveGroupRequest{
+	leaveReq := &dto.LeaveGroupRequest{
 		UserId: body.UserId,
 	}
-
-	res, appErr := h.svc.Leave(req)
+	_, appErr := h.svc.Leave(leaveReq)
 	if appErr != nil {
 		h.log.Named("SwitchGroup").Error("Leave: ", zap.Error(appErr))
 		c.ResponseError(appErr)
 		return
 	}
 
-	c.JSON(http.StatusOK, &dto.LeaveGroupResponse{
+	joinReq := &dto.JoinGroupRequest{
+		Token:  body.NewGroupToken,
+		UserId: body.UserId,
+	}
+	res, appErr := h.svc.Join(joinReq)
+	if appErr != nil {
+		h.log.Named("SwitchGroup").Error("Join: ", zap.Error(appErr))
+		c.ResponseError(appErr)
+		return
+	}
+
+	c.JSON(http.StatusOK, &dto.SwitchGroupResponse{
 		Group: res.Group,
 	})
 }
 
 func (h *handlerImpl) DeleteMember(c context.Ctx) {
-	body := &dto.DeleteMemberGroupRequest{}
+	body := &dto.DeleteMemberGroupBody{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("DeleteMember").Error("Bind: failed to bind request body", zap.Error(err))
 		c.BadRequestError(err.Error())
@@ -230,8 +233,8 @@ func (h *handlerImpl) DeleteMember(c context.Ctx) {
 	}
 
 	req := &dto.DeleteMemberGroupRequest{
-		UserId:   body.UserId,
-		LeaderId: body.LeaderId,
+		UserId:   body.DeletedUserId,
+		LeaderId: body.RequestingUserId,
 	}
 
 	res, appErr := h.svc.DeleteMember(req)

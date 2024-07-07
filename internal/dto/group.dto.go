@@ -63,6 +63,15 @@ type LeaveGroupResponse struct {
 	Group *Group `json:"group"`
 }
 
+type SwitchGroupBody struct {
+	UserId        string `json:"user_id" validate:"required"`
+	NewGroupToken string `json:"new_group_token" validate:"required"`
+}
+
+type SwitchGroupResponse struct {
+	Group *Group `json:"group"`
+}
+
 type DeleteMemberGroupBody struct {
 	RequestingUserId string `json:"requesting_user_id" validate:"required"`
 	DeletedUserId    string `json:"deleted_user_id" validate:"required"`
@@ -75,9 +84,4 @@ type DeleteMemberGroupRequest struct {
 
 type DeleteMemberGroupResponse struct {
 	Group *Group `json:"group"`
-}
-
-type SwitchGroupBody struct {
-	UserId        string `json:"user_id" validate:"required"`
-	NewGroupToken string `json:"new_group_token" validate:"required"`
 }
