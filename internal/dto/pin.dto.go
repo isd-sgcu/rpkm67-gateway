@@ -17,7 +17,7 @@ type ResetPinRequest struct {
 }
 
 type ResetPinResponse struct {
-	Success bool `json:"success"`
+	Pin *Pin `json:"pin"`
 }
 
 type CheckPinRequest struct {

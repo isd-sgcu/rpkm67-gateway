@@ -56,7 +56,7 @@ func (s *serviceImpl) ResetPin(req *dto.ResetPinRequest) (*dto.ResetPinResponse,
 	}
 
 	return &dto.ResetPinResponse{
-		Success: res.Success,
+		Pin: ProtoToDto(res.Pin),
 	}, nil
 }
 
