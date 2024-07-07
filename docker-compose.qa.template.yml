@@ -39,6 +39,7 @@ services:
       JWT_ACCESS_TTL: 3600
       JWT_REFRESH_TTL: 259200
       JWT_ISSUER: rpkm67.sgcu.in.th
+      AUTH_CHECK_CHULA_EMAIL: false
       OAUTH_CLIENT_ID: client_id
       OAUTH_CLIENT_SECRET: client_secret
       OAUTH_REDIRECT_URI: http://localhost:3000
