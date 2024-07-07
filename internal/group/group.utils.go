@@ -10,7 +10,7 @@ func GroupProtoToDto(group *groupProto.Group) *dto.Group {
 		Id:       group.Id,
 		LeaderID: group.LeaderID,
 		Token:    group.Token,
-		Members:  convertMembers(group.Members),
+		Members:  membersProtoToDto(group.Members),
 	}
 }
 
@@ -41,7 +41,7 @@ func UserInfoProtoToDto(userInfo *groupProto.UserInfo) *dto.UserInfo {
 	}
 }
 
-func convertMembers(members []*groupProto.UserInfo) []*dto.UserInfo {
+func membersProtoToDto(members []*groupProto.UserInfo) []*dto.UserInfo {
 	var convertedMembers []*dto.UserInfo
 	for _, member := range members {
 		convertedMembers = append(convertedMembers, &dto.UserInfo{
