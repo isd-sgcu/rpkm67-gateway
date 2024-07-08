@@ -784,6 +784,12 @@ const docTemplate = `{
             "properties": {
                 "checkin": {
                     "$ref": "#/definitions/dto.CheckIn"
+                },
+                "firstname": {
+                    "type": "string"
+                },
+                "lastname": {
+                    "type": "string"
                 }
             }
         },
