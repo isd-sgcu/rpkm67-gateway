@@ -6,6 +6,7 @@ import (
 
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/user"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"go.uber.org/zap"
 )
@@ -18,13 +19,15 @@ type Handler interface {
 
 type handlerImpl struct {
 	svc      Service
+	userSvc  user.Service
 	validate validator.DtoValidator
 	log      *zap.Logger
 }
 
-func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
+func NewHandler(svc Service, userSvc user.Service, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
 		svc:      svc,
+		userSvc:  userSvc,
 		validate: validate,
 		log:      log,
 	}
@@ -68,6 +71,14 @@ func (h *handlerImpl) Create(c context.Ctx) {
 		return
 	}
 
+	resUser, appErr := h.userSvc.FindOne(&dto.FindOneUserRequest{Id: res.CheckIn.UserID})
+	if appErr != nil {
+		h.log.Named("Create").Error("FindOne: ", zap.Error(appErr))
+		c.ResponseError(appErr)
+		return
+	}
+	h.log.Info("user found", zap.Any("user", resUser.User))
+
 	c.JSON(http.StatusCreated, &dto.CreateCheckInResponse{
 		CheckIn: &dto.CheckIn{
 			ID:     res.CheckIn.ID,
@@ -75,6 +86,8 @@ func (h *handlerImpl) Create(c context.Ctx) {
 			Email:  res.CheckIn.Email,
 			Event:  res.CheckIn.Event,
 		},
+		Firstname: resUser.User.Firstname,
+		Lastname:  resUser.User.Lastname,
 	})
 }
 

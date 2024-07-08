@@ -94,7 +94,7 @@ func main() {
 
 	checkinClient := checkinProto.NewCheckInServiceClient(checkinConn)
 	checkinSvc := checkin.NewService(checkinClient, logger)
-	checkinHdr := checkin.NewHandler(checkinSvc, validate, logger)
+	checkinHdr := checkin.NewHandler(checkinSvc, userSvc, validate, logger)
 
 	requestCounter := prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: "api_requests_total",
