@@ -14,7 +14,9 @@ type CreateCheckInRequest struct {
 }
 
 type CreateCheckInResponse struct {
-	CheckIn *CheckIn `json:"checkin"`
+	CheckIn   *CheckIn `json:"checkin"`
+	Firstname string   `json:"firstname"`
+	Lastname  string   `json:"lastname"`
 }
 
 type FindByUserIdCheckInRequest struct {
