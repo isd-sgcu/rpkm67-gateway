@@ -11,12 +11,12 @@ import (
 )
 
 type Service interface {
-	FindOne(req *dto.FindOneGroupRequest) (*dto.FindOneGroupResponse, *apperror.AppError)
+	FindByUserId(req *dto.FindByUserIdGroupRequest) (*dto.FindByUserIdGroupResponse, *apperror.AppError)
 	FindByToken(req *dto.FindByTokenGroupRequest) (*dto.FindByTokenGroupResponse, *apperror.AppError)
-	Update(req *dto.UpdateGroupRequest) (*dto.UpdateGroupResponse, *apperror.AppError)
+	UpdateConfirm(req *dto.UpdateConfirmGroupRequest) (*dto.UpdateConfirmGroupResponse, *apperror.AppError)
 	Join(req *dto.JoinGroupRequest) (*dto.JoinGroupResponse, *apperror.AppError)
-	DeleteMember(req *dto.DeleteMemberGroupRequest) (*dto.DeleteMemberGroupResponse, *apperror.AppError)
 	Leave(req *dto.LeaveGroupRequest) (*dto.LeaveGroupResponse, *apperror.AppError)
+	DeleteMember(req *dto.DeleteMemberGroupRequest) (*dto.DeleteMemberGroupResponse, *apperror.AppError)
 }
 
 type serviceImpl struct {
@@ -31,20 +31,19 @@ func NewService(client groupProto.GroupServiceClient, log *zap.Logger) Service {
 	}
 }
 
-func (s *serviceImpl) DeleteMember(req *dto.DeleteMemberGroupRequest) (*dto.DeleteMemberGroupResponse, *apperror.AppError) {
+func (s *serviceImpl) FindByUserId(req *dto.FindByUserIdGroupRequest) (*dto.FindByUserIdGroupResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res, err := s.client.DeleteMember(ctx, &groupProto.DeleteMemberGroupRequest{
-		UserId:   req.UserId,
-		LeaderId: req.LeaderId,
+	res, err := s.client.FindByUserId(ctx, &groupProto.FindByUserIdGroupRequest{
+		UserId: req.UserId,
 	})
 	if err != nil {
-		s.log.Named("DeleteMember").Error("DeleteMember: ", zap.Error(err))
+		s.log.Named("FindOne").Error("FindOne: ", zap.Error(err))
 		return nil, apperror.HandleServiceError(err)
 	}
 
-	return &dto.DeleteMemberGroupResponse{
+	return &dto.FindByUserIdGroupResponse{
 		Group: GroupProtoToDto(res.Group),
 	}, nil
 }
@@ -68,19 +67,20 @@ func (s *serviceImpl) FindByToken(req *dto.FindByTokenGroupRequest) (*dto.FindBy
 	}, nil
 }
 
-func (s *serviceImpl) FindOne(req *dto.FindOneGroupRequest) (*dto.FindOneGroupResponse, *apperror.AppError) {
+func (s *serviceImpl) UpdateConfirm(req *dto.UpdateConfirmGroupRequest) (*dto.UpdateConfirmGroupResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res, err := s.client.FindByUserId(ctx, &groupProto.FindByUserIdGroupRequest{
-		UserId: req.UserId,
+	res, err := s.client.UpdateConfirm(ctx, &groupProto.UpdateConfirmGroupRequest{
+		LeaderId:    req.LeaderId,
+		IsConfirmed: req.IsConfirmed,
 	})
 	if err != nil {
-		s.log.Named("FindOne").Error("FindOne: ", zap.Error(err))
+		s.log.Named("UpdateConfirm").Error("UpdateConfirm: ", zap.Error(err))
 		return nil, apperror.HandleServiceError(err)
 	}
 
-	return &dto.FindOneGroupResponse{
+	return &dto.UpdateConfirmGroupResponse{
 		Group: GroupProtoToDto(res.Group),
 	}, nil
 }
@@ -121,20 +121,20 @@ func (s *serviceImpl) Leave(req *dto.LeaveGroupRequest) (*dto.LeaveGroupResponse
 	}, nil
 }
 
-func (s *serviceImpl) Update(req *dto.UpdateGroupRequest) (*dto.UpdateGroupResponse, *apperror.AppError) {
+func (s *serviceImpl) DeleteMember(req *dto.DeleteMemberGroupRequest) (*dto.DeleteMemberGroupResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res, err := s.client.UpdateConfirm(ctx, &groupProto.UpdateConfirmGroupRequest{
-		// Group:    GroupDtoToProto(req.Group),
+	res, err := s.client.DeleteMember(ctx, &groupProto.DeleteMemberGroupRequest{
+		UserId:   req.UserId,
 		LeaderId: req.LeaderId,
 	})
 	if err != nil {
-		s.log.Named("Update").Error("Update: ", zap.Error(err))
+		s.log.Named("DeleteMember").Error("DeleteMember: ", zap.Error(err))
 		return nil, apperror.HandleServiceError(err)
 	}
 
-	return &dto.UpdateGroupResponse{
+	return &dto.DeleteMemberGroupResponse{
 		Group: GroupProtoToDto(res.Group),
 	}, nil
 }

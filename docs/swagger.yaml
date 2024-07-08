@@ -61,6 +61,21 @@ definitions:
         example: e7e84d54-7518-4...
         type: string
     type: object
+  dto.DeleteMemberGroupBody:
+    properties:
+      deleted_user_id:
+        type: string
+      requesting_user_id:
+        type: string
+    required:
+    - deleted_user_id
+    - requesting_user_id
+    type: object
+  dto.DeleteMemberGroupResponse:
+    properties:
+      group:
+        $ref: '#/definitions/dto.Group'
+    type: object
   dto.FindAllPinResponse:
     properties:
       pins:
@@ -75,12 +90,26 @@ definitions:
           $ref: '#/definitions/dto.CheckIn'
         type: array
     type: object
+  dto.FindByTokenGroupResponse:
+    properties:
+      id:
+        type: string
+      leader:
+        $ref: '#/definitions/dto.UserInfo'
+      token:
+        type: string
+    type: object
   dto.FindByUserIdCheckInResponse:
     properties:
       checkins:
         items:
           $ref: '#/definitions/dto.CheckIn'
         type: array
+    type: object
+  dto.FindByUserIdGroupResponse:
+    properties:
+      group:
+        $ref: '#/definitions/dto.Group'
     type: object
   dto.FindByUserIdStampResponse:
     properties:
@@ -96,6 +125,48 @@ definitions:
     properties:
       url:
         type: string
+    type: object
+  dto.Group:
+    properties:
+      id:
+        type: string
+      is_confirmed:
+        type: boolean
+      leader_id:
+        type: string
+      members:
+        items:
+          $ref: '#/definitions/dto.UserInfo'
+        type: array
+      token:
+        type: string
+    type: object
+  dto.JoinGroupRequest:
+    properties:
+      token:
+        type: string
+      user_id:
+        type: string
+    required:
+    - token
+    - user_id
+    type: object
+  dto.JoinGroupResponse:
+    properties:
+      group:
+        $ref: '#/definitions/dto.Group'
+    type: object
+  dto.LeaveGroupRequest:
+    properties:
+      user_id:
+        type: string
+    required:
+    - user_id
+    type: object
+  dto.LeaveGroupResponse:
+    properties:
+      group:
+        $ref: '#/definitions/dto.Group'
     type: object
   dto.Pin:
     properties:
@@ -144,6 +215,18 @@ definitions:
     properties:
       stamp:
         $ref: '#/definitions/dto.Stamp'
+    type: object
+  dto.UpdateConfirmGroupBody:
+    properties:
+      is_confirmed:
+        type: boolean
+    required:
+    - is_confirmed
+    type: object
+  dto.UpdateConfirmGroupResponse:
+    properties:
+      group:
+        $ref: '#/definitions/dto.Group'
     type: object
   dto.UpdateUserPictureResponse:
     properties:
@@ -232,6 +315,17 @@ definitions:
         type: string
       year:
         type: integer
+    type: object
+  dto.UserInfo:
+    properties:
+      first_name:
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      last_name:
+        type: string
     type: object
   dto.VerifyGoogleLoginResponse:
     properties:
@@ -455,6 +549,209 @@ paths:
       summary: Count clicks
       tags:
       - count
+  /group/{userId}:
+    get:
+      consumes:
+      - text/plain
+      description: user must be member of that group
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FindByUserIdGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Find group by user id
+      tags:
+      - group
+    put:
+      consumes:
+      - application/json
+      description: only group leader can update this status
+      parameters:
+      - description: userId of request sender (must be group leader)
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: update confirm request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateConfirmGroupBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UpdateConfirmGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Update group isConfirmed status
+      tags:
+      - group
+  /group/delete-member:
+    delete:
+      consumes:
+      - application/json
+      description: only leader can remove member, cannot remove yourself
+      parameters:
+      - description: delete request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DeleteMemberGroupBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DeleteMemberGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Removes user from group
+      tags:
+      - group
+  /group/join:
+    post:
+      consumes:
+      - application/json
+      description: cannot leave group if you are leader of a group (but you can use
+        `join` to join another group)
+      parameters:
+      - description: leave request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LeaveGroupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LeaveGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: User leaves group
+      tags:
+      - group
+  /group/token:
+    get:
+      consumes:
+      - text/plain
+      description: Group leader invites member by giving them the token
+      parameters:
+      - description: token of group
+        in: query
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FindByTokenGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Find group by group's token
+      tags:
+      - group
   /pin:
     get:
       description: Staff only

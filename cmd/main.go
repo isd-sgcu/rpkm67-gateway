@@ -9,6 +9,7 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/checkin"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/count"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/db"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/group"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/metrics"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/object"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/pin"
@@ -20,6 +21,7 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/middleware"
 	authProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/auth/v1"
 	userProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/user/v1"
+	groupProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/group/v1"
 	pinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/pin/v1"
 	stampProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/stamp/v1"
 	checkinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/checkin/checkin/v1"
@@ -84,6 +86,10 @@ func main() {
 	userSvc := user.NewService(userClient, objSvc, logger)
 	userHdr := user.NewHandler(userSvc, conf.App.MaxFileSizeMb, constant.AllowedContentType, validate, logger)
 
+	groupClient := groupProto.NewGroupServiceClient(backendConn)
+	groupSvc := group.NewService(groupClient, logger)
+	groupHdr := group.NewHandler(groupSvc, validate, logger)
+
 	pinClient := pinProto.NewPinServiceClient(backendConn)
 	pinSvc := pin.NewService(pinClient, logger)
 	pinHdr := pin.NewHandler(pinSvc, validate, logger)
@@ -124,6 +130,14 @@ func main() {
 	r.V1Get("/user/:id", userHdr.FindOne)
 	r.V1Patch("/user/profile/:id", userHdr.UpdateProfile)
 	r.V1Put("/user/picture/:id", userHdr.UpdatePicture)
+
+	r.V1Get("/group/:userId", groupHdr.FindByUserId)
+	r.V1Get("/group/token", groupHdr.FindByToken)
+	r.V1Put("/group/:userId", groupHdr.UpdateConfirm)
+	r.V1Post("/group/join", groupHdr.Join)
+	r.V1Post("/group/leave", groupHdr.Leave)
+	r.V1Post("/group/switch-group", groupHdr.SwitchGroup) // basically leave current group and join another group
+	r.V1Delete("/group/delete-member", groupHdr.DeleteMember)
 
 	r.V1Post("/checkin", checkinHdr.Create)
 	r.V1Get("/checkin/:userId", checkinHdr.FindByUserID)
