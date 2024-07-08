@@ -82,16 +82,16 @@ func (h *handlerImpl) FindByUserId(c context.Ctx) {
 // @Tags group
 // @Accept plain
 // @Produce json
-// @Param token path string true "token of group"
+// @Param token query string true "token of group"
 // @Security BearerAuth
 // @Success 200 {object} dto.FindByTokenGroupResponse
 // @Failure 400 {object} apperror.AppError
 // @Failure 401 {object} apperror.AppError
 // @Failure 404 {object} apperror.AppError
 // @Failure 500 {object} apperror.AppError
-// @Router /group/token/{token} [get]
+// @Router /group/token [get]
 func (h *handlerImpl) FindByToken(c context.Ctx) {
-	token := c.Param("token")
+	token := c.Query("token")
 	if token == "" {
 		c.BadRequestError("url parameter 'token' not found")
 	}
@@ -165,6 +165,20 @@ func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
 	})
 }
 
+// Join godoc
+// @Summary User joins another group
+// @Description previous group gets deleted, cannot join another group you are the leader of group with more than 1 member
+// @Tags group
+// @Accept json
+// @Produce json
+// @Param body body dto.JoinGroupRequest true "join request"
+// @Security BearerAuth
+// @Success 200 {object} dto.JoinGroupResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /group/join [post]
 func (h *handlerImpl) Join(c context.Ctx) {
 	body := &dto.JoinGroupRequest{}
 	if err := c.Bind(body); err != nil {
@@ -196,6 +210,20 @@ func (h *handlerImpl) Join(c context.Ctx) {
 	})
 }
 
+// Leave godoc
+// @Summary User leaves group
+// @Description cannot leave group if you are leader of a group (but you can use `join` to join another group)
+// @Tags group
+// @Accept json
+// @Produce json
+// @Param body body dto.LeaveGroupRequest true "leave request"
+// @Security BearerAuth
+// @Success 200 {object} dto.LeaveGroupResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /group/join [post]
 func (h *handlerImpl) Leave(c context.Ctx) {
 	body := &dto.LeaveGroupRequest{}
 	if err := c.Bind(body); err != nil {
@@ -266,6 +294,20 @@ func (h *handlerImpl) SwitchGroup(c context.Ctx) {
 	})
 }
 
+// DeleteMember godoc
+// @Summary Removes user from group
+// @Description only leader can remove member, cannot remove yourself
+// @Tags group
+// @Accept json
+// @Produce json
+// @Param body body dto.DeleteMemberGroupBody true "delete request"
+// @Security BearerAuth
+// @Success 200 {object} dto.DeleteMemberGroupResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /group/delete-member [delete]
 func (h *handlerImpl) DeleteMember(c context.Ctx) {
 	body := &dto.DeleteMemberGroupBody{}
 	if err := c.Bind(body); err != nil {

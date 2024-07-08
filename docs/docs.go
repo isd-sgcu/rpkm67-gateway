@@ -338,7 +338,133 @@ const docTemplate = `{
                 }
             }
         },
-        "/group/token/{token}": {
+        "/group/delete-member": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "only leader can remove member, cannot remove yourself",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "group"
+                ],
+                "summary": "Removes user from group",
+                "parameters": [
+                    {
+                        "description": "delete request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DeleteMemberGroupBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DeleteMemberGroupResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/group/join": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "cannot leave group if you are leader of a group (but you can use ` + "`" + `join` + "`" + ` to join another group)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "group"
+                ],
+                "summary": "User leaves group",
+                "parameters": [
+                    {
+                        "description": "leave request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LeaveGroupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.LeaveGroupResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/group/token": {
             "get": {
                 "security": [
                     {
@@ -361,7 +487,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "token of group",
                         "name": "token",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -994,6 +1120,29 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.DeleteMemberGroupBody": {
+            "type": "object",
+            "required": [
+                "deleted_user_id",
+                "requesting_user_id"
+            ],
+            "properties": {
+                "deleted_user_id": {
+                    "type": "string"
+                },
+                "requesting_user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.DeleteMemberGroupResponse": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "$ref": "#/definitions/dto.Group"
+                }
+            }
+        },
         "dto.FindAllPinResponse": {
             "type": "object",
             "properties": {
@@ -1093,6 +1242,48 @@ const docTemplate = `{
                 },
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.JoinGroupRequest": {
+            "type": "object",
+            "required": [
+                "token",
+                "user_id"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.JoinGroupResponse": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "$ref": "#/definitions/dto.Group"
+                }
+            }
+        },
+        "dto.LeaveGroupRequest": {
+            "type": "object",
+            "required": [
+                "user_id"
+            ],
+            "properties": {
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LeaveGroupResponse": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "$ref": "#/definitions/dto.Group"
                 }
             }
         },

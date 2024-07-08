@@ -57,6 +57,21 @@ definitions:
         example: e7e84d54-7518-4...
         type: string
     type: object
+  dto.DeleteMemberGroupBody:
+    properties:
+      deleted_user_id:
+        type: string
+      requesting_user_id:
+        type: string
+    required:
+    - deleted_user_id
+    - requesting_user_id
+    type: object
+  dto.DeleteMemberGroupResponse:
+    properties:
+      group:
+        $ref: '#/definitions/dto.Group'
+    type: object
   dto.FindAllPinResponse:
     properties:
       pins:
@@ -121,6 +136,33 @@ definitions:
         type: array
       token:
         type: string
+    type: object
+  dto.JoinGroupRequest:
+    properties:
+      token:
+        type: string
+      user_id:
+        type: string
+    required:
+    - token
+    - user_id
+    type: object
+  dto.JoinGroupResponse:
+    properties:
+      group:
+        $ref: '#/definitions/dto.Group'
+    type: object
+  dto.LeaveGroupRequest:
+    properties:
+      user_id:
+        type: string
+    required:
+    - user_id
+    type: object
+  dto.LeaveGroupResponse:
+    properties:
+      group:
+        $ref: '#/definitions/dto.Group'
     type: object
   dto.Pin:
     properties:
@@ -586,14 +628,95 @@ paths:
       summary: Update group isConfirmed status
       tags:
       - group
-  /group/token/{token}:
+  /group/delete-member:
+    delete:
+      consumes:
+      - application/json
+      description: only leader can remove member, cannot remove yourself
+      parameters:
+      - description: delete request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DeleteMemberGroupBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DeleteMemberGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Removes user from group
+      tags:
+      - group
+  /group/join:
+    post:
+      consumes:
+      - application/json
+      description: cannot leave group if you are leader of a group (but you can use
+        `join` to join another group)
+      parameters:
+      - description: leave request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LeaveGroupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LeaveGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: User leaves group
+      tags:
+      - group
+  /group/token:
     get:
       consumes:
       - text/plain
       description: Group leader invites member by giving them the token
       parameters:
       - description: token of group
-        in: path
+        in: query
         name: token
         required: true
         type: string
