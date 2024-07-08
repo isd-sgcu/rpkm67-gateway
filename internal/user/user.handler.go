@@ -84,7 +84,7 @@ func (h *handlerImpl) FindOne(c context.Ctx) {
 // @Failure 401 {object} apperror.AppError
 // @Failure 404 {object} apperror.AppError
 // @Failure 500 {object} apperror.AppError
-// @Router /user/profile/{id} [post]
+// @Router /user/profile/{id} [patch]
 func (h *handlerImpl) UpdateProfile(c context.Ctx) {
 	id := c.Param("id")
 	if id == "" {
@@ -132,7 +132,7 @@ func (h *handlerImpl) UpdateProfile(c context.Ctx) {
 // @Failure 401 {object} apperror.AppError
 // @Failure 404 {object} apperror.AppError
 // @Failure 500 {object} apperror.AppError
-// @Router /user/picture/{id} [post]
+// @Router /user/picture/{id} [put]
 func (h *handlerImpl) UpdatePicture(c context.Ctx) {
 	id := c.Param("id")
 	if id == "" {

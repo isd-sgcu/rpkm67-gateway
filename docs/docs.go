@@ -274,6 +274,32 @@ const docTemplate = `{
                 }
             }
         },
+        "/clean-db": {
+            "get": {
+                "description": "must be used only in development environment",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "db"
+                ],
+                "summary": "Clean all data in database",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Credential"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
         "/count": {
             "post": {
                 "description": "Add 1 to count metrics by name",
@@ -492,7 +518,7 @@ const docTemplate = `{
             }
         },
         "/user/picture/{id}": {
-            "post": {
+            "put": {
                 "security": [
                     {
                         "BearerAuth": []
@@ -560,7 +586,7 @@ const docTemplate = `{
             }
         },
         "/user/profile/{id}": {
-            "post": {
+            "patch": {
                 "security": [
                     {
                         "BearerAuth": []
@@ -860,8 +886,8 @@ const docTemplate = `{
         "dto.ResetPinResponse": {
             "type": "object",
             "properties": {
-                "success": {
-                    "type": "boolean"
+                "pin": {
+                    "$ref": "#/definitions/dto.Pin"
                 }
             }
         },
@@ -981,12 +1007,6 @@ const docTemplate = `{
             "properties": {
                 "baan": {
                     "type": "string"
-                },
-                "check_ins": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.CheckIn"
-                    }
                 },
                 "drug_allergy": {
                     "type": "string"
