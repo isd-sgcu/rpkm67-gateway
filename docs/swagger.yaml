@@ -524,7 +524,7 @@ paths:
       summary: Clean all data in database
       tags:
       - db
-  /count:
+  /count/{name}:
     post:
       consumes:
       - application/json

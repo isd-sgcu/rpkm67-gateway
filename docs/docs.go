@@ -300,7 +300,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/count": {
+        "/count/{name}": {
             "post": {
                 "description": "Add 1 to count metrics by name",
                 "consumes": [

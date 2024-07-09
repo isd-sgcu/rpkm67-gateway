@@ -34,7 +34,7 @@ func NewHandler(countMetrics metrics.CountMetrics, log *zap.Logger) Handler {
 // @Param name path string true "Name of the count metric"
 // @Success 201 {object} dto.CountResponse
 // @Failure 400 {object} apperror.AppError
-// @Router /count [post]
+// @Router /count/{name} [post]
 func (h *handlerImpl) Count(c context.Ctx) {
 	name := c.Param("name")
 	if name == "" {
