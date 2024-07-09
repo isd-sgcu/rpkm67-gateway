@@ -34,6 +34,7 @@ func (s *serviceImpl) Upload(req *dto.UploadObjectRequest) (*dto.UploadObjectRes
 
 	res, err := s.client.Upload(ctx, &objectProto.UploadObjectRequest{
 		Filename: req.Filename,
+		Data:     req.Data,
 	})
 	if err != nil {
 		s.log.Named("Upload").Error("Upload: ", zap.Error(err))
