@@ -223,7 +223,7 @@ func (h *handlerImpl) Join(c context.Ctx) {
 // @Failure 401 {object} apperror.AppError
 // @Failure 404 {object} apperror.AppError
 // @Failure 500 {object} apperror.AppError
-// @Router /group/join [post]
+// @Router /group/leave [post]
 func (h *handlerImpl) Leave(c context.Ctx) {
 	body := &dto.LeaveGroupRequest{}
 	if err := c.Bind(body); err != nil {
