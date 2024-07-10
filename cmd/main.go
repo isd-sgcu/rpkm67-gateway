@@ -164,15 +164,15 @@ func main() {
 
 	r.V1NonAuth.GET("/metrics", metricsHdr.ExposeMetrics)
 
-	// Comment out in prod
-	dbConn, err := db.InitDatabase(&conf.Db, conf.App.IsDevelopment())
-	if err != nil {
-		logger.Fatal("unable to connect to database")
-	}
+	if conf.App.IsDevelopment() {
+		dbConn, err := db.InitDatabase(&conf.Db, conf.App.IsDevelopment())
+		if err != nil {
+			logger.Fatal("unable to connect to database")
+		}
 
-	dbHdr := db.NewHandler(dbConn, logger)
-	r.V1NonAuthGet("/clean-db", dbHdr.CleanDb)
-	// Comment out in prod
+		dbHdr := db.NewHandler(dbConn, logger)
+		r.V1NonAuthGet("/clean-db", dbHdr.CleanDb)
+	}
 
 	if err := r.Run(fmt.Sprintf(":%v", conf.App.Port)); err != nil {
 		logger.Fatal("unable to start server")

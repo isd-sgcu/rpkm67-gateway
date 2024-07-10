@@ -37,6 +37,7 @@ func (s *serviceImpl) Create(req *dto.CreateSelectionRequest) (*dto.CreateSelect
 	res, err := s.client.Create(ctx, &selectionProto.CreateSelectionRequest{
 		GroupId: req.GroupId,
 		BaanId:  req.BaanId,
+		Order:   int32(req.Order),
 	})
 	if err != nil {
 		s.log.Named("Create").Error("Create: ", zap.Error(err))
