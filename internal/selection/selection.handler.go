@@ -90,8 +90,6 @@ func (h *handlerImpl) Create(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /selection/{groupId} [get]
 func (h *handlerImpl) FindByGroupId(c context.Ctx) {
-	h.checkGroupLeader(c)
-
 	groupId := c.Param("groupId")
 	if groupId == "" {
 		h.log.Named("FindByGroupIdSelection").Error("Param: groupId not found")
@@ -161,6 +159,20 @@ func (h *handlerImpl) Update(c context.Ctx) {
 	})
 }
 
+// Delete godoc
+// @Summary Delete selection, only group leader can call
+// @Description used when removing a selection from the list
+// @Tags selection
+// @Accept json
+// @Produce json
+// @Param body body dto.DeleteSelectionRequest true "delete selection request"
+// @Security BearerAuth
+// @Success 200 {object} dto.DeleteSelectionResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /selection [delete]
 func (h *handlerImpl) Delete(c context.Ctx) {
 	h.checkGroupLeader(c)
 
@@ -190,8 +202,6 @@ func (h *handlerImpl) Delete(c context.Ctx) {
 }
 
 func (h *handlerImpl) CountByBaanId(c context.Ctx) {
-	h.checkGroupLeader(c)
-
 	res, appErr := h.svc.CountByBaanId()
 	if appErr != nil {
 		h.log.Named("CountByBaanId").Error("CountByBaanId: ", zap.Error(appErr))

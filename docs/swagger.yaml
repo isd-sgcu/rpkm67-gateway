@@ -89,6 +89,21 @@ definitions:
       group:
         $ref: '#/definitions/dto.Group'
     type: object
+  dto.DeleteSelectionRequest:
+    properties:
+      baan_id:
+        type: string
+      group_id:
+        type: string
+    required:
+    - baan_id
+    - group_id
+    type: object
+  dto.DeleteSelectionResponse:
+    properties:
+      success:
+        type: boolean
+    type: object
   dto.FindAllPinResponse:
     properties:
       pins:
@@ -854,6 +869,45 @@ paths:
       tags:
       - pin
   /selection:
+    delete:
+      consumes:
+      - application/json
+      description: used when removing a selection from the list
+      parameters:
+      - description: delete selection request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DeleteSelectionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DeleteSelectionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Delete selection, only group leader can call
+      tags:
+      - selection
     patch:
       consumes:
       - application/json
