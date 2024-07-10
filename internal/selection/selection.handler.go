@@ -6,6 +6,7 @@ import (
 
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/group"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"go.uber.org/zap"
 )
@@ -18,20 +19,36 @@ type Handler interface {
 	CountByBaanId(c context.Ctx)
 }
 
-func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
+type handlerImpl struct {
+	svc      Service
+	groupSvc group.Service
+	validate validator.DtoValidator
+	log      *zap.Logger
+}
+
+func NewHandler(svc Service, groupSvc group.Service, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
 		svc:      svc,
+		groupSvc: groupSvc,
 		validate: validate,
 		log:      log,
 	}
 }
 
-type handlerImpl struct {
-	svc      Service
-	validate validator.DtoValidator
-	log      *zap.Logger
-}
-
+// Create godoc
+// @Summary Create selection
+// @Description used when creating a selection on UNOCCUPIED order
+// @Tags selection
+// @Accept json
+// @Produce json
+// @Param body body dto.CreateSelectionRequest true "create selection request"
+// @Security BearerAuth
+// @Success 200 {object} dto.UpdateConfirmGroupResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /selection [post]
 func (h *handlerImpl) Create(c context.Ctx) {
 	body := &dto.CreateSelectionRequest{}
 	if err := c.Bind(body); err != nil {

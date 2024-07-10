@@ -49,6 +49,19 @@ definitions:
       lastname:
         type: string
     type: object
+  dto.CreateSelectionRequest:
+    properties:
+      baan_id:
+        type: string
+      group_id:
+        type: string
+      order:
+        type: integer
+    required:
+    - baan_id
+    - group_id
+    - order
+    type: object
   dto.Credential:
     properties:
       access_token:
@@ -806,6 +819,46 @@ paths:
       summary: Reset a pin
       tags:
       - pin
+  /selection:
+    post:
+      consumes:
+      - application/json
+      description: used when creating a selection on UNOCCUPIED order
+      parameters:
+      - description: create selection request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSelectionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UpdateConfirmGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Create selection
+      tags:
+      - selection
   /stamp/{userId}:
     get:
       consumes:

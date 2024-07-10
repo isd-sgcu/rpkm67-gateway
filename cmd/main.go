@@ -94,7 +94,7 @@ func main() {
 
 	selectionClient := selectionProto.NewSelectionServiceClient(backendConn)
 	selectionSvc := selection.NewService(selectionClient, logger)
-	selectionHdr := selection.NewHandler(selectionSvc, validate, logger)
+	selectionHdr := selection.NewHandler(selectionSvc, groupSvc, validate, logger)
 
 	pinClient := pinProto.NewPinServiceClient(backendConn)
 	pinSvc := pin.NewService(pinClient, logger)
