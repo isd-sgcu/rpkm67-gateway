@@ -23,7 +23,7 @@ func NewHandler(db *gorm.DB, log *zap.Logger) Handler {
 }
 
 // RefreshToken godoc
-// @Summary Clean all data in database
+// @Summary Clean all data in database (only in development environment)
 // @Description must be used only in development environment
 // @Tags db
 // @Produce json

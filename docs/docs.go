@@ -283,7 +283,7 @@ const docTemplate = `{
                 "tags": [
                     "db"
                 ],
-                "summary": "Clean all data in database",
+                "summary": "Clean all data in database (only in development environment)",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -803,6 +803,319 @@ const docTemplate = `{
                 }
             }
         },
+        "/selection": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "used when creating a selection on UNSELECTED order and baan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "selection"
+                ],
+                "summary": "Create selection, only group leader can call",
+                "parameters": [
+                    {
+                        "description": "create selection request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateSelectionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateConfirmGroupResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "used when removing a selection from the list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "selection"
+                ],
+                "summary": "Delete selection, only group leader can call",
+                "parameters": [
+                    {
+                        "description": "delete selection request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DeleteSelectionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DeleteSelectionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "used when selecting a selection on SELECTED order or baan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "selection"
+                ],
+                "summary": "Update selection, only group leader can call",
+                "parameters": [
+                    {
+                        "description": "update selection request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateSelectionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateSelectionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/selection/count-by-baan": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "displayed in baan selection page to show how many people are interested in each baan",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "selection"
+                ],
+                "summary": "count selections by baan id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CountByBaanIdSelectionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/selection/{groupId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "used when getting all selections in a group",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "selection"
+                ],
+                "summary": "find selection by group id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "groupId of request sender",
+                        "name": "groupId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.FindByGroupIdSelectionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
         "/stamp/{userId}": {
             "get": {
                 "security": [
@@ -1119,6 +1432,17 @@ const docTemplate = `{
                 "STAFF"
             ]
         },
+        "dto.BaanCount": {
+            "type": "object",
+            "properties": {
+                "baan_id": {
+                    "type": "string"
+                },
+                "count": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.CheckIn": {
             "type": "object",
             "properties": {
@@ -1133,6 +1457,17 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.CountByBaanIdSelectionResponse": {
+            "type": "object",
+            "properties": {
+                "baan_counts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.BaanCount"
+                    }
                 }
             }
         },
@@ -1169,6 +1504,25 @@ const docTemplate = `{
                 },
                 "lastname": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.CreateSelectionRequest": {
+            "type": "object",
+            "required": [
+                "baan_id",
+                "group_id",
+                "order"
+            ],
+            "properties": {
+                "baan_id": {
+                    "type": "string"
+                },
+                "group_id": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -1212,6 +1566,29 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.DeleteSelectionRequest": {
+            "type": "object",
+            "required": [
+                "baan_id",
+                "group_id"
+            ],
+            "properties": {
+                "baan_id": {
+                    "type": "string"
+                },
+                "group_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.DeleteSelectionResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "dto.FindAllPinResponse": {
             "type": "object",
             "properties": {
@@ -1230,6 +1607,17 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.CheckIn"
+                    }
+                }
+            }
+        },
+        "dto.FindByGroupIdSelectionResponse": {
+            "type": "object",
+            "properties": {
+                "selection": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Selection"
                     }
                 }
             }
@@ -1386,6 +1774,20 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.Selection": {
+            "type": "object",
+            "properties": {
+                "baan_id": {
+                    "type": "string"
+                },
+                "group_id": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.Stamp": {
             "type": "object",
             "properties": {
@@ -1447,6 +1849,33 @@ const docTemplate = `{
             "properties": {
                 "group": {
                     "$ref": "#/definitions/dto.Group"
+                }
+            }
+        },
+        "dto.UpdateSelectionRequest": {
+            "type": "object",
+            "required": [
+                "baan_id",
+                "group_id",
+                "order"
+            ],
+            "properties": {
+                "baan_id": {
+                    "type": "string"
+                },
+                "group_id": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.UpdateSelectionResponse": {
+            "type": "object",
+            "properties": {
+                "selection": {
+                    "$ref": "#/definitions/dto.Selection"
                 }
             }
         },

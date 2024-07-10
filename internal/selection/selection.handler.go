@@ -6,6 +6,7 @@ import (
 
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/group"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"go.uber.org/zap"
 )
@@ -18,21 +19,40 @@ type Handler interface {
 	CountByBaanId(c context.Ctx)
 }
 
-func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
+type handlerImpl struct {
+	svc      Service
+	groupSvc group.Service
+	validate validator.DtoValidator
+	log      *zap.Logger
+}
+
+func NewHandler(svc Service, groupSvc group.Service, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
 		svc:      svc,
+		groupSvc: groupSvc,
 		validate: validate,
 		log:      log,
 	}
 }
 
-type handlerImpl struct {
-	svc      Service
-	validate validator.DtoValidator
-	log      *zap.Logger
-}
-
+// Create godoc
+// @Summary Create selection, only group leader can call
+// @Description used when creating a selection on UNSELECTED order and baan
+// @Tags selection
+// @Accept json
+// @Produce json
+// @Param body body dto.CreateSelectionRequest true "create selection request"
+// @Security BearerAuth
+// @Success 200 {object} dto.UpdateConfirmGroupResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 403 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /selection [post]
 func (h *handlerImpl) Create(c context.Ctx) {
+	h.checkGroupLeader(c)
+
 	body := &dto.CreateSelectionRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Create").Error("Bind: failed to bind request body", zap.Error(err))
@@ -56,11 +76,25 @@ func (h *handlerImpl) Create(c context.Ctx) {
 	c.JSON(http.StatusCreated, &dto.CreateSelectionResponse{Selection: res.Selection})
 }
 
+// FindByGroupId godoc
+// @Summary find selection by group id
+// @Description used when getting all selections in a group
+// @Tags selection
+// @Accept json
+// @Produce json
+// @Param groupId path string true "groupId of request sender"
+// @Security BearerAuth
+// @Success 200 {object} dto.FindByGroupIdSelectionResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /selection/{groupId} [get]
 func (h *handlerImpl) FindByGroupId(c context.Ctx) {
-	groupId := c.Param("id")
+	groupId := c.Param("groupId")
 	if groupId == "" {
-		h.log.Named("FindByGroupIdSelection").Error("Param: id not found")
-		c.BadRequestError("url parameter 'id' not found")
+		h.log.Named("FindByGroupIdSelection").Error("Param: groupId not found")
+		c.BadRequestError("url parameter 'groupId' not found")
 		return
 	}
 
@@ -84,7 +118,24 @@ func (h *handlerImpl) FindByGroupId(c context.Ctx) {
 	c.JSON(http.StatusOK, &dto.FindByGroupIdSelectionResponse{Selections: res.Selections})
 }
 
+// Update godoc
+// @Summary Update selection, only group leader can call
+// @Description used when selecting a selection on SELECTED order or baan
+// @Tags selection
+// @Accept json
+// @Produce json
+// @Param body body dto.UpdateSelectionRequest true "update selection request"
+// @Security BearerAuth
+// @Success 200 {object} dto.UpdateSelectionResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 403 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /selection [patch]
 func (h *handlerImpl) Update(c context.Ctx) {
+	h.checkGroupLeader(c)
+
 	body := &dto.UpdateSelectionRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Update").Error("Bind: failed to bind request body", zap.Error(err))
@@ -106,11 +157,28 @@ func (h *handlerImpl) Update(c context.Ctx) {
 	}
 
 	c.JSON(http.StatusOK, &dto.UpdateSelectionResponse{
-		Success: res.Success,
+		Selection: res.Selection,
 	})
 }
 
+// Delete godoc
+// @Summary Delete selection, only group leader can call
+// @Description used when removing a selection from the list
+// @Tags selection
+// @Accept json
+// @Produce json
+// @Param body body dto.DeleteSelectionRequest true "delete selection request"
+// @Security BearerAuth
+// @Success 200 {object} dto.DeleteSelectionResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 403 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /selection [delete]
 func (h *handlerImpl) Delete(c context.Ctx) {
+	h.checkGroupLeader(c)
+
 	body := &dto.DeleteSelectionRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Delete").Error("Bind: ", zap.Error(err))
@@ -136,6 +204,18 @@ func (h *handlerImpl) Delete(c context.Ctx) {
 	})
 }
 
+// CountByBaanId godoc
+// @Summary count selections by baan id
+// @Description displayed in baan selection page to show how many people are interested in each baan
+// @Tags selection
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} dto.CountByBaanIdSelectionResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /selection/count-by-baan [get]
 func (h *handlerImpl) CountByBaanId(c context.Ctx) {
 	res, appErr := h.svc.CountByBaanId()
 	if appErr != nil {
@@ -147,4 +227,25 @@ func (h *handlerImpl) CountByBaanId(c context.Ctx) {
 	c.JSON(http.StatusOK, &dto.CountByBaanIdSelectionResponse{
 		BaanCounts: res.BaanCounts,
 	})
+}
+
+func (h *handlerImpl) checkGroupLeader(c context.Ctx) {
+	userId := c.GetString("userId")
+
+	res, err := h.groupSvc.FindByUserId(&dto.FindByUserIdGroupRequest{UserId: userId})
+	if err != nil {
+		h.log.Named("checkGroupLeader").Error("FindByUserId: ", zap.Error(err))
+		c.InternalServerError("Cannot get user's group")
+		c.Abort()
+		return
+	}
+
+	if res.Group.LeaderID != userId {
+		h.log.Named("checkGroupLeader").Error("Forbidden: You are not the leader of this group")
+		c.ForbiddenError("You are not the leader of this group")
+		c.Abort()
+		return
+	}
+
+	c.Next()
 }
