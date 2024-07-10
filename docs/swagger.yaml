@@ -15,6 +15,13 @@ definitions:
     x-enum-varnames:
     - USER
     - STAFF
+  dto.BaanCount:
+    properties:
+      baan_id:
+        type: string
+      count:
+        type: integer
+    type: object
   dto.CheckIn:
     properties:
       email:
@@ -25,6 +32,13 @@ definitions:
         type: string
       user_id:
         type: string
+    type: object
+  dto.CountByBaanIdSelectionResponse:
+    properties:
+      baan_counts:
+        items:
+          $ref: '#/definitions/dto.BaanCount'
+        type: array
     type: object
   dto.CountResponse:
     properties:
@@ -895,6 +909,10 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/apperror.AppError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/apperror.AppError'
         "404":
           description: Not Found
           schema:
@@ -934,6 +952,10 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/apperror.AppError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/apperror.AppError'
         "404":
           description: Not Found
           schema:
@@ -971,6 +993,10 @@ paths:
             $ref: '#/definitions/apperror.AppError'
         "401":
           description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "403":
+          description: Forbidden
           schema:
             $ref: '#/definitions/apperror.AppError'
         "404":
@@ -1023,6 +1049,38 @@ paths:
       security:
       - BearerAuth: []
       summary: find selection by group id
+      tags:
+      - selection
+  /selection/count-by-baan:
+    get:
+      description: displayed in baan selection page to show how many people are interested
+        in each baan
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CountByBaanIdSelectionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: count selections by baan id
       tags:
       - selection
   /stamp/{userId}:

@@ -788,6 +788,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/apperror.AppError"
                         }
                     },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -849,6 +855,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/apperror.AppError"
                         }
                     },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -896,6 +908,61 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.UpdateSelectionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/selection/count-by-baan": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "displayed in baan selection page to show how many people are interested in each baan",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "selection"
+                ],
+                "summary": "count selections by baan id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CountByBaanIdSelectionResponse"
                         }
                     },
                     "400": {
@@ -1302,6 +1369,17 @@ const docTemplate = `{
                 "STAFF"
             ]
         },
+        "dto.BaanCount": {
+            "type": "object",
+            "properties": {
+                "baan_id": {
+                    "type": "string"
+                },
+                "count": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.CheckIn": {
             "type": "object",
             "properties": {
@@ -1316,6 +1394,17 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.CountByBaanIdSelectionResponse": {
+            "type": "object",
+            "properties": {
+                "baan_counts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.BaanCount"
+                    }
                 }
             }
         },

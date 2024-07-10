@@ -46,6 +46,7 @@ func NewHandler(svc Service, groupSvc group.Service, validate validator.DtoValid
 // @Success 200 {object} dto.UpdateConfirmGroupResponse
 // @Failure 400 {object} apperror.AppError
 // @Failure 401 {object} apperror.AppError
+// @Failure 403 {object} apperror.AppError
 // @Failure 404 {object} apperror.AppError
 // @Failure 500 {object} apperror.AppError
 // @Router /selection [post]
@@ -128,6 +129,7 @@ func (h *handlerImpl) FindByGroupId(c context.Ctx) {
 // @Success 200 {object} dto.UpdateSelectionResponse
 // @Failure 400 {object} apperror.AppError
 // @Failure 401 {object} apperror.AppError
+// @Failure 403 {object} apperror.AppError
 // @Failure 404 {object} apperror.AppError
 // @Failure 500 {object} apperror.AppError
 // @Router /selection [patch]
@@ -170,6 +172,7 @@ func (h *handlerImpl) Update(c context.Ctx) {
 // @Success 200 {object} dto.DeleteSelectionResponse
 // @Failure 400 {object} apperror.AppError
 // @Failure 401 {object} apperror.AppError
+// @Failure 403 {object} apperror.AppError
 // @Failure 404 {object} apperror.AppError
 // @Failure 500 {object} apperror.AppError
 // @Router /selection [delete]
@@ -201,6 +204,18 @@ func (h *handlerImpl) Delete(c context.Ctx) {
 	})
 }
 
+// CountByBaanId godoc
+// @Summary count selections by baan id
+// @Description displayed in baan selection page to show how many people are interested in each baan
+// @Tags selection
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} dto.CountByBaanIdSelectionResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /selection/count-by-baan [get]
 func (h *handlerImpl) CountByBaanId(c context.Ctx) {
 	res, appErr := h.svc.CountByBaanId()
 	if appErr != nil {
