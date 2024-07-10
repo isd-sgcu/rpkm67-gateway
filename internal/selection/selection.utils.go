@@ -7,7 +7,6 @@ import (
 
 func ProtoToDto(selection *selectionProto.Selection) *dto.Selection {
 	return &dto.Selection{
-		Id:      selection.Id,
 		GroupId: selection.GroupId,
 		BaanId:  selection.BaanId,
 		Order:   int(selection.Order),
@@ -16,7 +15,6 @@ func ProtoToDto(selection *selectionProto.Selection) *dto.Selection {
 
 func DtoToProto(selection *dto.Selection) *selectionProto.Selection {
 	return &selectionProto.Selection{
-		Id:      selection.Id,
 		GroupId: selection.GroupId,
 		BaanId:  selection.BaanId,
 		Order:   int32(selection.Order),

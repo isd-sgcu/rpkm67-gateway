@@ -1547,9 +1547,6 @@ const docTemplate = `{
                 "group_id": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "string"
-                },
                 "order": {
                     "type": "integer"
                 }
@@ -1621,17 +1618,28 @@ const docTemplate = `{
         },
         "dto.UpdateSelectionRequest": {
             "type": "object",
+            "required": [
+                "baan_id",
+                "group_id",
+                "order"
+            ],
             "properties": {
-                "selection": {
-                    "$ref": "#/definitions/dto.Selection"
+                "baan_id": {
+                    "type": "string"
+                },
+                "group_id": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
         "dto.UpdateSelectionResponse": {
             "type": "object",
             "properties": {
-                "success": {
-                    "type": "boolean"
+                "selection": {
+                    "$ref": "#/definitions/dto.Selection"
                 }
             }
         },

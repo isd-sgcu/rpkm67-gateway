@@ -213,8 +213,6 @@ definitions:
         type: string
       group_id:
         type: string
-      id:
-        type: string
       order:
         type: integer
     type: object
@@ -261,13 +259,21 @@ definitions:
     type: object
   dto.UpdateSelectionRequest:
     properties:
-      selection:
-        $ref: '#/definitions/dto.Selection'
+      baan_id:
+        type: string
+      group_id:
+        type: string
+      order:
+        type: integer
+    required:
+    - baan_id
+    - group_id
+    - order
     type: object
   dto.UpdateSelectionResponse:
     properties:
-      success:
-        type: boolean
+      selection:
+        $ref: '#/definitions/dto.Selection'
     type: object
   dto.UpdateUserPictureResponse:
     properties:

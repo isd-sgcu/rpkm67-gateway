@@ -157,7 +157,7 @@ func (h *handlerImpl) Update(c context.Ctx) {
 	}
 
 	c.JSON(http.StatusOK, &dto.UpdateSelectionResponse{
-		Success: res.Success,
+		Selection: res.Selection,
 	})
 }
 

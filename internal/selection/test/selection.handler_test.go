@@ -53,7 +53,8 @@ func (t *SelectionHandlerTest) SetupTest() {
 		GroupId: t.Selection.GroupId,
 	}
 	t.DeleteSelectionReq = &dto.DeleteSelectionRequest{
-		Id: t.Selection.Id,
+		GroupId: t.Selection.GroupId,
+		BaanId:  t.Selection.BaanId,
 	}
 }
 
@@ -129,7 +130,7 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionSuccess() {
 	groupSvc.EXPECT().FindByUserId(&dto.FindByUserIdGroupRequest{UserId: t.userId}).
 		Return(&dto.FindByUserIdGroupResponse{Group: &dto.Group{LeaderID: t.userId}}, nil)
 	context.EXPECT().Next()
-	context.EXPECT().Param("id").Return(t.Selection.GroupId)
+	context.EXPECT().Param("groupId").Return(t.Selection.GroupId)
 	validator.EXPECT().Validate(t.FindByGroupIdSelectionReq).Return(nil)
 	selectionSvc.EXPECT().FindByGroupId(t.FindByGroupIdSelectionReq).Return(expectedResp, nil)
 	context.EXPECT().JSON(http.StatusOK, expectedResp)
@@ -142,13 +143,13 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionUrlParamEmpty() {
 	groupSvc := groupMock.NewMockService(t.controller)
 	handler := selection.NewHandler(nil, groupSvc, nil, t.logger)
 
-	expectedErr := apperror.BadRequestError("url parameter 'id' not found")
+	expectedErr := apperror.BadRequestError("url parameter 'groupId' not found")
 
 	context.EXPECT().GetString("userId").Return(t.userId)
 	groupSvc.EXPECT().FindByUserId(&dto.FindByUserIdGroupRequest{UserId: t.userId}).
 		Return(&dto.FindByUserIdGroupResponse{Group: &dto.Group{LeaderID: t.userId}}, nil)
 	context.EXPECT().Next()
-	context.EXPECT().Param("id").Return("")
+	context.EXPECT().Param("groupId").Return("")
 	context.EXPECT().BadRequestError(expectedErr.Error())
 
 	handler.FindByGroupId(context)
@@ -165,7 +166,7 @@ func (t *SelectionHandlerTest) TestFindByStudentIdSelectionServiceError() {
 	groupSvc.EXPECT().FindByUserId(&dto.FindByUserIdGroupRequest{UserId: t.userId}).
 		Return(&dto.FindByUserIdGroupResponse{Group: &dto.Group{LeaderID: t.userId}}, nil)
 	context.EXPECT().Next()
-	context.EXPECT().Param("id").Return(t.Selection.GroupId)
+	context.EXPECT().Param("groupId").Return(t.Selection.GroupId)
 	validator.EXPECT().Validate(t.FindByGroupIdSelectionReq).Return(nil)
 	selectionSvc.EXPECT().FindByGroupId(t.FindByGroupIdSelectionReq).Return(nil, apperror.InternalServer)
 	context.EXPECT().ResponseError(apperror.InternalServer)

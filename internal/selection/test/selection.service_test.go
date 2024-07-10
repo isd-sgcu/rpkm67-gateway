@@ -63,7 +63,8 @@ func (t *SelectionServiceTest) SetupTest() {
 		GroupId: t.SelectionProto.GroupId,
 	}
 	t.DeleteSelectionDtoRequest = &dto.DeleteSelectionRequest{
-		Id: t.SelectionDto.Id,
+		GroupId: t.SelectionDto.GroupId,
+		BaanId:  t.SelectionDto.BaanId,
 	}
 }
 
