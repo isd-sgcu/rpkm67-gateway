@@ -146,7 +146,7 @@ func main() {
 
 	r.V1Post("/selection", selectionHdr.Create)
 	r.V1Get("/selection/:groupId", selectionHdr.FindByGroupId)
-	r.V1Patch("/selection/:groupId", selectionHdr.Update)
+	r.V1Patch("/selection", selectionHdr.Update)
 	r.V1Delete("/selection/:groupId", selectionHdr.Delete)
 	r.V1Get("/selection/count-by-baan", selectionHdr.CountByBaanId)
 

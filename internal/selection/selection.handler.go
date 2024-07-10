@@ -37,7 +37,7 @@ func NewHandler(svc Service, groupSvc group.Service, validate validator.DtoValid
 
 // Create godoc
 // @Summary Create selection, only group leader can call
-// @Description used when creating a selection on UNOCCUPIED order
+// @Description used when creating a selection on UNSELECTED order and baan
 // @Tags selection
 // @Accept json
 // @Produce json
@@ -119,6 +119,20 @@ func (h *handlerImpl) FindByGroupId(c context.Ctx) {
 	c.JSON(http.StatusOK, &dto.FindByGroupIdSelectionResponse{Selections: res.Selections})
 }
 
+// Update godoc
+// @Summary Update selection, only group leader can call
+// @Description used when selecting a selection on SELECTED order or baan
+// @Tags selection
+// @Accept json
+// @Produce json
+// @Param body body dto.UpdateSelectionRequest true "update selection request"
+// @Security BearerAuth
+// @Success 200 {object} dto.UpdateSelectionResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /selection [patch]
 func (h *handlerImpl) Update(c context.Ctx) {
 	h.checkGroupLeader(c)
 
