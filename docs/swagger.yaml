@@ -103,6 +103,13 @@ definitions:
           $ref: '#/definitions/dto.CheckIn'
         type: array
     type: object
+  dto.FindByGroupIdSelectionResponse:
+    properties:
+      selection:
+        items:
+          $ref: '#/definitions/dto.Selection'
+        type: array
+    type: object
   dto.FindByTokenGroupResponse:
     properties:
       id:
@@ -199,6 +206,17 @@ definitions:
     properties:
       pin:
         $ref: '#/definitions/dto.Pin'
+    type: object
+  dto.Selection:
+    properties:
+      baan_id:
+        type: string
+      group_id:
+        type: string
+      id:
+        type: string
+      order:
+        type: integer
     type: object
   dto.Stamp:
     properties:
@@ -534,7 +552,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/apperror.AppError'
-      summary: Clean all data in database
+      summary: Clean all data in database (only in development environment)
       tags:
       - db
   /count/{name}:
@@ -856,7 +874,46 @@ paths:
             $ref: '#/definitions/apperror.AppError'
       security:
       - BearerAuth: []
-      summary: Create selection
+      summary: Create selection, only group leader can call
+      tags:
+      - selection
+  /selection/{groupId}:
+    get:
+      consumes:
+      - application/json
+      description: used when getting all selections in a group
+      parameters:
+      - description: groupId of request sender
+        in: path
+        name: groupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FindByGroupIdSelectionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: find selection by group id
       tags:
       - selection
   /stamp/{userId}:

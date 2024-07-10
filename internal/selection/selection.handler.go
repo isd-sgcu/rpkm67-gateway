@@ -36,7 +36,7 @@ func NewHandler(svc Service, groupSvc group.Service, validate validator.DtoValid
 }
 
 // Create godoc
-// @Summary Create selection
+// @Summary Create selection, only group leader can call
 // @Description used when creating a selection on UNOCCUPIED order
 // @Tags selection
 // @Accept json
@@ -75,13 +75,27 @@ func (h *handlerImpl) Create(c context.Ctx) {
 	c.JSON(http.StatusCreated, &dto.CreateSelectionResponse{Selection: res.Selection})
 }
 
+// FindByGroupId godoc
+// @Summary find selection by group id
+// @Description used when getting all selections in a group
+// @Tags selection
+// @Accept json
+// @Produce json
+// @Param groupId path string true "groupId of request sender"
+// @Security BearerAuth
+// @Success 200 {object} dto.FindByGroupIdSelectionResponse
+// @Failure 400 {object} apperror.AppError
+// @Failure 401 {object} apperror.AppError
+// @Failure 404 {object} apperror.AppError
+// @Failure 500 {object} apperror.AppError
+// @Router /selection/{groupId} [get]
 func (h *handlerImpl) FindByGroupId(c context.Ctx) {
 	h.checkGroupLeader(c)
 
-	groupId := c.Param("id")
+	groupId := c.Param("groupId")
 	if groupId == "" {
-		h.log.Named("FindByGroupIdSelection").Error("Param: id not found")
-		c.BadRequestError("url parameter 'id' not found")
+		h.log.Named("FindByGroupIdSelection").Error("Param: groupId not found")
+		c.BadRequestError("url parameter 'groupId' not found")
 		return
 	}
 

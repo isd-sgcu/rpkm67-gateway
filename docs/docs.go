@@ -283,7 +283,7 @@ const docTemplate = `{
                 "tags": [
                     "db"
                 ],
-                "summary": "Clean all data in database",
+                "summary": "Clean all data in database (only in development environment)",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -757,7 +757,7 @@ const docTemplate = `{
                 "tags": [
                     "selection"
                 ],
-                "summary": "Create selection",
+                "summary": "Create selection, only group leader can call",
                 "parameters": [
                     {
                         "description": "create selection request",
@@ -774,6 +774,67 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.UpdateConfirmGroupResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
+        "/selection/{groupId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "used when getting all selections in a group",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "selection"
+                ],
+                "summary": "find selection by group id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "groupId of request sender",
+                        "name": "groupId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.FindByGroupIdSelectionResponse"
                         }
                     },
                     "400": {
@@ -1253,6 +1314,17 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.FindByGroupIdSelectionResponse": {
+            "type": "object",
+            "properties": {
+                "selection": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Selection"
+                    }
+                }
+            }
+        },
         "dto.FindByTokenGroupResponse": {
             "type": "object",
             "properties": {
@@ -1402,6 +1474,23 @@ const docTemplate = `{
             "properties": {
                 "pin": {
                     "$ref": "#/definitions/dto.Pin"
+                }
+            }
+        },
+        "dto.Selection": {
+            "type": "object",
+            "properties": {
+                "baan_id": {
+                    "type": "string"
+                },
+                "group_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
