@@ -747,7 +747,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "used when creating a selection on UNOCCUPIED order",
+                "description": "used when creating a selection on UNSELECTED order and baan",
                 "consumes": [
                     "application/json"
                 ],
@@ -774,6 +774,67 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.UpdateConfirmGroupResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "used when selecting a selection on SELECTED order or baan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "selection"
+                ],
+                "summary": "Update selection, only group leader can call",
+                "parameters": [
+                    {
+                        "description": "update selection request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateSelectionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateSelectionResponse"
                         }
                     },
                     "400": {
@@ -1555,6 +1616,22 @@ const docTemplate = `{
             "properties": {
                 "group": {
                     "$ref": "#/definitions/dto.Group"
+                }
+            }
+        },
+        "dto.UpdateSelectionRequest": {
+            "type": "object",
+            "properties": {
+                "selection": {
+                    "$ref": "#/definitions/dto.Selection"
+                }
+            }
+        },
+        "dto.UpdateSelectionResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean"
                 }
             }
         },

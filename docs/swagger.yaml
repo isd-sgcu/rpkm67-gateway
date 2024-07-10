@@ -259,6 +259,16 @@ definitions:
       group:
         $ref: '#/definitions/dto.Group'
     type: object
+  dto.UpdateSelectionRequest:
+    properties:
+      selection:
+        $ref: '#/definitions/dto.Selection'
+    type: object
+  dto.UpdateSelectionResponse:
+    properties:
+      success:
+        type: boolean
+    type: object
   dto.UpdateUserPictureResponse:
     properties:
       success:
@@ -838,10 +848,49 @@ paths:
       tags:
       - pin
   /selection:
+    patch:
+      consumes:
+      - application/json
+      description: used when selecting a selection on SELECTED order or baan
+      parameters:
+      - description: update selection request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSelectionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UpdateSelectionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Update selection, only group leader can call
+      tags:
+      - selection
     post:
       consumes:
       - application/json
-      description: used when creating a selection on UNOCCUPIED order
+      description: used when creating a selection on UNSELECTED order and baan
       parameters:
       - description: create selection request
         in: body
