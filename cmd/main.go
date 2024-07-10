@@ -14,6 +14,7 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/object"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/pin"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/router"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/selection"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/stamp"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/user"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
@@ -23,6 +24,7 @@ import (
 	userProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/user/v1"
 	groupProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/group/v1"
 	pinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/pin/v1"
+	selectionProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/selection/v1"
 	stampProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/stamp/v1"
 	checkinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/checkin/checkin/v1"
 	objectProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/store/object/v1"
@@ -90,6 +92,10 @@ func main() {
 	groupSvc := group.NewService(groupClient, logger)
 	groupHdr := group.NewHandler(groupSvc, validate, logger)
 
+	selectionClient := selectionProto.NewSelectionServiceClient(backendConn)
+	selectionSvc := selection.NewService(selectionClient, logger)
+	selectionHdr := selection.NewHandler(selectionSvc, validate, logger)
+
 	pinClient := pinProto.NewPinServiceClient(backendConn)
 	pinSvc := pin.NewService(pinClient, logger)
 	pinHdr := pin.NewHandler(pinSvc, validate, logger)
@@ -136,8 +142,13 @@ func main() {
 	r.V1Put("/group/:userId", groupHdr.UpdateConfirm)
 	r.V1Post("/group/join", groupHdr.Join)
 	r.V1Post("/group/leave", groupHdr.Leave)
-	r.V1Post("/group/switch-group", groupHdr.SwitchGroup) // basically leave current group and join another group
 	r.V1Delete("/group/delete-member", groupHdr.DeleteMember)
+
+	r.V1Post("/selection", selectionHdr.Create)
+	r.V1Get("/selection/:groupId", selectionHdr.FindByGroupId)
+	r.V1Patch("/selection/:groupId", selectionHdr.Update)
+	r.V1Delete("/selection/:groupId", selectionHdr.Delete)
+	r.V1Get("/selection/count-by-baan", selectionHdr.CountByBaanId)
 
 	r.V1Post("/checkin", checkinHdr.Create)
 	r.V1Get("/checkin/:userId", checkinHdr.FindByUserID)
