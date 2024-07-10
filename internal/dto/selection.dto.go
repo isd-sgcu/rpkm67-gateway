@@ -13,7 +13,7 @@ type BaanCount struct {
 }
 
 type CreateSelectionRequest struct {
-	GroupId string `json:"group_id" validate:"required"`
+	GroupId string `json:"group_id" validate:"required,uuid"`
 	BaanId  string `json:"baan_id" validate:"required"`
 	Order   int    `json:"order" validate:"required"`
 }

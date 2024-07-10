@@ -50,6 +50,8 @@ func NewHandler(svc Service, groupSvc group.Service, validate validator.DtoValid
 // @Failure 500 {object} apperror.AppError
 // @Router /selection [post]
 func (h *handlerImpl) Create(c context.Ctx) {
+	h.checkGroupLeader(c)
+
 	body := &dto.CreateSelectionRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Create").Error("Bind: failed to bind request body", zap.Error(err))
@@ -74,6 +76,8 @@ func (h *handlerImpl) Create(c context.Ctx) {
 }
 
 func (h *handlerImpl) FindByGroupId(c context.Ctx) {
+	h.checkGroupLeader(c)
+
 	groupId := c.Param("id")
 	if groupId == "" {
 		h.log.Named("FindByGroupIdSelection").Error("Param: id not found")
@@ -102,6 +106,8 @@ func (h *handlerImpl) FindByGroupId(c context.Ctx) {
 }
 
 func (h *handlerImpl) Update(c context.Ctx) {
+	h.checkGroupLeader(c)
+
 	body := &dto.UpdateSelectionRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Update").Error("Bind: failed to bind request body", zap.Error(err))
@@ -128,6 +134,8 @@ func (h *handlerImpl) Update(c context.Ctx) {
 }
 
 func (h *handlerImpl) Delete(c context.Ctx) {
+	h.checkGroupLeader(c)
+
 	body := &dto.DeleteSelectionRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Delete").Error("Bind: ", zap.Error(err))
@@ -154,6 +162,8 @@ func (h *handlerImpl) Delete(c context.Ctx) {
 }
 
 func (h *handlerImpl) CountByBaanId(c context.Ctx) {
+	h.checkGroupLeader(c)
+
 	res, appErr := h.svc.CountByBaanId()
 	if appErr != nil {
 		h.log.Named("CountByBaanId").Error("CountByBaanId: ", zap.Error(appErr))
@@ -164,4 +174,25 @@ func (h *handlerImpl) CountByBaanId(c context.Ctx) {
 	c.JSON(http.StatusOK, &dto.CountByBaanIdSelectionResponse{
 		BaanCounts: res.BaanCounts,
 	})
+}
+
+func (h *handlerImpl) checkGroupLeader(c context.Ctx) {
+	userId := c.GetString("userId")
+
+	res, err := h.groupSvc.FindByUserId(&dto.FindByUserIdGroupRequest{UserId: userId})
+	if err != nil {
+		h.log.Named("checkGroupLeader").Error("FindByUserId: ", zap.Error(err))
+		c.InternalServerError("Cannot get user's group")
+		c.Abort()
+		return
+	}
+
+	if res.Group.LeaderID != userId {
+		h.log.Named("checkGroupLeader").Error("Forbidden: You are not the leader of this group")
+		c.ForbiddenError("You are not the leader of this group")
+		c.Abort()
+		return
+	}
+
+	c.Next()
 }

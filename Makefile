@@ -29,6 +29,7 @@ watch:
 mock-gen:
 	mockgen -source ./internal/auth/auth.service.go -destination ./mocks/auth/auth.service.go
 	mockgen -source ./internal/pin/pin.service.go -destination ./mocks/pin/pin.service.go
+	mockgen -source ./internal/group/group.service.go -destination ./mocks/group/group.service.go
 	mockgen -source ./internal/selection/selection.service.go -destination ./mocks/selection/selection.service.go
 	mockgen -source ./internal/selection/selection.client.go -destination ./mocks/selection/selection.client.go
 	mockgen -source ./internal/checkin/checkin.service.go -destination ./mocks/checkin/checkin.service.go

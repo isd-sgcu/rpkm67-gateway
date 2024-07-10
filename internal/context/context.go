@@ -13,6 +13,7 @@ type Ctx interface {
 	JSON(statusCode int, obj interface{})
 	ResponseError(err *apperror.AppError)
 	BadRequestError(err string)
+	ForbiddenError(err string)
 	InternalServerError(err string)
 	NewUUID() uuid.UUID
 	Bind(obj interface{}) error
@@ -22,6 +23,8 @@ type Ctx interface {
 	FormFile(key string, allowedContentType map[string]struct{}, maxFileSize int64) (*dto.DecomposedFile, error)
 	GetString(key string) string
 	GetHeader(key string) string
+	Abort()
+	Next()
 }
 
 type contextImpl struct {
@@ -123,4 +126,12 @@ func (c *contextImpl) GetString(key string) string {
 
 func (c *contextImpl) GetHeader(key string) string {
 	return c.Context.GetHeader(key)
+}
+
+func (c *contextImpl) Abort() {
+	c.Context.Abort()
+}
+
+func (c *contextImpl) Next() {
+	c.Context.Next()
 }
