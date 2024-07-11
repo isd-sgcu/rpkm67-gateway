@@ -8,6 +8,8 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/middleware"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type Router struct {
@@ -15,14 +17,16 @@ type Router struct {
 	V1             *gin.RouterGroup
 	V1NonAuth      *gin.RouterGroup
 	requestMetrics metrics.RequestMetrics
+	tracer         trace.Tracer
 }
 
-func New(conf *config.Config, corsHandler config.CorsHandler, authMiddleware middleware.AuthMiddleware, requestMetrics metrics.RequestMetrics) *Router {
+func New(conf *config.Config, corsHandler config.CorsHandler, authMiddleware middleware.AuthMiddleware, requestMetrics metrics.RequestMetrics, tracer trace.Tracer) *Router {
 	if !conf.App.IsDevelopment() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
 	r := gin.Default()
+	r.Use(otelgin.Middleware(conf.App.ServiceName))
 	r.Use(gin.HandlerFunc(corsHandler))
 	v1 := r.Group("/api/v1")
 	v1.Use(gin.HandlerFunc(authMiddleware.Validate))
@@ -33,5 +37,5 @@ func New(conf *config.Config, corsHandler config.CorsHandler, authMiddleware mid
 		v1NonAuth.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
-	return &Router{r, v1, v1NonAuth, requestMetrics}
+	return &Router{r, v1, v1NonAuth, requestMetrics, tracer}
 }
