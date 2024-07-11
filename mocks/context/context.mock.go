@@ -5,12 +5,14 @@
 package mock_context
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
 	apperror "github.com/isd-sgcu/rpkm67-gateway/apperror"
 	dto "github.com/isd-sgcu/rpkm67-gateway/internal/dto"
+	trace "go.opentelemetry.io/otel/trace"
 )
 
 // MockCtx is a mock of Ctx interface.
@@ -105,6 +107,20 @@ func (mr *MockCtxMockRecorder) GetString(key interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetString", reflect.TypeOf((*MockCtx)(nil).GetString), key)
 }
 
+// GetTracer mocks base method.
+func (m *MockCtx) GetTracer() trace.Tracer {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTracer")
+	ret0, _ := ret[0].(trace.Tracer)
+	return ret0
+}
+
+// GetTracer indicates an expected call of GetTracer.
+func (mr *MockCtxMockRecorder) GetTracer() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTracer", reflect.TypeOf((*MockCtx)(nil).GetTracer))
+}
+
 // InternalServerError mocks base method.
 func (m *MockCtx) InternalServerError(err string) {
 	m.ctrl.T.Helper()
@@ -183,6 +199,20 @@ func (m *MockCtx) Query(key string) string {
 func (mr *MockCtxMockRecorder) Query(key interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Query", reflect.TypeOf((*MockCtx)(nil).Query), key)
+}
+
+// RequestContext mocks base method.
+func (m *MockCtx) RequestContext() context.Context {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RequestContext")
+	ret0, _ := ret[0].(context.Context)
+	return ret0
+}
+
+// RequestContext indicates an expected call of RequestContext.
+func (mr *MockCtxMockRecorder) RequestContext() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RequestContext", reflect.TypeOf((*MockCtx)(nil).RequestContext))
 }
 
 // ResponseError mocks base method.
