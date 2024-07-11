@@ -45,6 +45,10 @@ func NewHandler(svc Service, userSvc user.Service, validate validator.DtoValidat
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin [post]
 func (h *handlerImpl) Create(c context.Ctx) {
+	tr := c.GetTracer()
+	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.Create")
+	defer span.End()
+
 	body := &dto.CreateCheckInRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Create").Error("Bind: failed to bind request body", zap.Error(err))
@@ -64,7 +68,7 @@ func (h *handlerImpl) Create(c context.Ctx) {
 		Event:  body.Event,
 	}
 
-	res, appErr := h.svc.Create(req)
+	res, appErr := h.svc.Create(ctx, req)
 	if appErr != nil {
 		h.log.Named("Create").Error("Create: ", zap.Error(appErr))
 		c.ResponseError(appErr)
@@ -103,6 +107,10 @@ func (h *handlerImpl) Create(c context.Ctx) {
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/email/{email} [get]
 func (h *handlerImpl) FindByEmail(c context.Ctx) {
+	tr := c.GetTracer()
+	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.FindByEmail")
+	defer span.End()
+
 	email := c.Param("email")
 	if email == "" {
 		h.log.Named("FindByEmail").Error("FindByEmail: email should not be empty")
@@ -114,7 +122,7 @@ func (h *handlerImpl) FindByEmail(c context.Ctx) {
 		Email: email,
 	}
 
-	res, appErr := h.svc.FindByEmail(req)
+	res, appErr := h.svc.FindByEmail(ctx, req)
 	if appErr != nil {
 		h.log.Named("FindByEmail").Error("FindByEmail: ", zap.Error(appErr))
 		c.ResponseError(appErr)
@@ -138,6 +146,10 @@ func (h *handlerImpl) FindByEmail(c context.Ctx) {
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/{userId} [get]
 func (h *handlerImpl) FindByUserID(c context.Ctx) {
+	tr := c.GetTracer()
+	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.FindByUserID")
+	defer span.End()
+
 	userId := c.Param("userId")
 	if userId == "" {
 		h.log.Named("FindByUserID").Error("FindByUserID: user_id should not be empty")
@@ -149,7 +161,7 @@ func (h *handlerImpl) FindByUserID(c context.Ctx) {
 		UserID: userId,
 	}
 
-	res, appErr := h.svc.FindByUserID(req)
+	res, appErr := h.svc.FindByUserID(ctx, req)
 	if appErr != nil {
 		h.log.Named("FindByUserID").Error("FindByUserID: ", zap.Error(appErr))
 		c.ResponseError(appErr)
