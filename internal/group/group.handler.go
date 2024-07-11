@@ -16,7 +16,6 @@ type Handler interface {
 	UpdateConfirm(c context.Ctx)
 	Join(c context.Ctx)
 	Leave(c context.Ctx)
-	SwitchGroup(c context.Ctx) // basically leave current group and join another group
 	DeleteMember(c context.Ctx)
 }
 
@@ -223,7 +222,7 @@ func (h *handlerImpl) Join(c context.Ctx) {
 // @Failure 401 {object} apperror.AppError
 // @Failure 404 {object} apperror.AppError
 // @Failure 500 {object} apperror.AppError
-// @Router /group/join [post]
+// @Router /group/leave [post]
 func (h *handlerImpl) Leave(c context.Ctx) {
 	body := &dto.LeaveGroupRequest{}
 	if err := c.Bind(body); err != nil {
@@ -250,46 +249,6 @@ func (h *handlerImpl) Leave(c context.Ctx) {
 	}
 
 	c.JSON(http.StatusOK, &dto.LeaveGroupResponse{
-		Group: res.Group,
-	})
-}
-
-func (h *handlerImpl) SwitchGroup(c context.Ctx) {
-	body := &dto.SwitchGroupBody{}
-	if err := c.Bind(body); err != nil {
-		h.log.Named("SwitchGroup").Error("Bind: failed to bind request body", zap.Error(err))
-		c.BadRequestError(err.Error())
-		return
-	}
-
-	if errorList := h.validate.Validate(body); errorList != nil {
-		h.log.Named("SwitchGroup").Error("Validate: ", zap.Strings("errorList", errorList))
-		c.BadRequestError(strings.Join(errorList, ", "))
-		return
-	}
-
-	leaveReq := &dto.LeaveGroupRequest{
-		UserId: body.UserId,
-	}
-	_, appErr := h.svc.Leave(leaveReq)
-	if appErr != nil {
-		h.log.Named("SwitchGroup").Error("Leave: ", zap.Error(appErr))
-		c.ResponseError(appErr)
-		return
-	}
-
-	joinReq := &dto.JoinGroupRequest{
-		Token:  body.NewGroupToken,
-		UserId: body.UserId,
-	}
-	res, appErr := h.svc.Join(joinReq)
-	if appErr != nil {
-		h.log.Named("SwitchGroup").Error("Join: ", zap.Error(appErr))
-		c.ResponseError(appErr)
-		return
-	}
-
-	c.JSON(http.StatusOK, &dto.SwitchGroupResponse{
 		Group: res.Group,
 	})
 }

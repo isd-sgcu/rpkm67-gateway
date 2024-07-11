@@ -9,7 +9,6 @@ func MockSelectionsProto() []*selectionProto.Selection {
 	var selections []*selectionProto.Selection
 	for i := 0; i < 10; i++ {
 		selection := &selectionProto.Selection{
-			Id:      faker.UUIDDigit(),
 			GroupId: faker.UUIDDigit(),
 			BaanId:  faker.UUIDDigit(),
 		}

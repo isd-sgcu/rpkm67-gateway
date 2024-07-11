@@ -15,6 +15,13 @@ definitions:
     x-enum-varnames:
     - USER
     - STAFF
+  dto.BaanCount:
+    properties:
+      baan_id:
+        type: string
+      count:
+        type: integer
+    type: object
   dto.CheckIn:
     properties:
       email:
@@ -25,6 +32,13 @@ definitions:
         type: string
       user_id:
         type: string
+    type: object
+  dto.CountByBaanIdSelectionResponse:
+    properties:
+      baan_counts:
+        items:
+          $ref: '#/definitions/dto.BaanCount'
+        type: array
     type: object
   dto.CountResponse:
     properties:
@@ -48,6 +62,19 @@ definitions:
         type: string
       lastname:
         type: string
+    type: object
+  dto.CreateSelectionRequest:
+    properties:
+      baan_id:
+        type: string
+      group_id:
+        type: string
+      order:
+        type: integer
+    required:
+    - baan_id
+    - group_id
+    - order
     type: object
   dto.Credential:
     properties:
@@ -76,6 +103,21 @@ definitions:
       group:
         $ref: '#/definitions/dto.Group'
     type: object
+  dto.DeleteSelectionRequest:
+    properties:
+      baan_id:
+        type: string
+      group_id:
+        type: string
+    required:
+    - baan_id
+    - group_id
+    type: object
+  dto.DeleteSelectionResponse:
+    properties:
+      success:
+        type: boolean
+    type: object
   dto.FindAllPinResponse:
     properties:
       pins:
@@ -88,6 +130,13 @@ definitions:
       checkins:
         items:
           $ref: '#/definitions/dto.CheckIn'
+        type: array
+    type: object
+  dto.FindByGroupIdSelectionResponse:
+    properties:
+      selection:
+        items:
+          $ref: '#/definitions/dto.Selection'
         type: array
     type: object
   dto.FindByTokenGroupResponse:
@@ -187,6 +236,15 @@ definitions:
       pin:
         $ref: '#/definitions/dto.Pin'
     type: object
+  dto.Selection:
+    properties:
+      baan_id:
+        type: string
+      group_id:
+        type: string
+      order:
+        type: integer
+    type: object
   dto.Stamp:
     properties:
       id:
@@ -227,6 +285,24 @@ definitions:
     properties:
       group:
         $ref: '#/definitions/dto.Group'
+    type: object
+  dto.UpdateSelectionRequest:
+    properties:
+      baan_id:
+        type: string
+      group_id:
+        type: string
+      order:
+        type: integer
+    required:
+    - baan_id
+    - group_id
+    - order
+    type: object
+  dto.UpdateSelectionResponse:
+    properties:
+      selection:
+        $ref: '#/definitions/dto.Selection'
     type: object
   dto.UpdateUserPictureResponse:
     properties:
@@ -521,7 +597,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/apperror.AppError'
-      summary: Clean all data in database
+      summary: Clean all data in database (only in development environment)
       tags:
       - db
   /count/{name}:
@@ -676,6 +752,47 @@ paths:
     post:
       consumes:
       - application/json
+      description: previous group gets deleted, cannot join another group you are
+        the leader of group with more than 1 member
+      parameters:
+      - description: join request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.JoinGroupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.JoinGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: User joins another group
+      tags:
+      - group
+  /group/leave:
+    post:
+      consumes:
+      - application/json
       description: cannot leave group if you are leader of a group (but you can use
         `join` to join another group)
       parameters:
@@ -806,6 +923,207 @@ paths:
       summary: Reset a pin
       tags:
       - pin
+  /selection:
+    delete:
+      consumes:
+      - application/json
+      description: used when removing a selection from the list
+      parameters:
+      - description: delete selection request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DeleteSelectionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DeleteSelectionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Delete selection, only group leader can call
+      tags:
+      - selection
+    patch:
+      consumes:
+      - application/json
+      description: used when selecting a selection on SELECTED order or baan
+      parameters:
+      - description: update selection request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSelectionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UpdateSelectionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Update selection, only group leader can call
+      tags:
+      - selection
+    post:
+      consumes:
+      - application/json
+      description: used when creating a selection on UNSELECTED order and baan
+      parameters:
+      - description: create selection request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSelectionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UpdateConfirmGroupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: Create selection, only group leader can call
+      tags:
+      - selection
+  /selection/{groupId}:
+    get:
+      consumes:
+      - application/json
+      description: used when getting all selections in a group
+      parameters:
+      - description: groupId of request sender
+        in: path
+        name: groupId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FindByGroupIdSelectionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: find selection by group id
+      tags:
+      - selection
+  /selection/count-by-baan:
+    get:
+      description: displayed in baan selection page to show how many people are interested
+        in each baan
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CountByBaanIdSelectionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      security:
+      - BearerAuth: []
+      summary: count selections by baan id
+      tags:
+      - selection
   /stamp/{userId}:
     get:
       consumes:

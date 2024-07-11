@@ -37,6 +37,7 @@ func (s *serviceImpl) Create(req *dto.CreateSelectionRequest) (*dto.CreateSelect
 	res, err := s.client.Create(ctx, &selectionProto.CreateSelectionRequest{
 		GroupId: req.GroupId,
 		BaanId:  req.BaanId,
+		Order:   int32(req.Order),
 	})
 	if err != nil {
 		s.log.Named("Create").Error("Create: ", zap.Error(err))
@@ -70,7 +71,9 @@ func (s *serviceImpl) Update(req *dto.UpdateSelectionRequest) (*dto.UpdateSelect
 	defer cancel()
 
 	res, err := s.client.Update(ctx, &selectionProto.UpdateSelectionRequest{
-		Selection: DtoToProto(req.Selection),
+		GroupId: req.GroupId,
+		BaanId:  req.BaanId,
+		Order:   int32(req.Order),
 	})
 	if err != nil {
 		s.log.Named("Update").Error("Update: ", zap.Error(err))
@@ -78,7 +81,7 @@ func (s *serviceImpl) Update(req *dto.UpdateSelectionRequest) (*dto.UpdateSelect
 	}
 
 	return &dto.UpdateSelectionResponse{
-		Success: res.Success,
+		Selection: ProtoToDto(res.Selection),
 	}, nil
 }
 
@@ -87,7 +90,8 @@ func (s *serviceImpl) Delete(req *dto.DeleteSelectionRequest) (*dto.DeleteSelect
 	defer cancel()
 
 	res, err := s.client.Delete(ctx, &selectionProto.DeleteSelectionRequest{
-		GroupId: req.Id,
+		GroupId: req.GroupId,
+		BaanId:  req.BaanId,
 	})
 	if err != nil {
 		s.log.Named("Delete").Error("Delete: ", zap.Error(err))

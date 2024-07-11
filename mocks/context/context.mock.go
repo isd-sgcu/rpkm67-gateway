@@ -38,6 +38,18 @@ func (m *MockCtx) EXPECT() *MockCtxMockRecorder {
 	return m.recorder
 }
 
+// Abort mocks base method.
+func (m *MockCtx) Abort() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Abort")
+}
+
+// Abort indicates an expected call of Abort.
+func (mr *MockCtxMockRecorder) Abort() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Abort", reflect.TypeOf((*MockCtx)(nil).Abort))
+}
+
 // BadRequestError mocks base method.
 func (m *MockCtx) BadRequestError(err string) {
 	m.ctrl.T.Helper()
@@ -62,6 +74,18 @@ func (m *MockCtx) Bind(obj interface{}) error {
 func (mr *MockCtxMockRecorder) Bind(obj interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Bind", reflect.TypeOf((*MockCtx)(nil).Bind), obj)
+}
+
+// ForbiddenError mocks base method.
+func (m *MockCtx) ForbiddenError(err string) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "ForbiddenError", err)
+}
+
+// ForbiddenError indicates an expected call of ForbiddenError.
+func (mr *MockCtxMockRecorder) ForbiddenError(err interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ForbiddenError", reflect.TypeOf((*MockCtx)(nil).ForbiddenError), err)
 }
 
 // FormFile mocks base method.
@@ -157,6 +181,18 @@ func (m *MockCtx) NewUUID() uuid.UUID {
 func (mr *MockCtxMockRecorder) NewUUID() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewUUID", reflect.TypeOf((*MockCtx)(nil).NewUUID))
+}
+
+// Next mocks base method.
+func (m *MockCtx) Next() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Next")
+}
+
+// Next indicates an expected call of Next.
+func (mr *MockCtxMockRecorder) Next() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Next", reflect.TypeOf((*MockCtx)(nil).Next))
 }
 
 // Param mocks base method.

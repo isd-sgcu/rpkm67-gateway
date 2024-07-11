@@ -16,6 +16,7 @@ type Ctx interface {
 	JSON(statusCode int, obj interface{})
 	ResponseError(err *apperror.AppError)
 	BadRequestError(err string)
+	ForbiddenError(err string)
 	InternalServerError(err string)
 	NewUUID() uuid.UUID
 	Bind(obj interface{}) error
@@ -27,6 +28,8 @@ type Ctx interface {
 	GetHeader(key string) string
 	GetTracer() trace.Tracer
 	RequestContext() context.Context
+	Abort()
+	Next()
 }
 
 type contextImpl struct {
@@ -138,4 +141,12 @@ func (c *contextImpl) GetString(key string) string {
 
 func (c *contextImpl) GetHeader(key string) string {
 	return c.Context.GetHeader(key)
+}
+
+func (c *contextImpl) Abort() {
+	c.Context.Abort()
+}
+
+func (c *contextImpl) Next() {
+	c.Context.Next()
 }
