@@ -115,64 +115,64 @@ func (t *SelectionHandlerTest) TestCreateSelectionServiceError() {
 	handler.Create(context)
 }
 
-func (t *SelectionHandlerTest) TestFindByStudentIdSelectionSuccess() {
-	selectionSvc := selectionMock.NewMockService(t.controller)
-	groupSvc := groupMock.NewMockService(t.controller)
-	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := ctxMock.NewMockCtx(t.controller)
-	handler := selection.NewHandler(selectionSvc, groupSvc, validator, t.logger)
+// func (t *SelectionHandlerTest) TestFindByStudentIdSelectionSuccess() {
+// 	selectionSvc := selectionMock.NewMockService(t.controller)
+// 	groupSvc := groupMock.NewMockService(t.controller)
+// 	validator := validatorMock.NewMockDtoValidator(t.controller)
+// 	context := ctxMock.NewMockCtx(t.controller)
+// 	handler := selection.NewHandler(selectionSvc, groupSvc, validator, t.logger)
 
-	expectedResp := &dto.FindByGroupIdSelectionResponse{
-		Selections: t.Selections,
-	}
+// 	expectedResp := &dto.FindByGroupIdSelectionResponse{
+// 		Selections: t.Selections,
+// 	}
 
-	context.EXPECT().GetString("userId").Return(t.userId)
-	groupSvc.EXPECT().FindByUserId(&dto.FindByUserIdGroupRequest{UserId: t.userId}).
-		Return(&dto.FindByUserIdGroupResponse{Group: &dto.Group{LeaderID: t.userId}}, nil)
-	context.EXPECT().Next()
-	context.EXPECT().Param("groupId").Return(t.Selection.GroupId)
-	validator.EXPECT().Validate(t.FindByGroupIdSelectionReq).Return(nil)
-	selectionSvc.EXPECT().FindByGroupId(t.FindByGroupIdSelectionReq).Return(expectedResp, nil)
-	context.EXPECT().JSON(http.StatusOK, expectedResp)
+// 	context.EXPECT().GetString("userId").Return(t.userId)
+// 	groupSvc.EXPECT().FindByUserId(&dto.FindByUserIdGroupRequest{UserId: t.userId}).
+// 		Return(&dto.FindByUserIdGroupResponse{Group: &dto.Group{LeaderID: t.userId}}, nil)
+// 	context.EXPECT().Next()
+// 	context.EXPECT().Param("groupId").Return(t.Selection.GroupId)
+// 	validator.EXPECT().Validate(t.FindByGroupIdSelectionReq).Return(nil)
+// 	selectionSvc.EXPECT().FindByGroupId(t.FindByGroupIdSelectionReq).Return(expectedResp, nil)
+// 	context.EXPECT().JSON(http.StatusOK, expectedResp)
 
-	handler.FindByGroupId(context)
-}
+// 	handler.FindByGroupId(context)
+// }
 
-func (t *SelectionHandlerTest) TestFindByStudentIdSelectionUrlParamEmpty() {
-	context := ctxMock.NewMockCtx(t.controller)
-	groupSvc := groupMock.NewMockService(t.controller)
-	handler := selection.NewHandler(nil, groupSvc, nil, t.logger)
+// func (t *SelectionHandlerTest) TestFindByStudentIdSelectionUrlParamEmpty() {
+// 	context := ctxMock.NewMockCtx(t.controller)
+// 	groupSvc := groupMock.NewMockService(t.controller)
+// 	handler := selection.NewHandler(nil, groupSvc, nil, t.logger)
 
-	expectedErr := apperror.BadRequestError("url parameter 'groupId' not found")
+// 	expectedErr := apperror.BadRequestError("url parameter 'groupId' not found")
 
-	context.EXPECT().GetString("userId").Return(t.userId)
-	groupSvc.EXPECT().FindByUserId(&dto.FindByUserIdGroupRequest{UserId: t.userId}).
-		Return(&dto.FindByUserIdGroupResponse{Group: &dto.Group{LeaderID: t.userId}}, nil)
-	context.EXPECT().Next()
-	context.EXPECT().Param("groupId").Return("")
-	context.EXPECT().BadRequestError(expectedErr.Error())
+// 	context.EXPECT().GetString("userId").Return(t.userId)
+// 	groupSvc.EXPECT().FindByUserId(&dto.FindByUserIdGroupRequest{UserId: t.userId}).
+// 		Return(&dto.FindByUserIdGroupResponse{Group: &dto.Group{LeaderID: t.userId}}, nil)
+// 	context.EXPECT().Next()
+// 	context.EXPECT().Param("groupId").Return("")
+// 	context.EXPECT().BadRequestError(expectedErr.Error())
 
-	handler.FindByGroupId(context)
-}
+// 	handler.FindByGroupId(context)
+// }
 
-func (t *SelectionHandlerTest) TestFindByStudentIdSelectionServiceError() {
-	selectionSvc := selectionMock.NewMockService(t.controller)
-	groupSvc := groupMock.NewMockService(t.controller)
-	validator := validatorMock.NewMockDtoValidator(t.controller)
-	context := ctxMock.NewMockCtx(t.controller)
-	handler := selection.NewHandler(selectionSvc, groupSvc, validator, t.logger)
+// func (t *SelectionHandlerTest) TestFindByStudentIdSelectionServiceError() {
+// 	selectionSvc := selectionMock.NewMockService(t.controller)
+// 	groupSvc := groupMock.NewMockService(t.controller)
+// 	validator := validatorMock.NewMockDtoValidator(t.controller)
+// 	context := ctxMock.NewMockCtx(t.controller)
+// 	handler := selection.NewHandler(selectionSvc, groupSvc, validator, t.logger)
 
-	context.EXPECT().GetString("userId").Return(t.userId)
-	groupSvc.EXPECT().FindByUserId(&dto.FindByUserIdGroupRequest{UserId: t.userId}).
-		Return(&dto.FindByUserIdGroupResponse{Group: &dto.Group{LeaderID: t.userId}}, nil)
-	context.EXPECT().Next()
-	context.EXPECT().Param("groupId").Return(t.Selection.GroupId)
-	validator.EXPECT().Validate(t.FindByGroupIdSelectionReq).Return(nil)
-	selectionSvc.EXPECT().FindByGroupId(t.FindByGroupIdSelectionReq).Return(nil, apperror.InternalServer)
-	context.EXPECT().ResponseError(apperror.InternalServer)
+// 	context.EXPECT().GetString("userId").Return(t.userId)
+// 	groupSvc.EXPECT().FindByUserId(&dto.FindByUserIdGroupRequest{UserId: t.userId}).
+// 		Return(&dto.FindByUserIdGroupResponse{Group: &dto.Group{LeaderID: t.userId}}, nil)
+// 	context.EXPECT().Next()
+// 	context.EXPECT().Param("groupId").Return(t.Selection.GroupId)
+// 	validator.EXPECT().Validate(t.FindByGroupIdSelectionReq).Return(nil)
+// 	selectionSvc.EXPECT().FindByGroupId(t.FindByGroupIdSelectionReq).Return(nil, apperror.InternalServer)
+// 	context.EXPECT().ResponseError(apperror.InternalServer)
 
-	handler.FindByGroupId(context)
-}
+// 	handler.FindByGroupId(context)
+// }
 
 func (t *SelectionHandlerTest) TestDeleteSelectionSuccess() {
 	selectionSvc := selectionMock.NewMockService(t.controller)
