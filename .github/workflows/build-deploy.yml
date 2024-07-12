@@ -83,7 +83,7 @@ jobs:
         uses: mikefarah/yq@master
         if: github.ref == 'refs/heads/main'
         with:
-          cmd: yq -i '.[0].value = "${{ env.IMAGE_NAME }}:" + strenv(IMAGE_TAG)' isd/${{ env.SERVICE_NAME }}/deployment.yaml
+          cmd: yq -i '.[0].value = "${{ env.IMAGE_NAME }}:" + strenv(IMAGE_TAG)' prod/${{ env.SERVICE_NAME }}/deployment.yaml
 
       - name: Commit & Push changes
         uses: actions-js/push@v1.4
