@@ -28,7 +28,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
-          RELEASE_BRANCHES: main
+          RELEASE_BRANCHES: dev
           DEFAULT_BUMP: patch
         id: tag_action
 
