@@ -17,6 +17,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    outputs:
+      IMAGE_TAG: ${{ steps.tag_action.outputs.new_tag }}
 
     permissions:
       contents: write
@@ -61,6 +63,8 @@ jobs:
     name: Continuous Deployment
     needs: build
     runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: ${{ needs.build.outputs.IMAGE_TAG }}
 
     steps:
       - name: Checkout DevOps repository
