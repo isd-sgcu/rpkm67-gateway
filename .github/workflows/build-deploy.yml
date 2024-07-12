@@ -58,12 +58,10 @@ jobs:
         env:
           NEW_TAG: ${{ env.IMAGE_TAG }}
         with:
-          cmd: yq -i '.spec.template.spec.containers[0].image = "ghcr.io/isd-sgcu/rpkm67-gateway:" + strenv(NEW_TAG)' base/rpkm67-gateway/deployment.yaml
+          cmd: yq -i '[0].value = "ghcr.io/isd-sgcu/rpkm67-gateway:" + strenv(NEW_TAG)' isd/rpkm67-gateway/deployment.yaml
 
       - name: Commit & Push changes
         uses: actions-js/push@v1.4
         with:
           repository: isd-sgcu/rpkm67-devops
           github_token: ${{ secrets.DEVOPS_TOKEN }}
-
-# docker pull --platform linux/x86_64
