@@ -5,8 +5,7 @@ services:
     image: ghcr.io/isd-sgcu/rpkm67-gateway:latest
     container_name: gateway
     restart: unless-stopped
-    depends_on:
-        - db
+    depends_on: [db, auth, backend, checkin, store]
     environment:
       APP_PORT: 3001
       APP_ENV: development
