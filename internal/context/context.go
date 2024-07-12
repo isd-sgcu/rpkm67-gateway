@@ -1,12 +1,15 @@
 package context
 
 import (
+	"context"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/constant"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/metrics"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type Ctx interface {
@@ -23,6 +26,8 @@ type Ctx interface {
 	FormFile(key string, allowedContentType map[string]struct{}, maxFileSize int64) (*dto.DecomposedFile, error)
 	GetString(key string) string
 	GetHeader(key string) string
+	GetTracer() trace.Tracer
+	RequestContext() context.Context
 	Abort()
 	Next()
 }
@@ -32,15 +37,25 @@ type contextImpl struct {
 	httpMethod constant.Method
 	path       string
 	reqMetrics metrics.RequestMetrics
+	tracer     trace.Tracer
 }
 
-func NewContext(c *gin.Context, httpMethod constant.Method, path string, reqMetrics metrics.RequestMetrics) Ctx {
+func NewContext(c *gin.Context, httpMethod constant.Method, path string, reqMetrics metrics.RequestMetrics, tracer trace.Tracer) Ctx {
 	return &contextImpl{
 		Context:    c,
 		httpMethod: httpMethod,
 		path:       path,
 		reqMetrics: reqMetrics,
+		tracer:     tracer,
 	}
+}
+
+func (c *contextImpl) GetTracer() trace.Tracer {
+	return c.tracer
+}
+
+func (c *contextImpl) RequestContext() context.Context {
+	return c.Context.Request.Context()
 }
 
 func (c *contextImpl) JSON(statusCode int, obj interface{}) {
