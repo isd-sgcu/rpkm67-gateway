@@ -74,8 +74,14 @@ jobs:
             repository: isd-sgcu/rpkm67-devops
             token: ${{ secrets.DEVOPS_TOKEN }}
 
-      - name: Update image tag
+      - name: Update image tag in dev
         uses: mikefarah/yq@master
+        with:
+          cmd: yq -i '.[0].value = "${{ env.IMAGE_NAME }}:" + strenv(IMAGE_TAG)' isd/${{ env.SERVICE_NAME }}/deployment.yaml
+
+      - name: Update image tag in prod
+        uses: mikefarah/yq@master
+        if: github.ref == 'refs/heads/main'
         with:
           cmd: yq -i '.[0].value = "${{ env.IMAGE_NAME }}:" + strenv(IMAGE_TAG)' isd/${{ env.SERVICE_NAME }}/deployment.yaml
 
