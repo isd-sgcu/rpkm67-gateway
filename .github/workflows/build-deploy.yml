@@ -58,7 +58,7 @@ jobs:
         env:
           NEW_TAG: ${{ env.IMAGE_TAG }}
         with:
-          cmd: yq -i '[0].value = "ghcr.io/isd-sgcu/rpkm67-gateway:" + strenv(NEW_TAG)' isd/rpkm67-gateway/deployment.yaml
+          cmd: yq -i '.[0].value = "ghcr.io/isd-sgcu/rpkm67-gateway:" + strenv(NEW_TAG)' isd/rpkm67-gateway/deployment.yaml
 
       - name: Commit & Push changes
         uses: actions-js/push@v1.4
