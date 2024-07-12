@@ -72,7 +72,7 @@ jobs:
         uses: actions/checkout@v4
         with:
             repository: isd-sgcu/rpkm67-devops
-            token: ${{ secrets.DEVOPS_TOKEN }}
+            token: ${{ secrets.RPKM67_DEVOPS_TOKEN }}
 
       - name: Update image tag in dev
         uses: mikefarah/yq@master
@@ -89,4 +89,4 @@ jobs:
         uses: actions-js/push@v1.4
         with:
           repository: isd-sgcu/rpkm67-devops
-          github_token: ${{ secrets.DEVOPS_TOKEN }}
+          github_token: ${{ secrets.RPKM67_DEVOPS_TOKEN }}
