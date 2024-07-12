@@ -10,6 +10,7 @@ on:
       - v*
 
 env:
+  SERVICE_NAME: rpkm67-gateway
   IMAGE_NAME: ghcr.io/${{ github.repository }}
   IMAGE_TAG: <WILL_BE_SET>
 
@@ -76,7 +77,7 @@ jobs:
       - name: Update image tag
         uses: mikefarah/yq@master
         with:
-          cmd: yq -i '.[0].value = "ghcr.io/isd-sgcu/rpkm67-gateway:" + strenv(IMAGE_TAG)' isd/rpkm67-gateway/deployment.yaml
+          cmd: yq -i '.[0].value = "${{ env.IMAGE_NAME }}:" + strenv(IMAGE_TAG)' isd/${{ env.SERVICE_NAME }}/deployment.yaml
 
       - name: Commit & Push changes
         uses: actions-js/push@v1.4
