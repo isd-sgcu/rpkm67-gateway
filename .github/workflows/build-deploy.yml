@@ -11,7 +11,7 @@ on:
 
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository }}
-  IMAGE_TAG: ${{ github.sha }}
+  IMAGE_TAG: <WILL_BE_SET>
 
 jobs:
   build:
@@ -23,6 +23,18 @@ jobs:
       packages: write
 
     steps:
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.64.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          RELEASE_BRANCHES: main
+          DEFAULT_BUMP: patch
+        id: tag_action  # Add an ID to reference the step later
+
+      - name: Set IMAGE_TAG
+        run: echo "IMAGE_TAG=${{ steps.tag_action.outputs.new_tag }}" >> $GITHUB_ENV
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
