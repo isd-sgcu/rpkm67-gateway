@@ -43,6 +43,7 @@ jobs:
   
   cd:
     name: Continuous Deployment
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
