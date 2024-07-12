@@ -66,6 +66,8 @@ func HandleServiceError(err error) *AppError {
 		return NotFoundError(st.Message())
 	case codes.Internal:
 		return InternalServerError(st.Message())
+	case codes.AlreadyExists:
+		return BadRequestError(st.Message())
 	default:
 		return ServiceUnavailable
 	}

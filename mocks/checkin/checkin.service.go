@@ -5,6 +5,7 @@
 package mock_checkin
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -36,46 +37,46 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockService) Create(req *dto.CreateCheckInRequest) (*dto.CreateCheckInResponse, *apperror.AppError) {
+func (m *MockService) Create(ctx context.Context, req *dto.CreateCheckInRequest) (*dto.CreateCheckInResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", req)
+	ret := m.ctrl.Call(m, "Create", ctx, req)
 	ret0, _ := ret[0].(*dto.CreateCheckInResponse)
 	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockServiceMockRecorder) Create(req interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) Create(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockService)(nil).Create), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockService)(nil).Create), ctx, req)
 }
 
 // FindByEmail mocks base method.
-func (m *MockService) FindByEmail(req *dto.FindByEmailCheckInRequest) (*dto.FindByEmailCheckInResponse, *apperror.AppError) {
+func (m *MockService) FindByEmail(ctx context.Context, req *dto.FindByEmailCheckInRequest) (*dto.FindByEmailCheckInResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByEmail", req)
+	ret := m.ctrl.Call(m, "FindByEmail", ctx, req)
 	ret0, _ := ret[0].(*dto.FindByEmailCheckInResponse)
 	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 
 // FindByEmail indicates an expected call of FindByEmail.
-func (mr *MockServiceMockRecorder) FindByEmail(req interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) FindByEmail(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByEmail", reflect.TypeOf((*MockService)(nil).FindByEmail), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByEmail", reflect.TypeOf((*MockService)(nil).FindByEmail), ctx, req)
 }
 
 // FindByUserID mocks base method.
-func (m *MockService) FindByUserID(req *dto.FindByUserIdCheckInRequest) (*dto.FindByUserIdCheckInResponse, *apperror.AppError) {
+func (m *MockService) FindByUserID(ctx context.Context, req *dto.FindByUserIdCheckInRequest) (*dto.FindByUserIdCheckInResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByUserID", req)
+	ret := m.ctrl.Call(m, "FindByUserID", ctx, req)
 	ret0, _ := ret[0].(*dto.FindByUserIdCheckInResponse)
 	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 
 // FindByUserID indicates an expected call of FindByUserID.
-func (mr *MockServiceMockRecorder) FindByUserID(req interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) FindByUserID(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUserID", reflect.TypeOf((*MockService)(nil).FindByUserID), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUserID", reflect.TypeOf((*MockService)(nil).FindByUserID), ctx, req)
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/isd-sgcu/rpkm67-gateway/config"
@@ -20,6 +21,7 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
 	"github.com/isd-sgcu/rpkm67-gateway/logger"
 	"github.com/isd-sgcu/rpkm67-gateway/middleware"
+	"github.com/isd-sgcu/rpkm67-gateway/tracer"
 	authProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/auth/v1"
 	userProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/user/v1"
 	groupProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/group/v1"
@@ -29,6 +31,7 @@ import (
 	checkinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/checkin/checkin/v1"
 	objectProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/store/object/v1"
 	"github.com/prometheus/client_golang/prometheus"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -49,6 +52,18 @@ func main() {
 		panic(fmt.Sprintf("Failed to load config: %v", err))
 	}
 
+	tp, err := tracer.New(conf)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to create tracer: %v", err))
+	}
+	defer func() {
+		if err := tp.Shutdown(context.Background()); err != nil {
+			panic(fmt.Sprintf("Failed to shutdown tracer: %v", err))
+		}
+	}()
+
+	tracer := tp.Tracer("rpkm67-gateway")
+
 	logger := logger.New(&conf.App)
 	corsHandler := config.MakeCorsConfig(conf)
 
@@ -67,7 +82,11 @@ func main() {
 		logger.Sugar().Fatalf("cannot connect to backend service", err)
 	}
 
-	checkinConn, err := grpc.NewClient(conf.Svc.CheckIn, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	checkinConn, err := grpc.NewClient(
+		conf.Svc.CheckIn,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
+	)
 	if err != nil {
 		logger.Sugar().Fatalf("cannot connect to checkin service", err)
 	}
@@ -105,7 +124,7 @@ func main() {
 	stampHdr := stamp.NewHandler(stampSvc, validate, logger)
 
 	checkinClient := checkinProto.NewCheckInServiceClient(checkinConn)
-	checkinSvc := checkin.NewService(checkinClient, logger)
+	checkinSvc := checkin.NewService(checkinClient, logger, tracer)
 	checkinHdr := checkin.NewHandler(checkinSvc, userSvc, validate, logger)
 
 	requestCounter := prometheus.NewCounterVec(prometheus.CounterOpts{
@@ -127,7 +146,7 @@ func main() {
 
 	authMiddleware := middleware.NewAuthMiddleware(authSvc, requestMetrics)
 
-	r := router.New(conf, corsHandler, authMiddleware, requestMetrics)
+	r := router.New(conf, corsHandler, authMiddleware, requestMetrics, tracer)
 
 	r.V1NonAuthGet("/auth/google-url", authHdr.GetGoogleLoginUrl)
 	r.V1NonAuthGet("/auth/verify-google", authHdr.VerifyGoogleLogin)
