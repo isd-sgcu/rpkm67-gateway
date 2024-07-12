@@ -1,26 +1,28 @@
 version: "3.9"
 
 services:
-  # gateway:
-  #   image: ghcr.io/isd-sgcu/rpkm67-gateway:latest
-  #   container_name: gateway
-  #   restart: unless-stopped
-      # depends_on:
-      #     - db
-  #   environment:
-  #     APP_PORT: 3001
-  #     APP_ENV: development
-  #     APP_MAX_FILE_SIZE_MB: 10
-  #     CORS_ORIGINS: http://localhost:3000
-  #     SERVICE_AUTH: auth:3002
-  #     SERVICE_BACKEND: backend:3003
-  #     SERVICE_CHECKIN: checkin:3004
-  #     SERVICE_STORE: store:3005
-  #     DB_URL: postgres://root:1234@db:5432/rpkm67_db
-  #   networks:
-  #     - rpkm67
-  #   ports:
-  #     - "3001:3001"
+  gateway:
+    image: ghcr.io/isd-sgcu/rpkm67-gateway:latest
+    container_name: gateway
+    restart: unless-stopped
+    depends_on:
+        - db
+    environment:
+      APP_PORT: 3001
+      APP_ENV: development
+      APP_MAX_FILE_SIZE_MB: 10
+      APP_SERVICE_NAME: rpkm67-gateway
+      SERVICE_AUTH: auth:3002
+      SERVICE_BACKEND: backend:3003
+      SERVICE_CHECKIN: checkin:3004
+      SERVICE_STORE: store:3005
+      CORS_ORIGINS: http://localhost:3000
+      DB_URL: postgres://root:1234@db:5432/rpkm67_db
+      TRACER_ENDPOINT: localhost:4318
+    networks:
+      - rpkm67
+    ports:
+      - "3001:3001"
 
   auth:
     image: ghcr.io/isd-sgcu/rpkm67-auth:latest
