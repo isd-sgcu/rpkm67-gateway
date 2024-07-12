@@ -2,12 +2,12 @@ name: Build
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - main
       - dev
-    tags:
-      - v*
 
 env:
   SERVICE_NAME: rpkm67-gateway
@@ -18,6 +18,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     outputs:
       IMAGE_TAG: ${{ steps.tag_action.outputs.new_tag }}
 
