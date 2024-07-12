@@ -40,5 +40,29 @@ jobs:
           tags: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }},${{ env.IMAGE_NAME }}:latest
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=max
+  
+  cd:
+    name: Continuous Deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout DevOps repository
+        uses: actions/checkout@v4
+        with:
+            repository: isd-sgcu/rpkm67-devops
+            token: ${{ secrets.DEVOPS_TOKEN }}
+
+      - name: Update image tag
+        uses: mikefarah/yq@master
+        env:
+          NEW_TAG: ${{ env.IMAGE_TAG }}
+        with:
+          cmd: yq -i '.spec.template.spec.containers[0].image = ghcr.io/isd-sgcu/rpkm67-gateway:strenv(NEW_TAG)' base/rpkm67-gateway/deployment.yaml
+
+      - name: Commit & Push changes
+        uses: actions-js/push@v1.4
+        with:
+          repository: isd-sgcu/rpkm67-devops
+          github_token: ${{ secrets.DEVOPS_TOKEN }}
 
 # docker pull --platform linux/x86_64
