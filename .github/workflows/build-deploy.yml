@@ -30,7 +30,7 @@ jobs:
           WITH_V: true
           RELEASE_BRANCHES: main
           DEFAULT_BUMP: patch
-        id: tag_action  # Add an ID to reference the step later
+        id: tag_action
 
       - name: Set IMAGE_TAG
         run: echo "IMAGE_TAG=${{ steps.tag_action.outputs.new_tag }}" >> $GITHUB_ENV
