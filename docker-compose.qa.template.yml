@@ -100,7 +100,6 @@ services:
     environment:
       APP_PORT: 3005
       APP_ENV: development
-      APP_MAX_FILE_SIZE_MB: 20
       STORE_ENDPOINT: endpoint
       STORE_ACCESS_KEY: access_key
       STORE_SECRET_KEY: secret_key
