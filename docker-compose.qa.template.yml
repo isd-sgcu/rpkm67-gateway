@@ -5,10 +5,6 @@ services:
     image: ghcr.io/isd-sgcu/firstdate-rpkm67-frontend:latest
     container_name: frontend
     restart: unless-stopped
-    environment:
-      API_BASE_URL: https://localhost:3001/api/v1
-      FIRST_DATE_DATE: '2024-07-21'
-      RUP_PEUN_DATE: '2024-07-20'
     networks:
       - rpkm67
     ports:
