@@ -17,7 +17,7 @@ services:
       SERVICE_STORE: store:3005
       CORS_ORIGINS: http://localhost:3000
       DB_URL: postgres://root:1234@db:5432/rpkm67_db
-      TRACER_ENDPOINT: localhost:4318
+      TRACER_ENDPOINT: otel-collector:4318
     networks:
       - rpkm67
     ports:
