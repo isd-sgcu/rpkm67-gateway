@@ -87,7 +87,7 @@ func (h *handlerImpl) Create(c context.Ctx) {
 		CheckIn: &dto.CheckIn{
 			ID:     res.CheckIn.ID,
 			UserID: res.CheckIn.UserID,
-			Email:  res.CheckIn.Email,
+			Email:  resUser.User.Email,
 			Event:  res.CheckIn.Event,
 		},
 		Firstname: resUser.User.Firstname,
