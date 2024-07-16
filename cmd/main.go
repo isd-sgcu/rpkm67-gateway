@@ -181,7 +181,7 @@ func main() {
 
 	r.V1NonAuthPost("/count/:name", countHdr.Count)
 
-	r.V1NonAuth.GET("/metrics", metricsHdr.ExposeMetrics)
+	r.GET("/metrics", metricsHdr.ExposeMetrics)
 
 	if conf.App.IsDevelopment() {
 		dbConn, err := db.InitDatabase(&conf.Db, conf.App.IsDevelopment())

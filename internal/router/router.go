@@ -1,6 +1,9 @@
 package router
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/isd-sgcu/rpkm67-gateway/config"
 	_ "github.com/isd-sgcu/rpkm67-gateway/docs"
@@ -25,17 +28,33 @@ func New(conf *config.Config, corsHandler config.CorsHandler, authMiddleware mid
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	r := gin.Default()
+	r := gin.New()
 	r.Use(otelgin.Middleware(conf.App.ServiceName))
 	r.Use(gin.HandlerFunc(corsHandler))
 	v1 := r.Group("/api/v1")
+	v1.Use(gin.LoggerWithFormatter(logRequest))
 	v1.Use(gin.HandlerFunc(authMiddleware.Validate))
 
 	v1NonAuth := r.Group("/api/v1")
+	v1NonAuth.Use(gin.LoggerWithFormatter(logRequest))
 
 	if conf.App.IsDevelopment() {
 		v1NonAuth.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
 	return &Router{r, v1, v1NonAuth, requestMetrics, tracer}
+}
+
+func logRequest(param gin.LogFormatterParams) string {
+	return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
+		param.ClientIP,
+		param.TimeStamp.Format(time.RFC1123),
+		param.Method,
+		param.Path,
+		param.Request.Proto,
+		param.StatusCode,
+		param.Latency,
+		param.Request.UserAgent(),
+		param.ErrorMessage,
+	)
 }
