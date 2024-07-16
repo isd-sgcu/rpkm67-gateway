@@ -1,4 +1,5 @@
 pull-latest-mac:
+	docker pull --platform linux/x86_64 ghcr.io/isd-sgcu/firstdate-rpkm67-frontend:latest
 	docker pull --platform linux/x86_64 ghcr.io/isd-sgcu/rpkm67-gateway:latest
 	docker pull --platform linux/x86_64 ghcr.io/isd-sgcu/rpkm67-auth:latest
 	docker pull --platform linux/x86_64 ghcr.io/isd-sgcu/rpkm67-backend:latest

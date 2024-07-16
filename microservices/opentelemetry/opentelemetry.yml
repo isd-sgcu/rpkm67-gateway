@@ -11,11 +11,11 @@ processors:
 
 exporters:
   otlp:
-    endpoint: jaeger:4317
+    endpoint: http://jaeger:4317
     tls:
       insecure: true
   otlphttp:
-    endpoint: jaeger:4318
+    endpoint: http://jaeger:4318
   debug:
 
 service:

@@ -1,26 +1,36 @@
 version: "3.9"
 
 services:
-  # gateway:
-  #   image: ghcr.io/isd-sgcu/rpkm67-gateway:latest
-  #   container_name: gateway
-  #   restart: unless-stopped
-      # depends_on:
-      #     - db
-  #   environment:
-  #     APP_PORT: 3001
-  #     APP_ENV: development
-  #     APP_MAX_FILE_SIZE_MB: 10
-  #     CORS_ORIGINS: http://localhost:3000
-  #     SERVICE_AUTH: auth:3002
-  #     SERVICE_BACKEND: backend:3003
-  #     SERVICE_CHECKIN: checkin:3004
-  #     SERVICE_STORE: store:3005
-  #     DB_URL: postgres://root:1234@db:5432/rpkm67_db
-  #   networks:
-  #     - rpkm67
-  #   ports:
-  #     - "3001:3001"
+  frontend:
+    image: ghcr.io/isd-sgcu/firstdate-rpkm67-frontend:latest
+    container_name: frontend
+    restart: unless-stopped
+    networks:
+      - rpkm67
+    ports:
+      - "3000:3000"
+      
+  gateway:
+    image: ghcr.io/isd-sgcu/rpkm67-gateway:latest
+    container_name: gateway
+    restart: unless-stopped
+    depends_on: [db, auth, backend, checkin, store]
+    environment:
+      APP_PORT: 3001
+      APP_ENV: development
+      APP_MAX_FILE_SIZE_MB: 10
+      APP_SERVICE_NAME: rpkm67-gateway
+      SERVICE_AUTH: auth:3002
+      SERVICE_BACKEND: backend:3003
+      SERVICE_CHECKIN: checkin:3004
+      SERVICE_STORE: store:3005
+      CORS_ORIGINS: http://localhost:3000
+      DB_URL: postgres://root:1234@db:5432/rpkm67_db
+      TRACER_ENDPOINT: otel-collector:4318
+    networks:
+      - rpkm67
+    ports:
+      - "3001:3001"
 
   auth:
     image: ghcr.io/isd-sgcu/rpkm67-auth:latest
@@ -84,7 +94,9 @@ services:
     environment:
       APP_PORT: 3004
       APP_ENV: development
+      APP_SERVICE_NAME: checkin
       DB_URL: postgres://root:1234@db:5432/rpkm67_db
+      TRACER_ENDPOINT: otel-collector:4317
     networks:
       - rpkm67
     ports:
@@ -97,7 +109,6 @@ services:
     environment:
       APP_PORT: 3005
       APP_ENV: development
-      APP_MAX_FILE_SIZE_MB: 20
       STORE_ENDPOINT: endpoint
       STORE_ACCESS_KEY: access_key
       STORE_SECRET_KEY: secret_key
@@ -161,27 +172,31 @@ services:
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.104.0
+    container_name: otel-collector
+    restart: unless-stopped
+    depends_on:
+      - jaeger
     command: ["--config=/etc/opentelemetry.yml"]
+    networks:
+      - rpkm67
     volumes:
       - ./microservices/opentelemetry/opentelemetry.yml:/etc/opentelemetry.yml
     ports:
       - 4317:4317 # OTLP gRPC receiver
       - 4318:4318 # OTLP HTTP receiver
-    networks:
-      - rpkm67
-    depends_on:
-      - jaeger
 
   jaeger:
     image: jaegertracing/all-in-one:1.58
+    container_name: jaeger
+    restart: unless-stopped
     environment:
       - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - rpkm67
     ports:
       - 9091:16686 # Jaeger UI
       - 14250:14250 # Jaeger gRPC collector
       - 14268:14268 # Jaeger HTTP collector
-    networks:
-      - rpkm67
 
 networks:
   rpkm67:
