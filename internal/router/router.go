@@ -46,15 +46,12 @@ func New(conf *config.Config, corsHandler config.CorsHandler, authMiddleware mid
 }
 
 func logRequest(param gin.LogFormatterParams) string {
-	return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
-		param.ClientIP,
+	return fmt.Sprintf("[%s] \"%d %s %s %s %s\"\n",
 		param.TimeStamp.Format(time.RFC1123),
+		param.StatusCode,
 		param.Method,
 		param.Path,
-		param.Request.Proto,
-		param.StatusCode,
 		param.Latency,
-		param.Request.UserAgent(),
 		param.ErrorMessage,
 	)
 }
