@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/isd-sgcu/rpkm67-gateway/config"
 	"github.com/isd-sgcu/rpkm67-gateway/constant"
 	auth "github.com/isd-sgcu/rpkm67-gateway/internal/auth"
@@ -182,6 +183,10 @@ func main() {
 	r.V1NonAuthPost("/count/:name", countHdr.Count)
 
 	r.GET("/metrics", metricsHdr.ExposeMetrics)
+
+	r.GET("/healthz", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
 
 	if conf.App.IsDevelopment() {
 		dbConn, err := db.InitDatabase(&conf.Db, conf.App.IsDevelopment())
