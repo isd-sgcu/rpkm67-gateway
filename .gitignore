@@ -32,6 +32,10 @@ coverage.html
 
 tmp
 staff.json
+<<<<<<< HEAD
 internal/group/test/group.handler_test.go
 go.mod
 go.mod
+=======
+docker-compose.qa.yml
+>>>>>>> 7a930b83b55505c704592f4414df3ebd42990134

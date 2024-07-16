@@ -115,3 +115,23 @@ func (mr *MockClientMockRecorder) FindByGroupId(ctx, in interface{}, opts ...int
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByGroupId", reflect.TypeOf((*MockClient)(nil).FindByGroupId), varargs...)
 }
+
+// Update mocks base method.
+func (m *MockClient) Update(ctx context.Context, in *v1.UpdateSelectionRequest, opts ...grpc.CallOption) (*v1.UpdateSelectionResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Update", varargs...)
+	ret0, _ := ret[0].(*v1.UpdateSelectionResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockClientMockRecorder) Update(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockClient)(nil).Update), varargs...)
+}

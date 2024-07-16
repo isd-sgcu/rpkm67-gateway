@@ -65,19 +65,19 @@ func (mr *MockServiceMockRecorder) FindByToken(req interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByToken", reflect.TypeOf((*MockService)(nil).FindByToken), req)
 }
 
-// FindOne mocks base method.
-func (m *MockService) FindOne(req *dto.FindOneGroupRequest) (*dto.FindOneGroupResponse, *apperror.AppError) {
+// FindByUserId mocks base method.
+func (m *MockService) FindByUserId(req *dto.FindByUserIdGroupRequest) (*dto.FindByUserIdGroupResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindOne", req)
-	ret0, _ := ret[0].(*dto.FindOneGroupResponse)
+	ret := m.ctrl.Call(m, "FindByUserId", req)
+	ret0, _ := ret[0].(*dto.FindByUserIdGroupResponse)
 	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 
-// FindOne indicates an expected call of FindOne.
-func (mr *MockServiceMockRecorder) FindOne(req interface{}) *gomock.Call {
+// FindByUserId indicates an expected call of FindByUserId.
+func (mr *MockServiceMockRecorder) FindByUserId(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindOne", reflect.TypeOf((*MockService)(nil).FindOne), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUserId", reflect.TypeOf((*MockService)(nil).FindByUserId), req)
 }
 
 // Join mocks base method.
@@ -110,32 +110,17 @@ func (mr *MockServiceMockRecorder) Leave(req interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Leave", reflect.TypeOf((*MockService)(nil).Leave), req)
 }
 
-// SelectBaan mocks base method.
-func (m *MockService) SelectBaan(req *dto.SelectBaanRequest) (*dto.SelectBaanResponse, *apperror.AppError) {
+// UpdateConfirm mocks base method.
+func (m *MockService) UpdateConfirm(req *dto.UpdateConfirmGroupRequest) (*dto.UpdateConfirmGroupResponse, *apperror.AppError) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectBaan", req)
-	ret0, _ := ret[0].(*dto.SelectBaanResponse)
+	ret := m.ctrl.Call(m, "UpdateConfirm", req)
+	ret0, _ := ret[0].(*dto.UpdateConfirmGroupResponse)
 	ret1, _ := ret[1].(*apperror.AppError)
 	return ret0, ret1
 }
 
-// SelectBaan indicates an expected call of SelectBaan.
-func (mr *MockServiceMockRecorder) SelectBaan(req interface{}) *gomock.Call {
+// UpdateConfirm indicates an expected call of UpdateConfirm.
+func (mr *MockServiceMockRecorder) UpdateConfirm(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectBaan", reflect.TypeOf((*MockService)(nil).SelectBaan), req)
-}
-
-// Update mocks base method.
-func (m *MockService) Update(req *dto.UpdateGroupRequest) (*dto.UpdateGroupResponse, *apperror.AppError) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", req)
-	ret0, _ := ret[0].(*dto.UpdateGroupResponse)
-	ret1, _ := ret[1].(*apperror.AppError)
-	return ret0, ret1
-}
-
-// Update indicates an expected call of Update.
-func (mr *MockServiceMockRecorder) Update(req interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockService)(nil).Update), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateConfirm", reflect.TypeOf((*MockService)(nil).UpdateConfirm), req)
 }

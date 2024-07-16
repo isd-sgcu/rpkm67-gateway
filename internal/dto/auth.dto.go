@@ -6,18 +6,11 @@ type Credential struct {
 	ExpiresIn    int    `json:"expires_in" example:"3600"`
 }
 
-type SignInRequest struct {
-	Email    string `json:"email" validate:"required"`
-	Password string `json:"password" validate:"required,gte=6,lte=30"`
-}
-type SignUpRequest struct {
-	Email     string `json:"email" validate:"required"`
-	Password  string `json:"password" validate:"required,gte=6,lte=30"`
-	Firstname string `json:"firstname" validate:"required"`
-	Lastname  string `json:"lastname" validate:"required"`
+type ValidateRequest struct {
+	AccessToken string `json:"access_token" validate:"required"`
 }
 
-type TokenPayloadAuth struct {
+type ValidateResponse struct {
 	UserId string `json:"user_id"`
 	Role   string `json:"role"`
 }
@@ -26,10 +19,15 @@ type RefreshTokenRequest struct {
 	RefreshToken string `json:"refresh_token" validate:"required"`
 }
 
+type GetGoogleLoginUrlResponse struct {
+	Url string `json:"url"`
+}
+
 type VerifyGoogleLoginRequest struct {
 	Code string `json:"code" validate:"required"`
 }
 
 type VerifyGoogleLoginResponse struct {
 	Credential *Credential `json:"credential"`
+	UserId     string      `json:"user_id"`
 }

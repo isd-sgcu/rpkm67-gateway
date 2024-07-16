@@ -1,6 +1,11 @@
 package apperror
 
-import "net/http"
+import (
+	"net/http"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
 
 type AppError struct {
 	Id       string
@@ -12,15 +17,24 @@ func (e *AppError) Error() string {
 }
 
 var (
+	BadRequest         = &AppError{"Bad request", http.StatusBadRequest}
+	Unauthorized       = &AppError{"Unauthorized", http.StatusUnauthorized}
+	Forbidden          = &AppError{"Forbidden", http.StatusForbidden}
+	NotFound           = &AppError{"Not found", http.StatusNotFound}
 	InternalServer     = &AppError{"Internal error", http.StatusInternalServerError}
 	ServiceUnavailable = &AppError{"Internal error", http.StatusServiceUnavailable}
-	Unauthorized       = &AppError{"Unauthorized", http.StatusUnauthorized}
-	BadRequest         = &AppError{"Bad request", http.StatusBadRequest}
-	InvalidToken       = &AppError{"Invalid token", http.StatusUnauthorized}
 )
 
 func BadRequestError(message string) *AppError {
 	return &AppError{message, http.StatusBadRequest}
+}
+
+func UnauthorizedError(message string) *AppError {
+	return &AppError{message, http.StatusUnauthorized}
+}
+
+func ForbiddenError(message string) *AppError {
+	return &AppError{message, http.StatusForbidden}
 }
 
 func NotFoundError(message string) *AppError {
@@ -29,4 +43,32 @@ func NotFoundError(message string) *AppError {
 
 func InternalServerError(message string) *AppError {
 	return &AppError{message, http.StatusInternalServerError}
+}
+
+func ServiceUnavailableError(message string) *AppError {
+	return &AppError{message, http.StatusServiceUnavailable}
+}
+
+func HandleServiceError(err error) *AppError {
+	st, ok := status.FromError(err)
+	if !ok {
+		return InternalServer
+	}
+
+	switch st.Code() {
+	case codes.InvalidArgument:
+		return BadRequestError(st.Message())
+	case codes.Unauthenticated:
+		return UnauthorizedError(st.Message())
+	case codes.PermissionDenied:
+		return ForbiddenError(st.Message())
+	case codes.NotFound:
+		return NotFoundError(st.Message())
+	case codes.Internal:
+		return InternalServerError(st.Message())
+	case codes.AlreadyExists:
+		return BadRequestError(st.Message())
+	default:
+		return ServiceUnavailable
+	}
 }

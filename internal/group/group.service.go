@@ -8,18 +8,15 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	groupProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/group/v1"
 	"go.uber.org/zap"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type Service interface {
-	FindOne(req *dto.FindOneGroupRequest) (*dto.FindOneGroupResponse, *apperror.AppError)
+	FindByUserId(req *dto.FindByUserIdGroupRequest) (*dto.FindByUserIdGroupResponse, *apperror.AppError)
 	FindByToken(req *dto.FindByTokenGroupRequest) (*dto.FindByTokenGroupResponse, *apperror.AppError)
-	Update(req *dto.UpdateGroupRequest) (*dto.UpdateGroupResponse, *apperror.AppError)
+	UpdateConfirm(req *dto.UpdateConfirmGroupRequest) (*dto.UpdateConfirmGroupResponse, *apperror.AppError)
 	Join(req *dto.JoinGroupRequest) (*dto.JoinGroupResponse, *apperror.AppError)
-	DeleteMember(req *dto.DeleteMemberGroupRequest) (*dto.DeleteMemberGroupResponse, *apperror.AppError)
 	Leave(req *dto.LeaveGroupRequest) (*dto.LeaveGroupResponse, *apperror.AppError)
-	SelectBaan(req *dto.SelectBaanRequest) (*dto.SelectBaanResponse, *apperror.AppError)
+	DeleteMember(req *dto.DeleteMemberGroupRequest) (*dto.DeleteMemberGroupResponse, *apperror.AppError)
 }
 
 type serviceImpl struct {
@@ -34,31 +31,19 @@ func NewService(client groupProto.GroupServiceClient, log *zap.Logger) Service {
 	}
 }
 
-func (s *serviceImpl) DeleteMember(req *dto.DeleteMemberGroupRequest) (*dto.DeleteMemberGroupResponse, *apperror.AppError) {
+func (s *serviceImpl) FindByUserId(req *dto.FindByUserIdGroupRequest) (*dto.FindByUserIdGroupResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res, err := s.client.DeleteMember(ctx, &groupProto.DeleteMemberGroupRequest{
-		UserId:   req.UserId,
-		LeaderId: req.LeaderId,
+	res, err := s.client.FindByUserId(ctx, &groupProto.FindByUserIdGroupRequest{
+		UserId: req.UserId,
 	})
 	if err != nil {
-		s.log.Named("DeleteMember").Error("DeleteMember: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		s.log.Named("FindOne").Error("FindOne: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
 	}
 
-	return &dto.DeleteMemberGroupResponse{
+	return &dto.FindByUserIdGroupResponse{
 		Group: GroupProtoToDto(res.Group),
 	}, nil
 }
@@ -72,18 +57,7 @@ func (s *serviceImpl) FindByToken(req *dto.FindByTokenGroupRequest) (*dto.FindBy
 	})
 	if err != nil {
 		s.log.Named("FindByToken").Error("FindByToken: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("Invalid argument")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.FindByTokenGroupResponse{
@@ -93,30 +67,20 @@ func (s *serviceImpl) FindByToken(req *dto.FindByTokenGroupRequest) (*dto.FindBy
 	}, nil
 }
 
-func (s *serviceImpl) FindOne(req *dto.FindOneGroupRequest) (*dto.FindOneGroupResponse, *apperror.AppError) {
+func (s *serviceImpl) UpdateConfirm(req *dto.UpdateConfirmGroupRequest) (*dto.UpdateConfirmGroupResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res, err := s.client.FindOne(ctx, &groupProto.FindOneGroupRequest{
-		UserId: req.UserId,
+	res, err := s.client.UpdateConfirm(ctx, &groupProto.UpdateConfirmGroupRequest{
+		LeaderId:    req.LeaderId,
+		IsConfirmed: req.IsConfirmed,
 	})
 	if err != nil {
-		s.log.Named("FindOne").Error("FindOne: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("Invalid argument")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		s.log.Named("UpdateConfirm").Error("UpdateConfirm: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
 	}
 
-	return &dto.FindOneGroupResponse{
+	return &dto.UpdateConfirmGroupResponse{
 		Group: GroupProtoToDto(res.Group),
 	}, nil
 }
@@ -132,18 +96,7 @@ func (s *serviceImpl) Join(req *dto.JoinGroupRequest) (*dto.JoinGroupResponse, *
 
 	if err != nil {
 		s.log.Named("Join").Error("Join: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("Invalid argument")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.JoinGroupResponse{
@@ -160,18 +113,7 @@ func (s *serviceImpl) Leave(req *dto.LeaveGroupRequest) (*dto.LeaveGroupResponse
 	})
 	if err != nil {
 		s.log.Named("Leave").Error("Leave: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("Invalid argument")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		return nil, apperror.HandleServiceError(err)
 	}
 
 	return &dto.LeaveGroupResponse{
@@ -179,60 +121,20 @@ func (s *serviceImpl) Leave(req *dto.LeaveGroupRequest) (*dto.LeaveGroupResponse
 	}, nil
 }
 
-func (s *serviceImpl) SelectBaan(req *dto.SelectBaanRequest) (*dto.SelectBaanResponse, *apperror.AppError) {
+func (s *serviceImpl) DeleteMember(req *dto.DeleteMemberGroupRequest) (*dto.DeleteMemberGroupResponse, *apperror.AppError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res, err := s.client.SelectBaan(ctx, &groupProto.SelectBaanRequest{
-		UserId: req.UserId,
-		Baans:  req.Baans,
-	})
-	if err != nil {
-		s.log.Named("SelectBaan").Error("SelectBaan: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("Invalid argument")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
-	}
-
-	return &dto.SelectBaanResponse{
-		Success: res.Success,
-	}, nil
-}
-
-func (s *serviceImpl) Update(req *dto.UpdateGroupRequest) (*dto.UpdateGroupResponse, *apperror.AppError) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	res, err := s.client.Update(ctx, &groupProto.UpdateGroupRequest{
-		Group:    GroupDtoToProto(req.Group),
+	res, err := s.client.DeleteMember(ctx, &groupProto.DeleteMemberGroupRequest{
+		UserId:   req.UserId,
 		LeaderId: req.LeaderId,
 	})
 	if err != nil {
-		s.log.Named("Update").Error("Update: ", zap.Error(err))
-		st, ok := status.FromError(err)
-		if !ok {
-			return nil, apperror.InternalServer
-		}
-		switch st.Code() {
-		case codes.InvalidArgument:
-			return nil, apperror.BadRequestError("Invalid argument")
-		case codes.Internal:
-			return nil, apperror.InternalServerError(err.Error())
-		default:
-			return nil, apperror.ServiceUnavailable
-		}
+		s.log.Named("DeleteMember").Error("DeleteMember: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
 	}
 
-	return &dto.UpdateGroupResponse{
+	return &dto.DeleteMemberGroupResponse{
 		Group: GroupProtoToDto(res.Group),
 	}, nil
 }
