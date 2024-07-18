@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"image"
 	"image/jpeg"
+
+	"image/png"
 	"mime/multipart"
 	"strings"
 )
@@ -20,8 +22,6 @@ func ExtractFile(file *multipart.FileHeader, allowedContent map[string]struct{},
 	if err != nil {
 		return nil, err
 	}
-
-	println("File size: ", len(fileBytes))
 
 	return fileBytes, nil
 }
@@ -40,6 +40,7 @@ func mapToArr(m map[string]struct{}) []string {
 }
 
 func compressImage(fileHeader *multipart.FileHeader, maxSizeMB int) ([]byte, error) {
+	fileExt := fileHeader.Header["Content-Type"][0]
 	file, err := fileHeader.Open()
 	if err != nil {
 		return nil, err
@@ -56,11 +57,20 @@ func compressImage(fileHeader *multipart.FileHeader, maxSizeMB int) ([]byte, err
 
 	for {
 		buf := new(bytes.Buffer)
-		if err := jpeg.Encode(buf, img, &jpeg.Options{Quality: quality}); err != nil {
+
+		switch fileExt {
+		case "image/jpeg", "image/jpg":
+			err = jpeg.Encode(buf, img, &jpeg.Options{Quality: quality})
+		case "image/png":
+			err = png.Encode(buf, img)
+		default:
+			return nil, fmt.Errorf("unsupported file type: %v", fileExt)
+		}
+		if err != nil {
 			return nil, err
 		}
-		compressed = buf.Bytes()
 
+		compressed = buf.Bytes()
 		if len(compressed) <= maxSizeMB {
 			break
 		}
@@ -74,3 +84,29 @@ func compressImage(fileHeader *multipart.FileHeader, maxSizeMB int) ([]byte, err
 
 	return compressed, nil
 }
+
+// func resizeImage(img image.Image, width, height int) *image.RGBA {
+// 	bounds := img.Bounds()
+
+// 	if width == 0 && height == 0 {
+// 		return nil
+// 	}
+
+// 	if width == 0 {
+// 		width = bounds.Dx() * height / bounds.Dy()
+// 	}
+// 	if height == 0 {
+// 		height = bounds.Dy() * width / bounds.Dx()
+// 	}
+
+// 	if width > 500 || height > 500 {
+// 		scaleFactor := float64(500) / math.Max(float64(width), float64(height))
+// 		width = int(float64(width) * scaleFactor)
+// 		height = int(float64(height) * scaleFactor)
+// 	}
+
+// 	newImg := image.NewRGBA(image.Rect(0, 0, width, height))
+// 	draw.CatmullRom.Scale(newImg, newImg.Bounds(), img, bounds, draw.Over, nil)
+
+// 	return newImg
+// }
