@@ -16,10 +16,12 @@ import (
 	mockPin "github.com/isd-sgcu/rpkm67-gateway/mocks/pin"
 	pinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/pin/v1"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 
-type PinServiceTest struct {
+type PinHandlerTest struct {
  	suite.Suite
  	controller         *gomock.Controller
  	logger             *zap.Logger
@@ -29,35 +31,43 @@ type PinServiceTest struct {
  	pinDto             *dto.Pin
  	FindAllPinProtoReq *pinProto.FindAllPinRequest
  	FindAllPinDtoReq   *dto.FindAllPinRequest
-	ResetPinProtoReq     *dto.ResetPinRequest
+	ResetPinProtoReq    *pinProto.ResetPinRequest
 	ResetPinDtoReq    *dto.ResetPinRequest
- 	Err                apperror.AppError
+	Err                apperror.AppError
+	CheckPinProtoReq  *pinProto.CheckPinRequest
+	CheckPinDtoReq    *dto.CheckPinRequest
  }
 
-func TestPinService(t *testing.T) {
+func TestPinHandler(t *testing.T) {
 	suite.Run(t, new(PinServiceTest))
 }
 
-func (t *PinServiceTest) SetupTest() {
+func (t *PinHandlerTest) SetupTest() {
 	t.controller = gomock.NewController(t.T())
  	t.logger = zap.NewNop()
 	t.pinsProto = MockPinsProto()
-	t.pinProto = t.pinsProto[0]
+	t.pinProto = (t.pinsProto)[0]
 	t.pinsDto = pin.ProtoToDtoList(t.pinsProto)
-	t.pinDto = t.pinsDto[0]
+	t.pinDto = (t.pinsDto)[0]
 	t.FindAllPinProtoReq = &pinProto.FindAllPinRequest{}
  	t.FindAllPinDtoReq = &dto.FindAllPinRequest{}
 	t.ResetPinProtoReq = &pinProto.ResetPinRequest{
-		ActivityId: "",
+		ActivityId: t.pinProto.ActivityId,
 	}
 	t.ResetPinDtoReq = &dto.ResetPinRequest{
 		ActivityId: t.pinDto.ActivityId,
 	}
- 	t.Err = t.Err
+	t.CheckPinDtoReq = &dto.CheckPinRequest{
+		ActivityId: t.pinDto.ActivityId,
+		Code: t.pinDto.Code,
+	}
+	t.CheckPinProtoReq = &pinProto.CheckPinRequest{
+
+	}
 }
 
 
-func (t *PinServiceTest) TestFindAllSuccess() {
+func (t *PinHandlerTest) TestFindAllSuccess() {
 	client := mockPin.NewMockPinServiceClient(t.controller)
 	svc := pin.NewService(client, t.logger)
 	
@@ -83,17 +93,30 @@ func (t *PinServiceTest) TestFindAllSuccess() {
 				{ActivityId: "4", Code: "333333"},
 				{ActivityId: "5", Code: "444444"},
 				{ActivityId: "6", Code: "555555"},
-		}}
-	*/
-    //t.NotNil(res)
-    //t.Len(res.Pins, 6)
-    //t.Equal("1", res.Pins[0].ActivityId)
-    //t.Equal("000000", res.Pins[0].Code)
+				}}
+				*/
+				//t.NotNil(res)
+				//t.Len(res.Pins, 6)
+				//t.Equal("1", res.Pins[0].ActivityId)
+				//t.Equal("000000", res.Pins[0].Code)
 }
 
+func (t *PinHandlerTest) TestFindAllInvalidArgument() {
+	client := mockPin.NewMockPinServiceClient(t.controller)
+	svc := pin.NewService(client, t.logger)
+	
+	expected := apperror.BadRequest
 
+	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
 
-func (t *PinServiceTest) TestResetPin(req *dto.ResetPinRequest) {
+	client.EXPECT().FindAll(gomock.Any(), t.FindAllPinProtoReq).Return(nil, clientErr)
+	
+	actual, err := svc.FindAll(t.FindAllPinDtoReq)
+	
+	t.Nil(actual)
+	t.Equal(expected, err)
+}
+func (t *PinHandlerTest) TestResetPin() {
 	client := mockPin.NewMockPinServiceClient(t.controller)
 	svc := pin.NewService(client, t.logger)
 	
@@ -104,7 +127,7 @@ func (t *PinServiceTest) TestResetPin(req *dto.ResetPinRequest) {
 		Pin: t.pinDto,
 	}
 	
-	client.EXPECT().FindAll(gomock.Any(), t.FindAllPinProtoReq).Return(protoResp, nil)
+	client.EXPECT().ResetPin(gomock.Any(), t.ResetPinProtoReq).Return(protoResp, nil)
 	
 	actual, err := svc.ResetPin(t.ResetPinDtoReq)
 
@@ -112,6 +135,57 @@ func (t *PinServiceTest) TestResetPin(req *dto.ResetPinRequest) {
 	t.Equal(expected, actual)
 }
 
+func (t *PinHandlerTest) TestResetPinInvalidArgument() {
+	client := mockPin.NewMockPinServiceClient(t.controller)
+	svc := pin.NewService(client, t.logger)
+
+	expected := apperror.BadRequest
+	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
+	
+	client.EXPECT().ResetPin(gomock.Any(), t.ResetPinProtoReq).Return(nil, clientErr)
+	actual, err := svc.ResetPin(t.ResetPinDtoReq)
+
+	t.Nil(actual)
+	t.Equal(expected, err)
+}
+
+func (t *PinHandlerTest) TestCheckPin() {
+	client := mockPin.NewMockPinServiceClient(t.controller)
+	svc := pin.NewService(client, t.logger)
+	
+	protoResp := &pinProto.CheckPinResponse{
+		IsMatch: true,
+	}
+	expected := &dto.CheckPinResponse{
+		IsMatch: true,
+	}
+	
+	client.EXPECT().CheckPin(gomock.Any(), gomock.Any()).Return(protoResp, nil)
+	
+	actual, err := svc.CheckPin(t.CheckPinDtoReq)
+	
+	t.Nil(err)
+	t.Equal(expected, actual)
+}
+
+func (t *PinHandlerTest) TestCheckPinInvalidArgument() {
+	client := mockPin.NewMockPinServiceClient(t.controller)
+	svc := pin.NewService(client, t.logger)
+	
+	expected := apperror.BadRequest
+	clientErr := status.Error(codes.InvalidArgument, apperror.BadRequest.Error())
+	client.EXPECT().CheckPin(gomock.Any(), gomock.Any()).Return(nil, clientErr)
+	
+	actual, err := svc.CheckPin(t.CheckPinDtoReq)
+	
+	t.Nil(actual)
+	t.Equal(expected, err)
+}
+
+
+func (t *PinHandlerTest) TearDownTest() {
+	t.controller.Finish()
+}
 /*
 
 func TestCheckPin(t *testing.T) {
@@ -135,7 +209,7 @@ func TestCheckPin(t *testing.T) {
 	assert.NotNil(t, res)
 	assert.True(t, res.IsMatch)
 }
-
+*/
 
 /*package test
 
@@ -190,141 +264,4 @@ func (t *PinServiceTest) TestResetPinSuccess() {
 	t.NotNil(resp)
 	t.Equal(true, resp.Success)
 }
-
-func TestPinServiceTest(t *testing.T) {
-	suite.Run(t, new(PinServiceTest))
-}
-
-
-/*package test
-
-import (
-	"testing"
-
-	"github.com/golang/mock/gomock"
-	"github.com/isd-sgcu/rpkm67-gateway/apperror"
-	"github.com/isd-sgcu/rpkm67-gateway/internal/pin"
-	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
-	pinMock "github.com/isd-sgcu/rpkm67-gateway/mocks/pin"
-	pinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/pin/v1"
-	"github.com/stretchr/testify/suite"
-	"go.uber.org/zap"
-)
-
-type PinServiceTest struct {
- 	suite.Suite
- 	controller          *gomock.Controller
- 	logger              *zap.Logger
- 	pinsProto          []*pinProto.Pin
- 	pinProto           *pinProto.Pin
- 	pinsDto            []*dto.Pin
- 	pinDto             *dto.Pin
- 	FindAllPinProtoReq *pinProto.FindAllPinRequest
- 	FindAllPinDtoReq   *dto.FindAllPinRequest
-	// 	FindOnePinProtoReq *pinProto.FindOnePinRequest
-// 	FindOnePinDtoReq   *dto.FindOnePinRequest
- 	Err                 apperror.AppError
- }
-
-func TestpinService(t *testing.T) {
-	suite.Run(t, new(PinServiceTest))
-}
-
-func (t *PinServiceTest) SetupTest() {
-	t.controller = gomock.NewController(t.T())
- 	t.logger = zap.NewNop()
-
-// 	t.pinsProto = MockPinsProto()
-// 	t.pinProto = t.pinsProto[0]
- 	t.pinsDto = pin.ProtoToDtoList(t.pinsProto)
- 	t.pinDto = pin.ProtoToDto(t.pinProto)
-
- 	t.FindAllPinProtoReq = &pinProto.FindAllPinRequest{}
-// 	t.FindOnepinProtoReq = &pinProto.FindAllPinRequest{
-// 		Id: t.pinProto.Id,
-// 	}
- 	t.FindAllPinDtoReq = &dto.FindAllPinRequest{}
-// 	t.FindOnePinDtoReq = &dto.FindOnePinRequest{
-// 		Id: t.pinDto.Id,
-// }
-}
-
-
-func (t *PinServiceTest) TestFindAllSuccess() {
-	
-	mockClient := mockPinProto.NewMockPinServiceClient(t.controller)
-	svc := pin.NewService(&client, t.logger)
-	actual, err := svc.FindAll(t.FindAllPinDtoReq)
-	expected := &dto.FindAllPinResponse{}
-	t.Nil(err)
-	t.Equal(expected, actual)
-
-	// client := pinMock.PinClientMock{}
-	//protoResp := &pinProto.FindAllPinResponse{
-	//	pins: t.PinsProto,
-	//}
- 	//svc := pin.NewService(&client, t.logger)
-
- 	//findAllpinsDto := pin.ProtoToDtoList(protoResp.pins)
- 	//expected := &dto.FindAllPinResponse{
- 	//	pins: findAllpinsDto,
- 	//}
-
- 	//client.On("FindAllpin", t.FindAllPinProtoReq).Return(protoResp, nil)
- 	//actual, err := svc.FindAllPin(t.FindAllPinDtoReq)
-
- 	//t.Nil(err)
- 	//t.Equal(expected, actual)
- }
-
-
-/*
-func (t *PinServiceTest) TestResetPinSuccess() {
-	//client := pinMock.NewMockService(t.controller)
-	client := pinMock.NewMockService(t.controller)
-	
-	
-	actual, err := svc.FindAll(t.FindAllPinDtoReq)
-	expected := &dto.FindAllPinResponse{}
-	t.Nil(err)
-	t.Equal(expected, actual)
-
-	client := pinMock.pinClientMock{}
-	svc := pin.NewService(&client, t.logger)
-
-	protoResp := &pinProto.ResetpinResponse{
-		Success: true,
-	}
-	expected := &dto.ResetpinResponse{
-		Success: true,
-	}
-
-	client.On("Resetpin", t.ResetpinProtoReq).Return(protoResp, nil)
-	actual, err := svc.Resetpin(t.ResetpinDtoReq)
-
-	t.Nil(err)
-	t.Equal(expected, actual)
-
-}
 */
-// func (t *pinServiceTest) TestFindOnepinSuccess() {
-// 	client := pinMock.pinClientMock{}
-// 	svc := pin.NewService(&client, t.logger)
-
-// 	protoResp := &pinProto.FindOnepinResponse{
-// 		pin: t.pinProto,
-// 	}
-// 	expected := &dto.FindOnepinResponse{
-// 		pin: t.pinDto,
-// 	}
-
-// 	client.On("FindOnepin", t.FindOnepinProtoReq).Return(protoResp, nil)
-// 	actual, err := svc.FindOnepin(t.FindOnepinDtoReq)
-
-// 	t.Nil(err)
-// 	t.Equal(expected, actual)
-// }
-
-// func (t *pinServiceTest) TearDownTest() {
-// 	t.controller.Finish()
-// }
