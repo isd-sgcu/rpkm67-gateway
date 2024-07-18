@@ -6,22 +6,29 @@ import (
 	"fmt"
 	"image"
 	"image/jpeg"
+	"math"
+
+	"image/png"
 	"mime/multipart"
 	"strings"
 )
 
 func ExtractFile(file *multipart.FileHeader, allowedContent map[string]struct{}, maxSize int64) (data []byte, err error) {
-	if !isExisted(allowedContent, file.Header["Content-Type"][0]) {
+	format := file.Header["Content-Type"][0]
+	if !isExisted(allowedContent, format) {
 		return nil, errors.New("Allowed content type is " + fmt.Sprint(strings.Join(mapToArr(allowedContent), ", ")))
 	}
 
-	maxSizeMB := maxSize * 1024 * 1024
-	fileBytes, err := compressImage(file, int(maxSizeMB))
+	resizedImage, err := resizeImage(file, 500, 500)
 	if err != nil {
 		return nil, err
 	}
 
-	println("File size: ", len(fileBytes))
+	maxSizeMB := maxSize * 1024 * 1024
+	fileBytes, err := compressImage(resizedImage, format, int(maxSizeMB))
+	if err != nil {
+		return nil, err
+	}
 
 	return fileBytes, nil
 }
@@ -39,28 +46,27 @@ func mapToArr(m map[string]struct{}) []string {
 	return arr
 }
 
-func compressImage(fileHeader *multipart.FileHeader, maxSizeMB int) ([]byte, error) {
-	file, err := fileHeader.Open()
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	img, _, err := image.Decode(file)
-	if err != nil {
-		return nil, err
-	}
-
+func compressImage(img image.Image, format string, maxSizeMB int) ([]byte, error) {
 	var quality int = 80
 	var compressed []byte
+	var err error
 
 	for {
 		buf := new(bytes.Buffer)
-		if err := jpeg.Encode(buf, img, &jpeg.Options{Quality: quality}); err != nil {
+
+		switch format {
+		case "image/jpeg", "image/jpg":
+			err = jpeg.Encode(buf, img, &jpeg.Options{Quality: quality})
+		case "image/png":
+			err = png.Encode(buf, img)
+		default:
+			return nil, fmt.Errorf("unsupported file type: %v", format)
+		}
+		if err != nil {
 			return nil, err
 		}
-		compressed = buf.Bytes()
 
+		compressed = buf.Bytes()
 		if len(compressed) <= maxSizeMB {
 			break
 		}
@@ -73,4 +79,41 @@ func compressImage(fileHeader *multipart.FileHeader, maxSizeMB int) ([]byte, err
 	}
 
 	return compressed, nil
+}
+
+func resizeImage(fileHeader *multipart.FileHeader, newWidth, newHeight int) (image.Image, error) {
+	format := fileHeader.Header["Content-Type"][0]
+	file, err := fileHeader.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	img, _, err := image.Decode(file)
+	if err != nil {
+		return nil, err
+	}
+
+	origWidth := img.Bounds().Dx()
+	origHeight := img.Bounds().Dy()
+
+	xOffset := int(math.Max(0, float64(origWidth-newWidth)/2))
+	yOffset := int(math.Max(0, float64(origHeight-newHeight)/2))
+
+	cropRect := image.Rect(xOffset, yOffset, xOffset+newWidth, yOffset+newHeight)
+	var croppedImg image.Image
+	if format == "image/jpeg" || format == "image/jpg" {
+		croppedImg = img.(*image.YCbCr).SubImage(cropRect)
+	} else if format == "image/png" {
+		switch img := img.(type) {
+		case *image.RGBA:
+			croppedImg = img.SubImage(cropRect)
+		case *image.NRGBA:
+			croppedImg = img.SubImage(cropRect)
+		default:
+			return nil, fmt.Errorf("unsupported image type: %T", img)
+		}
+	}
+
+	return croppedImg, nil
 }
