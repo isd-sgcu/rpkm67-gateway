@@ -105,11 +105,11 @@ func resizeImage(fileHeader *multipart.FileHeader, newWidth, newHeight int) (ima
 	if format == "image/jpeg" || format == "image/jpg" {
 		croppedImg = img.(*image.YCbCr).SubImage(cropRect)
 	} else if format == "image/png" {
-		switch img.(type) { //nolint:staticcheck // S1034 ignore this!
+		switch img := img.(type) {
 		case *image.RGBA:
-			croppedImg = img.(*image.RGBA).SubImage(cropRect)
+			croppedImg = img.SubImage(cropRect)
 		case *image.NRGBA:
-			croppedImg = img.(*image.NRGBA).SubImage(cropRect)
+			croppedImg = img.SubImage(cropRect)
 		default:
 			return nil, fmt.Errorf("unsupported image type: %T", img)
 		}
