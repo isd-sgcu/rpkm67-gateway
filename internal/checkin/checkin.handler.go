@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/user"
@@ -45,6 +46,11 @@ func NewHandler(svc Service, userSvc user.Service, validate validator.DtoValidat
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin [post]
 func (h *handlerImpl) Create(c context.Ctx) {
+	if c.GetString("role") != "staff" {
+		c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
+		return
+	}
+
 	tr := c.GetTracer()
 	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.Create")
 	defer span.End()
@@ -107,6 +113,11 @@ func (h *handlerImpl) Create(c context.Ctx) {
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/email/{email} [get]
 func (h *handlerImpl) FindByEmail(c context.Ctx) {
+	if c.GetString("role") != "staff" {
+		c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
+		return
+	}
+
 	tr := c.GetTracer()
 	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.FindByEmail")
 	defer span.End()
@@ -146,6 +157,11 @@ func (h *handlerImpl) FindByEmail(c context.Ctx) {
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/{userId} [get]
 func (h *handlerImpl) FindByUserID(c context.Ctx) {
+	if c.GetString("role") != "staff" {
+		c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
+		return
+	}
+
 	tr := c.GetTracer()
 	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.FindByUserID")
 	defer span.End()
