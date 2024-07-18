@@ -11,6 +11,7 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
 	apperror "github.com/isd-sgcu/rpkm67-gateway/apperror"
+	config "github.com/isd-sgcu/rpkm67-gateway/config"
 	dto "github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	trace "go.opentelemetry.io/otel/trace"
 )
@@ -89,18 +90,18 @@ func (mr *MockCtxMockRecorder) ForbiddenError(err interface{}) *gomock.Call {
 }
 
 // FormFile mocks base method.
-func (m *MockCtx) FormFile(key string, allowedContentType map[string]struct{}, maxFileSize int64) (*dto.DecomposedFile, error) {
+func (m *MockCtx) FormFile(key string, allowedContentType map[string]struct{}, conf *config.ImageConfig) (*dto.DecomposedFile, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FormFile", key, allowedContentType, maxFileSize)
+	ret := m.ctrl.Call(m, "FormFile", key, allowedContentType, conf)
 	ret0, _ := ret[0].(*dto.DecomposedFile)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FormFile indicates an expected call of FormFile.
-func (mr *MockCtxMockRecorder) FormFile(key, allowedContentType, maxFileSize interface{}) *gomock.Call {
+func (mr *MockCtxMockRecorder) FormFile(key, allowedContentType, conf interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FormFile", reflect.TypeOf((*MockCtx)(nil).FormFile), key, allowedContentType, maxFileSize)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FormFile", reflect.TypeOf((*MockCtx)(nil).FormFile), key, allowedContentType, conf)
 }
 
 // GetHeader mocks base method.

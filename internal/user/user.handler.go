@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/isd-sgcu/rpkm67-gateway/config"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
@@ -18,16 +19,16 @@ type Handler interface {
 
 type handlerImpl struct {
 	svc                Service
-	maxFileSize        int
+	conf               *config.ImageConfig
 	allowedContentType map[string]struct{}
 	validate           validator.DtoValidator
 	log                *zap.Logger
 }
 
-func NewHandler(svc Service, maxFileSize int, allowedContentType map[string]struct{}, validate validator.DtoValidator, log *zap.Logger) Handler {
+func NewHandler(svc Service, conf *config.ImageConfig, allowedContentType map[string]struct{}, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
 		svc:                svc,
-		maxFileSize:        maxFileSize,
+		conf:               conf,
 		allowedContentType: allowedContentType,
 		validate:           validate,
 		log:                log,
@@ -141,7 +142,7 @@ func (h *handlerImpl) UpdatePicture(c context.Ctx) {
 		return
 	}
 
-	file, err := c.FormFile("picture", h.allowedContentType, int64(h.maxFileSize))
+	file, err := c.FormFile("picture", h.allowedContentType, h.conf)
 	if err != nil {
 		h.log.Named("UpdatePicture").Error("FormFile: failed to get file", zap.Error(err))
 		c.BadRequestError(err.Error())

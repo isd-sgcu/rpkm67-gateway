@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
+	"github.com/isd-sgcu/rpkm67-gateway/config"
 	"github.com/isd-sgcu/rpkm67-gateway/constant"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/metrics"
@@ -23,7 +24,7 @@ type Ctx interface {
 	Param(key string) string
 	Query(key string) string
 	PostForm(key string) string
-	FormFile(key string, allowedContentType map[string]struct{}, maxFileSize int64) (*dto.DecomposedFile, error)
+	FormFile(key string, allowedContentType map[string]struct{}, conf *config.ImageConfig) (*dto.DecomposedFile, error)
 	GetString(key string) string
 	GetHeader(key string) string
 	GetTracer() trace.Tracer
@@ -118,13 +119,13 @@ func (c *contextImpl) PostForm(key string) string {
 	return c.Context.PostForm(key)
 }
 
-func (c *contextImpl) FormFile(key string, allowedContentType map[string]struct{}, maxFileSize int64) (*dto.DecomposedFile, error) {
+func (c *contextImpl) FormFile(key string, allowedContentType map[string]struct{}, conf *config.ImageConfig) (*dto.DecomposedFile, error) {
 	file, err := c.Context.FormFile(key)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := ExtractFile(file, allowedContentType, maxFileSize)
+	data, err := ExtractFile(file, allowedContentType, conf)
 	if err != nil {
 		return nil, err
 	}

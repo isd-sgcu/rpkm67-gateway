@@ -106,7 +106,7 @@ func main() {
 
 	userClient := userProto.NewUserServiceClient(authConn)
 	userSvc := user.NewService(userClient, objSvc, logger)
-	userHdr := user.NewHandler(userSvc, conf.App.MaxFileSizeMb, constant.AllowedContentType, validate, logger)
+	userHdr := user.NewHandler(userSvc, &conf.Img, constant.AllowedContentType, validate, logger)
 
 	groupClient := groupProto.NewGroupServiceClient(backendConn)
 	groupSvc := group.NewService(groupClient, logger)
