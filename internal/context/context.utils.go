@@ -105,7 +105,7 @@ func resizeImage(fileHeader *multipart.FileHeader, newWidth, newHeight int) (ima
 	if format == "image/jpeg" || format == "image/jpg" {
 		croppedImg = img.(*image.YCbCr).SubImage(cropRect)
 	} else if format == "image/png" {
-		switch img.(type) {
+		switch img.(type) { //nolint:staticcheck // S1034 ignore this!
 		case *image.RGBA:
 			croppedImg = img.(*image.RGBA).SubImage(cropRect)
 		case *image.NRGBA:
