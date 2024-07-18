@@ -112,6 +112,7 @@ services:
       STORE_ENDPOINT: endpoint
       STORE_ACCESS_KEY: access_key
       STORE_SECRET_KEY: secret_key
+      STORE_REGION: ap-southeast-1
       STORE_USE_SSL: true
       STORE_BUCKET_NAME: rpkm67-local
     networks:
