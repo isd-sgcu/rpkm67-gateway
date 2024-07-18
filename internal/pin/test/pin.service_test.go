@@ -15,13 +15,14 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/internal/pin"
 	mockPin "github.com/isd-sgcu/rpkm67-gateway/mocks/pin"
 	pinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/pin/v1"
+	
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 
-type PinHandlerTest struct {
+type PinServiceTest struct {
  	suite.Suite
  	controller         *gomock.Controller
  	logger             *zap.Logger
@@ -38,11 +39,11 @@ type PinHandlerTest struct {
 	CheckPinDtoReq    *dto.CheckPinRequest
  }
 
-func TestPinHandler(t *testing.T) {
+func TestPinService(t *testing.T) {
 	suite.Run(t, new(PinServiceTest))
 }
 
-func (t *PinHandlerTest) SetupTest() {
+func (t *PinServiceTest) SetupTest() {
 	t.controller = gomock.NewController(t.T())
  	t.logger = zap.NewNop()
 	t.pinsProto = MockPinsProto()
@@ -67,7 +68,7 @@ func (t *PinHandlerTest) SetupTest() {
 }
 
 
-func (t *PinHandlerTest) TestFindAllSuccess() {
+func (t *PinServiceTest) TestFindAllSuccess() {
 	client := mockPin.NewMockPinServiceClient(t.controller)
 	svc := pin.NewService(client, t.logger)
 	
@@ -101,7 +102,7 @@ func (t *PinHandlerTest) TestFindAllSuccess() {
 				//t.Equal("000000", res.Pins[0].Code)
 }
 
-func (t *PinHandlerTest) TestFindAllInvalidArgument() {
+func (t *PinServiceTest) TestFindAllInvalidArgument() {
 	client := mockPin.NewMockPinServiceClient(t.controller)
 	svc := pin.NewService(client, t.logger)
 	
@@ -116,7 +117,7 @@ func (t *PinHandlerTest) TestFindAllInvalidArgument() {
 	t.Nil(actual)
 	t.Equal(expected, err)
 }
-func (t *PinHandlerTest) TestResetPin() {
+func (t *PinServiceTest) TestResetPin() {
 	client := mockPin.NewMockPinServiceClient(t.controller)
 	svc := pin.NewService(client, t.logger)
 	
@@ -135,7 +136,7 @@ func (t *PinHandlerTest) TestResetPin() {
 	t.Equal(expected, actual)
 }
 
-func (t *PinHandlerTest) TestResetPinInvalidArgument() {
+func (t *PinServiceTest) TestResetPinInvalidArgument() {
 	client := mockPin.NewMockPinServiceClient(t.controller)
 	svc := pin.NewService(client, t.logger)
 
@@ -149,7 +150,7 @@ func (t *PinHandlerTest) TestResetPinInvalidArgument() {
 	t.Equal(expected, err)
 }
 
-func (t *PinHandlerTest) TestCheckPin() {
+func (t *PinServiceTest) TestCheckPin() {
 	client := mockPin.NewMockPinServiceClient(t.controller)
 	svc := pin.NewService(client, t.logger)
 	
@@ -168,7 +169,7 @@ func (t *PinHandlerTest) TestCheckPin() {
 	t.Equal(expected, actual)
 }
 
-func (t *PinHandlerTest) TestCheckPinInvalidArgument() {
+func (t *PinServiceTest) TestCheckPinInvalidArgument() {
 	client := mockPin.NewMockPinServiceClient(t.controller)
 	svc := pin.NewService(client, t.logger)
 	
@@ -183,7 +184,7 @@ func (t *PinHandlerTest) TestCheckPinInvalidArgument() {
 }
 
 
-func (t *PinHandlerTest) TearDownTest() {
+func (t *PinServiceTest) TearDownTest() {
 	t.controller.Finish()
 }
 /*
