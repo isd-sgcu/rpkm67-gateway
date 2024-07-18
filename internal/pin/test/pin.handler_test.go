@@ -1,88 +1,66 @@
 package test
+import (
+	//"context"
+	"testing"
 
-// import (
-// 	"net/http"
-// 	"testing"
+	//"time"
 
-// 	"github.com/golang/mock/gomock"
-// 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
-// 	"github.com/isd-sgcu/rpkm67-gateway/internal/baan"
-// 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
-// 	baanMock "github.com/isd-sgcu/rpkm67-gateway/mocks/baan"
-// 	routerMock "github.com/isd-sgcu/rpkm67-gateway/mocks/router"
-// 	validatorMock "github.com/isd-sgcu/rpkm67-gateway/mocks/validator"
-// 	"github.com/stretchr/testify/suite"
-// 	"go.uber.org/zap"
-// )
+	"github.com/golang/mock/gomock"
+	//"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 
-// type BaanHandlerTest struct {
-// 	suite.Suite
-// 	controller     *gomock.Controller
-// 	logger         *zap.Logger
-// 	Baans          []*dto.Baan
-// 	Baan           *dto.Baan
-// 	FindAllBaanReq *dto.FindAllBaanRequest
-// 	FindOneBaanReq *dto.FindOneBaanRequest
-// 	Err            *apperror.AppError
-// 	ParamMock      string
-// }
+	"github.com/isd-sgcu/rpkm67-gateway/apperror"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
+	"github.com/isd-sgcu/rpkm67-gateway/internal/pin"
+	mockPin "github.com/isd-sgcu/rpkm67-gateway/mocks/pin"
+	pinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/pin/v1"
+	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
 
-// func TestBaanHandler(t *testing.T) {
-// 	suite.Run(t, new(BaanHandlerTest))
-// }
 
-// func (t *BaanHandlerTest) SetupTest() {
-// 	t.controller = gomock.NewController(t.T())
-// 	t.logger = zap.NewNop()
+type PinServiceTest struct {
+ 	suite.Suite
+ 	controller         *gomock.Controller
+ 	logger             *zap.Logger
+ 	pinsProto          []*pinProto.Pin
+ 	pinProto           *pinProto.Pin
+ 	pinsDto            []*dto.Pin
+ 	pinDto             *dto.Pin
+ 	FindAllPinProtoReq *pinProto.FindAllPinRequest
+ 	FindAllPinDtoReq   *dto.FindAllPinRequest
+	ResetPinProtoReq    *pinProto.ResetPinRequest
+	ResetPinDtoReq    *dto.ResetPinRequest
+	Err                apperror.AppError
+	CheckPinProtoReq  *pinProto.CheckPinRequest
+	CheckPinDtoReq    *dto.CheckPinRequest
+ }
 
-// 	baansProto := MockBaansProto()
-// 	baanProto := baansProto[0]
+func TestPinService(t *testing.T) {
+	suite.Run(t, new(PinServiceTest))
+}
 
-// 	t.Baans = baan.ProtoToDtoList(baansProto)
-// 	t.Baan = baan.ProtoToDto(baanProto)
+func (t *PinServiceTest) SetupTest() {
+	t.controller = gomock.NewController(t.T())
+ 	t.logger = zap.NewNop()
+	t.pinsProto = MockPinsProto()
+	t.pinProto = (t.pinsProto)[0]
+	t.pinsDto = pin.ProtoToDtoList(t.pinsProto)
+	t.pinDto = (t.pinsDto)[0]
+	t.FindAllPinProtoReq = &pinProto.FindAllPinRequest{}
+ 	t.FindAllPinDtoReq = &dto.FindAllPinRequest{}
+	t.ResetPinProtoReq = &pinProto.ResetPinRequest{
+		ActivityId: t.pinProto.ActivityId,
+	}
+	t.ResetPinDtoReq = &dto.ResetPinRequest{
+		ActivityId: t.pinDto.ActivityId,
+	}
+	t.CheckPinDtoReq = &dto.CheckPinRequest{
+		ActivityId: t.pinDto.ActivityId,
+		Code: t.pinDto.Code,
+	}
+	t.CheckPinProtoReq = &pinProto.CheckPinRequest{
 
-// 	t.FindAllBaanReq = &dto.FindAllBaanRequest{}
-// 	t.FindOneBaanReq = &dto.FindOneBaanRequest{
-// 		Id: t.Baan.Id,
-// 	}
-
-// 	t.ParamMock = t.Baan.Id
-// }
-
-// func (t *BaanHandlerTest) TestFindAllBaanSuccess() {
-// 	baanSvc := baanMock.NewMockService(t.controller)
-// 	validator := validatorMock.NewMockDtoValidator(t.controller)
-// 	context := routerMock.NewMockContext(t.controller)
-// 	handler := baan.NewHandler(baanSvc, validator, t.logger)
-
-// 	expectedResp := &dto.FindAllBaanResponse{
-// 		Baans: t.Baans,
-// 	}
-
-// 	baanSvc.EXPECT().FindAllBaan(t.FindAllBaanReq).Return(expectedResp, t.Err)
-// 	context.EXPECT().JSON(http.StatusOK, expectedResp)
-
-// 	handler.FindAllBaan(context)
-// }
-
-// func (t *BaanHandlerTest) TestFindOneBaanSuccess() {
-// 	baanSvc := baanMock.NewMockService(t.controller)
-// 	validator := validatorMock.NewMockDtoValidator(t.controller)
-// 	context := routerMock.NewMockContext(t.controller)
-// 	handler := baan.NewHandler(baanSvc, validator, t.logger)
-
-// 	expectedResp := &dto.FindOneBaanResponse{
-// 		Baan: t.Baan,
-// 	}
-
-// 	context.EXPECT().Param("id").Return(t.ParamMock)
-// 	validator.EXPECT().Validate(t.FindOneBaanReq).Return(nil)
-// 	baanSvc.EXPECT().FindOneBaan(t.FindOneBaanReq).Return(expectedResp, t.Err)
-// 	context.EXPECT().JSON(http.StatusOK, expectedResp)
-
-// 	handler.FindOneBaan(context)
-// }
-
-// func (t *BaanHandlerTest) TearDownTest() {
-// 	t.controller.Finish()
-// }
+	}
+}
