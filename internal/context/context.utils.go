@@ -11,20 +11,22 @@ import (
 	"image/png"
 	"mime/multipart"
 	"strings"
+
+	"github.com/isd-sgcu/rpkm67-gateway/config"
 )
 
-func ExtractFile(file *multipart.FileHeader, allowedContent map[string]struct{}, maxSize int64) (data []byte, err error) {
+func ExtractFile(file *multipart.FileHeader, allowedContent map[string]struct{}, conf *config.ImageConfig) (data []byte, err error) {
 	format := file.Header["Content-Type"][0]
 	if !isExisted(allowedContent, format) {
 		return nil, errors.New("Allowed content type is " + fmt.Sprint(strings.Join(mapToArr(allowedContent), ", ")))
 	}
 
-	resizedImage, err := resizeImage(file, 500, 500)
+	resizedImage, err := resizeImage(file, conf.CropWidth, conf.CropHeight)
 	if err != nil {
 		return nil, err
 	}
 
-	maxSizeMB := maxSize * 1024 * 1024
+	maxSizeMB := conf.MaxFileSizeMb * 1024 * 1024
 	fileBytes, err := compressImage(resizedImage, format, int(maxSizeMB))
 	if err != nil {
 		return nil, err

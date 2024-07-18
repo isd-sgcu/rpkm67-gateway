@@ -8,10 +8,15 @@ import (
 )
 
 type AppConfig struct {
-	Port          string
-	Env           string
+	Port        string
+	Env         string
+	ServiceName string
+}
+
+type ImageConfig struct {
 	MaxFileSizeMb int
-	ServiceName   string
+	CropWidth     int
+	CropHeight    int
 }
 
 type ServiceConfig struct {
@@ -35,6 +40,7 @@ type TracerConfig struct {
 
 type Config struct {
 	App    AppConfig
+	Img    ImageConfig
 	Svc    ServiceConfig
 	Cors   CorsConfig
 	Db     DbConfig
@@ -49,16 +55,28 @@ func LoadConfig() (*Config, error) {
 		}
 	}
 
-	maxFileSizeMb, err := strconv.ParseInt(os.Getenv("APP_MAX_FILE_SIZE_MB"), 10, 64)
+	appConfig := AppConfig{
+		Port:        os.Getenv("APP_PORT"),
+		Env:         os.Getenv("APP_ENV"),
+		ServiceName: os.Getenv("APP_SERVICE_NAME"),
+	}
+
+	maxFileSizeMb, err := strconv.ParseInt(os.Getenv("IMG_MAX_FILE_SIZE_MB"), 10, 64)
 	if err != nil {
 		return nil, err
 	}
-
-	appConfig := AppConfig{
-		Port:          os.Getenv("APP_PORT"),
-		Env:           os.Getenv("APP_ENV"),
+	cropWidth, err := strconv.ParseInt(os.Getenv("IMG_CROP_WIDTH"), 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	cropHeight, err := strconv.ParseInt(os.Getenv("IMG_CROP_HEIGHT"), 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	imageConfig := ImageConfig{
 		MaxFileSizeMb: int(maxFileSizeMb),
-		ServiceName:   os.Getenv("APP_SERVICE_NAME"),
+		CropWidth:     int(cropWidth),
+		CropHeight:    int(cropHeight),
 	}
 
 	serviceConfig := ServiceConfig{
@@ -82,6 +100,7 @@ func LoadConfig() (*Config, error) {
 
 	return &Config{
 		App:    appConfig,
+		Img:    imageConfig,
 		Svc:    serviceConfig,
 		Cors:   corsConfig,
 		Db:     DbConfig,
