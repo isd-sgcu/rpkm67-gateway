@@ -7,10 +7,12 @@ import (
 
 func ProtoToDto(in *checkinProto.CheckIn) *dto.CheckIn {
 	return &dto.CheckIn{
-		ID:     in.Id,
-		UserID: in.UserId,
-		Email:  in.Email,
-		Event:  in.Event,
+		ID:          in.Id,
+		UserID:      in.UserId,
+		Email:       in.Email,
+		Event:       in.Event,
+		Timestamp:   in.Timestamp,
+		IsDuplicate: in.IsDuplicate,
 	}
 }
 

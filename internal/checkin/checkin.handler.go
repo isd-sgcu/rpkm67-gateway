@@ -87,14 +87,15 @@ func (h *handlerImpl) Create(c context.Ctx) {
 		c.ResponseError(appErr)
 		return
 	}
-	h.log.Info("user found", zap.Any("user", resUser.User))
 
 	c.JSON(http.StatusCreated, &dto.CreateCheckInResponse{
 		CheckIn: &dto.CheckIn{
-			ID:     res.CheckIn.ID,
-			UserID: res.CheckIn.UserID,
-			Email:  resUser.User.Email,
-			Event:  res.CheckIn.Event,
+			ID:          res.CheckIn.ID,
+			UserID:      res.CheckIn.UserID,
+			Email:       resUser.User.Email,
+			Event:       res.CheckIn.Event,
+			Timestamp:   res.CheckIn.Timestamp,
+			IsDuplicate: res.CheckIn.IsDuplicate,
 		},
 		Firstname: resUser.User.Firstname,
 		Lastname:  resUser.User.Lastname,

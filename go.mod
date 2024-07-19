@@ -12,7 +12,7 @@ require (
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.6.0
-	github.com/isd-sgcu/rpkm67-go-proto v0.4.8
+	github.com/isd-sgcu/rpkm67-go-proto v0.5.0
 	github.com/isd-sgcu/rpkm67-model v0.0.7
 	github.com/joho/godotenv v1.5.1
 	github.com/prometheus/client_golang v1.19.1

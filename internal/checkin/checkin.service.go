@@ -54,10 +54,12 @@ func (s *serviceImpl) Create(ctx context.Context, req *dto.CreateCheckInRequest)
 
 	return &dto.CreateCheckInResponse{
 		CheckIn: &dto.CheckIn{
-			ID:     res.CheckIn.Id,
-			UserID: res.CheckIn.UserId,
-			Email:  res.CheckIn.Email,
-			Event:  res.CheckIn.Event,
+			ID:          res.CheckIn.Id,
+			UserID:      res.CheckIn.UserId,
+			Email:       res.CheckIn.Email,
+			Event:       res.CheckIn.Event,
+			Timestamp:   res.CheckIn.Timestamp,
+			IsDuplicate: res.CheckIn.IsDuplicate,
 		},
 	}, nil
 }

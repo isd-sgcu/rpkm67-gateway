@@ -1,10 +1,12 @@
 package dto
 
 type CheckIn struct {
-	ID     string `json:"id"`
-	UserID string `json:"user_id"`
-	Email  string `json:"email"`
-	Event  string `json:"event"`
+	ID          string `json:"id"`
+	UserID      string `json:"user_id"`
+	Email       string `json:"email"`
+	Event       string `json:"event"`
+	Timestamp   string `json:"timestamp"`
+	IsDuplicate bool   `json:"is_duplicate"`
 }
 
 type CreateCheckInRequest struct {
