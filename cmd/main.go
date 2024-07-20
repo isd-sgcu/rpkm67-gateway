@@ -25,6 +25,7 @@ import (
 	"github.com/isd-sgcu/rpkm67-gateway/tracer"
 	authProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/auth/v1"
 	userProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/auth/user/v1"
+	countProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/count/v1"
 	groupProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/group/v1"
 	pinProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/pin/v1"
 	selectionProto "github.com/isd-sgcu/rpkm67-go-proto/rpkm67/backend/selection/v1"
@@ -143,7 +144,9 @@ func main() {
 	metricsReg := metrics.NewRegistry(prometheus.NewRegistry(), requestMetrics, countMetrics)
 	metricsHdr := metrics.NewHandler(metricsReg, logger)
 
-	countHdr := count.NewHandler(countMetrics, logger)
+	countClient := countProto.NewCountServiceClient(backendConn)
+	countSvc := count.NewService(countClient, logger)
+	countHdr := count.NewHandler(countSvc, countMetrics, logger)
 
 	authMiddleware := middleware.NewAuthMiddleware(authSvc, requestMetrics)
 

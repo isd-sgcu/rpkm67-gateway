@@ -320,7 +320,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.CountResponse"
+                            "$ref": "#/definitions/dto.CreateCountRequest"
                         }
                     },
                     "400": {
@@ -1471,14 +1471,6 @@
                 }
             }
         },
-        "dto.CountResponse": {
-            "type": "object",
-            "properties": {
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "dto.CreateCheckInRequest": {
             "type": "object",
             "properties": {
@@ -1503,6 +1495,14 @@
                     "type": "string"
                 },
                 "lastname": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateCountRequest": {
+            "type": "object",
+            "properties": {
+                "name": {
                     "type": "string"
                 }
             }
