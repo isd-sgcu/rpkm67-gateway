@@ -3,7 +3,9 @@ package selection
 import (
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/isd-sgcu/rpkm67-gateway/config"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/group"
@@ -23,14 +25,16 @@ type handlerImpl struct {
 	svc      Service
 	groupSvc group.Service
 	validate validator.DtoValidator
+	rpkmConf *config.RpkmConfig
 	log      *zap.Logger
 }
 
-func NewHandler(svc Service, groupSvc group.Service, validate validator.DtoValidator, log *zap.Logger) Handler {
+func NewHandler(svc Service, groupSvc group.Service, rpkmConf *config.RpkmConfig, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
 		svc:      svc,
 		groupSvc: groupSvc,
 		validate: validate,
+		rpkmConf: rpkmConf,
 		log:      log,
 	}
 }
@@ -51,6 +55,10 @@ func NewHandler(svc Service, groupSvc group.Service, validate validator.DtoValid
 // @Failure 500 {object} apperror.AppError
 // @Router /selection [post]
 func (h *handlerImpl) Create(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
 	h.checkGroupLeader(c)
 
 	body := &dto.CreateSelectionRequest{}
@@ -91,6 +99,11 @@ func (h *handlerImpl) Create(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /selection/{groupId} [get]
 func (h *handlerImpl) FindByGroupId(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
+
 	groupId := c.Param("groupId")
 	if groupId == "" {
 		h.log.Named("FindByGroupIdSelection").Error("Param: groupId not found")
@@ -134,6 +147,10 @@ func (h *handlerImpl) FindByGroupId(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /selection [patch]
 func (h *handlerImpl) Update(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
 	h.checkGroupLeader(c)
 
 	body := &dto.UpdateSelectionRequest{}
@@ -177,6 +194,10 @@ func (h *handlerImpl) Update(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /selection [delete]
 func (h *handlerImpl) Delete(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
 	h.checkGroupLeader(c)
 
 	body := &dto.DeleteSelectionRequest{}
@@ -217,6 +238,11 @@ func (h *handlerImpl) Delete(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /selection/count-by-baan [get]
 func (h *handlerImpl) CountByBaanId(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
+
 	res, appErr := h.svc.CountByBaanId()
 	if appErr != nil {
 		h.log.Named("CountByBaanId").Error("CountByBaanId: ", zap.Error(appErr))
@@ -248,4 +274,16 @@ func (h *handlerImpl) checkGroupLeader(c context.Ctx) {
 	}
 
 	c.Next()
+}
+
+func (h *handlerImpl) checkRegTime() bool {
+	nowUTC := time.Now().UTC()
+	gmtPlus7Location := time.FixedZone("GMT+7", 7*60*60)
+	nowGMTPlus7 := nowUTC.In(gmtPlus7Location)
+	if nowGMTPlus7.Before(h.rpkmConf.RegStart) {
+		h.log.Named("checkRegTime").Warn("Forbidden: Registration hasn't started")
+		return false
+	}
+
+	return true
 }

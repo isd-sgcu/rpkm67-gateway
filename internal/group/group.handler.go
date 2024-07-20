@@ -3,7 +3,9 @@ package group
 import (
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/isd-sgcu/rpkm67-gateway/config"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
@@ -19,10 +21,11 @@ type Handler interface {
 	DeleteMember(c context.Ctx)
 }
 
-func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
+func NewHandler(svc Service, rpkmConf *config.RpkmConfig, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
 		svc:      svc,
 		validate: validate,
+		rpkmConf: rpkmConf,
 		log:      log,
 	}
 }
@@ -30,6 +33,7 @@ func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) H
 type handlerImpl struct {
 	svc      Service
 	validate validator.DtoValidator
+	rpkmConf *config.RpkmConfig
 	log      *zap.Logger
 }
 
@@ -48,6 +52,11 @@ type handlerImpl struct {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/{userId} [get]
 func (h *handlerImpl) FindByUserId(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
+
 	userId := c.Param("userId")
 	if userId == "" {
 		c.BadRequestError("url parameter 'user_id' not found")
@@ -90,6 +99,11 @@ func (h *handlerImpl) FindByUserId(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/token [get]
 func (h *handlerImpl) FindByToken(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
+
 	token := c.Query("token")
 	if token == "" {
 		c.BadRequestError("url parameter 'token' not found")
@@ -129,6 +143,11 @@ func (h *handlerImpl) FindByToken(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/{userId} [put]
 func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
+
 	userId := c.Param("userId")
 	if userId == "" {
 		c.BadRequestError("url parameter 'user_id' not found")
@@ -179,6 +198,11 @@ func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/join [post]
 func (h *handlerImpl) Join(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
+
 	body := &dto.JoinGroupRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Join").Error("Bind: failed to bind request body", zap.Error(err))
@@ -224,6 +248,11 @@ func (h *handlerImpl) Join(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/leave [post]
 func (h *handlerImpl) Leave(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
+
 	body := &dto.LeaveGroupRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Leave").Error("Bind: failed to bind request body", zap.Error(err))
@@ -268,6 +297,11 @@ func (h *handlerImpl) Leave(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/delete-member [delete]
 func (h *handlerImpl) DeleteMember(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
+
 	body := &dto.DeleteMemberGroupBody{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("DeleteMember").Error("Bind: failed to bind request body", zap.Error(err))
@@ -296,4 +330,16 @@ func (h *handlerImpl) DeleteMember(c context.Ctx) {
 	c.JSON(http.StatusOK, &dto.DeleteMemberGroupResponse{
 		Group: res.Group,
 	})
+}
+
+func (h *handlerImpl) checkRegTime() bool {
+	nowUTC := time.Now().UTC()
+	gmtPlus7Location := time.FixedZone("GMT+7", 7*60*60)
+	nowGMTPlus7 := nowUTC.In(gmtPlus7Location)
+	if nowGMTPlus7.Before(h.rpkmConf.RegStart) {
+		h.log.Named("checkRegTime").Warn("Forbidden: Registration hasn't started")
+		return false
+	}
+
+	return true
 }
