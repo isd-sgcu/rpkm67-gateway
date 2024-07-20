@@ -21,6 +21,7 @@ type handlerImpl struct {
 
 func NewHandler(svc Service, countMetrics metrics.CountMetrics, log *zap.Logger) Handler {
 	return &handlerImpl{
+		svc:          svc,
 		countMetrics: countMetrics,
 		log:          log,
 	}
@@ -53,7 +54,5 @@ func (h *handlerImpl) Count(c context.Ctx) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, &dto.CreateCountResponse{
-		Count: res.Count,
-	})
+	c.JSON(http.StatusCreated, res)
 }
