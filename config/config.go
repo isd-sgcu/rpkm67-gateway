@@ -22,8 +22,8 @@ type ImageConfig struct {
 }
 
 type RegConfig struct {
-	RpkmStart      time.Time
-	FirstdateStart time.Time
+	RpkmStart    time.Time
+	CheckinStart time.Time
 }
 
 type ServiceConfig struct {
@@ -91,7 +91,7 @@ func LoadConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	parsedFirstdateTime, err := time.Parse(time.RFC3339, os.Getenv("REG_FIRSTDATE_START"))
+	parsedCheckinTime, err := time.Parse(time.RFC3339, os.Getenv("REG_CHECKIN_START"))
 	if err != nil {
 		return nil, err
 	}
@@ -105,15 +105,15 @@ func LoadConfig() (*Config, error) {
 		parsedRpkmTime.Nanosecond(), gmtPlus7Location)
 	fmt.Println("Local RPKM time (GMT+7):", localRpkmTime)
 
-	localFirstdateTime := time.Date(
-		parsedFirstdateTime.Year(), parsedFirstdateTime.Month(), parsedFirstdateTime.Day(),
-		parsedFirstdateTime.Hour(), parsedFirstdateTime.Minute(), parsedFirstdateTime.Second(),
-		parsedFirstdateTime.Nanosecond(), gmtPlus7Location)
-	fmt.Println("Local Firstdate time (GMT+7):", localFirstdateTime)
+	localCheckinTime := time.Date(
+		parsedCheckinTime.Year(), parsedCheckinTime.Month(), parsedCheckinTime.Day(),
+		parsedCheckinTime.Hour(), parsedCheckinTime.Minute(), parsedCheckinTime.Second(),
+		parsedCheckinTime.Nanosecond(), gmtPlus7Location)
+	fmt.Println("Local Firstdate time (GMT+7):", localCheckinTime)
 
 	regConfig := RegConfig{
-		RpkmStart:      localRpkmTime,
-		FirstdateStart: localFirstdateTime,
+		RpkmStart:    localRpkmTime,
+		CheckinStart: localCheckinTime,
 	}
 
 	serviceConfig := ServiceConfig{
