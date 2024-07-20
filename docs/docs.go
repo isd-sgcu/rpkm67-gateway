@@ -1455,6 +1455,12 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "is_duplicate": {
+                    "type": "boolean"
+                },
+                "timestamp": {
+                    "type": "string"
+                },
                 "user_id": {
                     "type": "string"
                 }
