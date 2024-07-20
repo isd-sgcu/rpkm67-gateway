@@ -21,8 +21,9 @@ type ImageConfig struct {
 	CropHeight    int
 }
 
-type RpkmConfig struct {
-	RegStart time.Time
+type RegConfig struct {
+	RpkmStart    time.Time
+	CheckinStart time.Time
 }
 
 type ServiceConfig struct {
@@ -47,7 +48,7 @@ type TracerConfig struct {
 type Config struct {
 	App    AppConfig
 	Img    ImageConfig
-	Rpkm   RpkmConfig
+	Reg    RegConfig
 	Svc    ServiceConfig
 	Cors   CorsConfig
 	Db     DbConfig
@@ -86,20 +87,33 @@ func LoadConfig() (*Config, error) {
 		CropHeight:    int(cropHeight),
 	}
 
-	parsedTime, err := time.Parse(time.RFC3339, os.Getenv("RPKM_REG_START"))
+	parsedRpkmTime, err := time.Parse(time.RFC3339, os.Getenv("REG_RPKM_START"))
+	if err != nil {
+		return nil, err
+	}
+	parsedCheckinTime, err := time.Parse(time.RFC3339, os.Getenv("REG_CHECKIN_START"))
 	if err != nil {
 		return nil, err
 	}
 
 	const gmtPlus7 = 7 * 60 * 60
 	gmtPlus7Location := time.FixedZone("GMT+7", gmtPlus7)
-	localTime := time.Date(
-		parsedTime.Year(), parsedTime.Month(), parsedTime.Day(),
-		parsedTime.Hour(), parsedTime.Minute(), parsedTime.Second(),
-		parsedTime.Nanosecond(), gmtPlus7Location)
-	fmt.Println("Local time (GMT+7):", localTime)
-	rpkmConfig := RpkmConfig{
-		RegStart: localTime,
+
+	localRpkmTime := time.Date(
+		parsedRpkmTime.Year(), parsedRpkmTime.Month(), parsedRpkmTime.Day(),
+		parsedRpkmTime.Hour(), parsedRpkmTime.Minute(), parsedRpkmTime.Second(),
+		parsedRpkmTime.Nanosecond(), gmtPlus7Location)
+	fmt.Println("Local RPKM time (GMT+7):", localRpkmTime)
+
+	localCheckinTime := time.Date(
+		parsedCheckinTime.Year(), parsedCheckinTime.Month(), parsedCheckinTime.Day(),
+		parsedCheckinTime.Hour(), parsedCheckinTime.Minute(), parsedCheckinTime.Second(),
+		parsedCheckinTime.Nanosecond(), gmtPlus7Location)
+	fmt.Println("Local Firstdate time (GMT+7):", localCheckinTime)
+
+	regConfig := RegConfig{
+		RpkmStart:    localRpkmTime,
+		CheckinStart: localCheckinTime,
 	}
 
 	serviceConfig := ServiceConfig{
@@ -124,7 +138,7 @@ func LoadConfig() (*Config, error) {
 	return &Config{
 		App:    appConfig,
 		Img:    imageConfig,
-		Rpkm:   rpkmConfig,
+		Reg:    regConfig,
 		Svc:    serviceConfig,
 		Cors:   corsConfig,
 		Db:     DbConfig,

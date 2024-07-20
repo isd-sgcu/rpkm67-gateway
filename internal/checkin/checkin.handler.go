@@ -3,8 +3,10 @@ package checkin
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
+	"github.com/isd-sgcu/rpkm67-gateway/config"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/user"
@@ -21,14 +23,16 @@ type Handler interface {
 type handlerImpl struct {
 	svc      Service
 	userSvc  user.Service
+	regConf  *config.RegConfig
 	validate validator.DtoValidator
 	log      *zap.Logger
 }
 
-func NewHandler(svc Service, userSvc user.Service, validate validator.DtoValidator, log *zap.Logger) Handler {
+func NewHandler(svc Service, userSvc user.Service, regConf *config.RegConfig, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
 		svc:      svc,
 		userSvc:  userSvc,
+		regConf:  regConf,
 		validate: validate,
 		log:      log,
 	}
@@ -46,6 +50,11 @@ func NewHandler(svc Service, userSvc user.Service, validate validator.DtoValidat
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin [post]
 func (h *handlerImpl) Create(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
+
 	if c.GetString("role") != "staff" {
 		c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
 		return
@@ -114,6 +123,11 @@ func (h *handlerImpl) Create(c context.Ctx) {
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/email/{email} [get]
 func (h *handlerImpl) FindByEmail(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
+
 	if c.GetString("role") != "staff" {
 		c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
 		return
@@ -158,6 +172,11 @@ func (h *handlerImpl) FindByEmail(c context.Ctx) {
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/{userId} [get]
 func (h *handlerImpl) FindByUserID(c context.Ctx) {
+	if !h.checkRegTime() {
+		c.ForbiddenError("Registration hasn't started")
+		return
+	}
+
 	if c.GetString("role") != "staff" {
 		c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
 		return
@@ -188,4 +207,16 @@ func (h *handlerImpl) FindByUserID(c context.Ctx) {
 	c.JSON(http.StatusOK, &dto.FindByUserIdCheckInResponse{
 		CheckIns: res.CheckIns,
 	})
+}
+
+func (h *handlerImpl) checkRegTime() bool {
+	nowUTC := time.Now().UTC()
+	gmtPlus7Location := time.FixedZone("GMT+7", 7*60*60)
+	nowGMTPlus7 := nowUTC.In(gmtPlus7Location)
+	if nowGMTPlus7.Before(h.regConf.CheckinStart) {
+		h.log.Named("checkRegTime").Warn("Forbidden: Registration hasn't started")
+		return false
+	}
+
+	return true
 }

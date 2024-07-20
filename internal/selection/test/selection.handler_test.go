@@ -23,7 +23,7 @@ type SelectionHandlerTest struct {
 	suite.Suite
 	controller                *gomock.Controller
 	logger                    *zap.Logger
-	rpkmConf                  *config.RpkmConfig
+	regConf                   *config.RegConfig
 	userId                    string
 	Selections                []*dto.Selection
 	Selection                 *dto.Selection
@@ -43,8 +43,8 @@ func (t *SelectionHandlerTest) SetupTest() {
 	if err != nil {
 		t.T().Fatal(err)
 	}
-	t.rpkmConf = &config.RpkmConfig{
-		RegStart: regStart,
+	t.regConf = &config.RegConfig{
+		RpkmStart: regStart,
 	}
 
 	t.userId = faker.UUIDHyphenated()
@@ -73,7 +73,7 @@ func (t *SelectionHandlerTest) TestCreateSelectionSuccess() {
 	groupSvc := groupMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
 	context := ctxMock.NewMockCtx(t.controller)
-	handler := selection.NewHandler(selectionSvc, groupSvc, t.rpkmConf, validator, t.logger)
+	handler := selection.NewHandler(selectionSvc, groupSvc, t.regConf, validator, t.logger)
 
 	expectedResp := &dto.CreateSelectionResponse{
 		Selection: t.Selection,
@@ -94,7 +94,7 @@ func (t *SelectionHandlerTest) TestCreateSelectionSuccess() {
 func (t *SelectionHandlerTest) TestCreateSelectionBindError() {
 	context := ctxMock.NewMockCtx(t.controller)
 	groupSvc := groupMock.NewMockService(t.controller)
-	handler := selection.NewHandler(nil, groupSvc, t.rpkmConf, nil, t.logger)
+	handler := selection.NewHandler(nil, groupSvc, t.regConf, nil, t.logger)
 
 	context.EXPECT().GetString("userId").Return(t.userId)
 	groupSvc.EXPECT().FindByUserId(&dto.FindByUserIdGroupRequest{UserId: t.userId}).
@@ -111,7 +111,7 @@ func (t *SelectionHandlerTest) TestCreateSelectionServiceError() {
 	groupSvc := groupMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
 	context := ctxMock.NewMockCtx(t.controller)
-	handler := selection.NewHandler(selectionSvc, groupSvc, t.rpkmConf, validator, t.logger)
+	handler := selection.NewHandler(selectionSvc, groupSvc, t.regConf, validator, t.logger)
 
 	context.EXPECT().GetString("userId").Return(t.userId)
 	groupSvc.EXPECT().FindByUserId(&dto.FindByUserIdGroupRequest{UserId: t.userId}).
@@ -189,7 +189,7 @@ func (t *SelectionHandlerTest) TestDeleteSelectionSuccess() {
 	groupSvc := groupMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
 	context := ctxMock.NewMockCtx(t.controller)
-	handler := selection.NewHandler(selectionSvc, groupSvc, t.rpkmConf, validator, t.logger)
+	handler := selection.NewHandler(selectionSvc, groupSvc, t.regConf, validator, t.logger)
 
 	expectedResp := &dto.DeleteSelectionResponse{
 		Success: true,
@@ -210,7 +210,7 @@ func (t *SelectionHandlerTest) TestDeleteSelectionSuccess() {
 func (t *SelectionHandlerTest) TestDeleteSelectionBindError() {
 	context := ctxMock.NewMockCtx(t.controller)
 	groupSvc := groupMock.NewMockService(t.controller)
-	handler := selection.NewHandler(nil, groupSvc, t.rpkmConf, nil, t.logger)
+	handler := selection.NewHandler(nil, groupSvc, t.regConf, nil, t.logger)
 
 	context.EXPECT().GetString("userId").Return(t.userId)
 	groupSvc.EXPECT().FindByUserId(&dto.FindByUserIdGroupRequest{UserId: t.userId}).
@@ -227,7 +227,7 @@ func (t *SelectionHandlerTest) TestDeleteSelectionServiceError() {
 	groupSvc := groupMock.NewMockService(t.controller)
 	validator := validatorMock.NewMockDtoValidator(t.controller)
 	context := ctxMock.NewMockCtx(t.controller)
-	handler := selection.NewHandler(selectionSvc, groupSvc, t.rpkmConf, validator, t.logger)
+	handler := selection.NewHandler(selectionSvc, groupSvc, t.regConf, validator, t.logger)
 
 	context.EXPECT().GetString("userId").Return(t.userId)
 	groupSvc.EXPECT().FindByUserId(&dto.FindByUserIdGroupRequest{UserId: t.userId}).
