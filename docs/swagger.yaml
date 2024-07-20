@@ -44,11 +44,6 @@ definitions:
           $ref: '#/definitions/dto.BaanCount'
         type: array
     type: object
-  dto.CountResponse:
-    properties:
-      success:
-        type: boolean
-    type: object
   dto.CreateCheckInRequest:
     properties:
       email:
@@ -65,6 +60,11 @@ definitions:
       firstname:
         type: string
       lastname:
+        type: string
+    type: object
+  dto.CreateCountRequest:
+    properties:
+      name:
         type: string
     type: object
   dto.CreateSelectionRequest:
@@ -621,7 +621,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/dto.CountResponse'
+            $ref: '#/definitions/dto.CreateCountRequest'
         "400":
           description: Bad Request
           schema:

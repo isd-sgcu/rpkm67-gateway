@@ -14,12 +14,14 @@ type Handler interface {
 }
 
 type handlerImpl struct {
+	svc          Service
 	countMetrics metrics.CountMetrics
 	log          *zap.Logger
 }
 
-func NewHandler(countMetrics metrics.CountMetrics, log *zap.Logger) Handler {
+func NewHandler(svc Service, countMetrics metrics.CountMetrics, log *zap.Logger) Handler {
 	return &handlerImpl{
+		svc:          svc,
 		countMetrics: countMetrics,
 		log:          log,
 	}
@@ -32,7 +34,7 @@ func NewHandler(countMetrics metrics.CountMetrics, log *zap.Logger) Handler {
 // @Accept json
 // @Produce json
 // @Param name path string true "Name of the count metric"
-// @Success 201 {object} dto.CountResponse
+// @Success 201 {object} dto.CreateCountRequest
 // @Failure 400 {object} apperror.AppError
 // @Router /count/{name} [post]
 func (h *handlerImpl) Count(c context.Ctx) {
@@ -45,7 +47,12 @@ func (h *handlerImpl) Count(c context.Ctx) {
 
 	h.countMetrics.Increment(name)
 
-	c.JSON(http.StatusCreated, &dto.CountResponse{
-		Success: true,
-	})
+	res, err := h.svc.Create(&dto.CreateCountRequest{Name: name})
+	if err != nil {
+		h.log.Named("Count").Error("Create: failed to create count", zap.Error(err))
+		c.InternalServerError(err.Error())
+		return
+	}
+
+	c.JSON(http.StatusCreated, res)
 }
