@@ -21,11 +21,11 @@ type Handler interface {
 	DeleteMember(c context.Ctx)
 }
 
-func NewHandler(svc Service, rpkmConf *config.RpkmConfig, validate validator.DtoValidator, log *zap.Logger) Handler {
+func NewHandler(svc Service, regConf *config.RegConfig, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
 		svc:      svc,
 		validate: validate,
-		rpkmConf: rpkmConf,
+		regConf:  regConf,
 		log:      log,
 	}
 }
@@ -33,7 +33,7 @@ func NewHandler(svc Service, rpkmConf *config.RpkmConfig, validate validator.Dto
 type handlerImpl struct {
 	svc      Service
 	validate validator.DtoValidator
-	rpkmConf *config.RpkmConfig
+	regConf  *config.RegConfig
 	log      *zap.Logger
 }
 
@@ -336,7 +336,7 @@ func (h *handlerImpl) checkRegTime() bool {
 	nowUTC := time.Now().UTC()
 	gmtPlus7Location := time.FixedZone("GMT+7", 7*60*60)
 	nowGMTPlus7 := nowUTC.In(gmtPlus7Location)
-	if nowGMTPlus7.Before(h.rpkmConf.RegStart) {
+	if nowGMTPlus7.Before(h.regConf.RpkmStart) {
 		h.log.Named("checkRegTime").Warn("Forbidden: Registration hasn't started")
 		return false
 	}
