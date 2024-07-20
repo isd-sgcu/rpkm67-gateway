@@ -3,6 +3,7 @@ package selection
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/isd-sgcu/rpkm67-gateway/config"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
@@ -54,6 +55,7 @@ func NewHandler(svc Service, groupSvc group.Service, rpkmConf *config.RpkmConfig
 // @Failure 500 {object} apperror.AppError
 // @Router /selection [post]
 func (h *handlerImpl) Create(c context.Ctx) {
+	h.checkRegTime(c)
 	h.checkGroupLeader(c)
 
 	body := &dto.CreateSelectionRequest{}
@@ -94,6 +96,8 @@ func (h *handlerImpl) Create(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /selection/{groupId} [get]
 func (h *handlerImpl) FindByGroupId(c context.Ctx) {
+	h.checkRegTime(c)
+
 	groupId := c.Param("groupId")
 	if groupId == "" {
 		h.log.Named("FindByGroupIdSelection").Error("Param: groupId not found")
@@ -137,6 +141,7 @@ func (h *handlerImpl) FindByGroupId(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /selection [patch]
 func (h *handlerImpl) Update(c context.Ctx) {
+	h.checkRegTime(c)
 	h.checkGroupLeader(c)
 
 	body := &dto.UpdateSelectionRequest{}
@@ -180,6 +185,7 @@ func (h *handlerImpl) Update(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /selection [delete]
 func (h *handlerImpl) Delete(c context.Ctx) {
+	h.checkRegTime(c)
 	h.checkGroupLeader(c)
 
 	body := &dto.DeleteSelectionRequest{}
@@ -220,6 +226,7 @@ func (h *handlerImpl) Delete(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /selection/count-by-baan [get]
 func (h *handlerImpl) CountByBaanId(c context.Ctx) {
+	h.checkRegTime(c)
 	res, appErr := h.svc.CountByBaanId()
 	if appErr != nil {
 		h.log.Named("CountByBaanId").Error("CountByBaanId: ", zap.Error(appErr))
@@ -246,6 +253,17 @@ func (h *handlerImpl) checkGroupLeader(c context.Ctx) {
 	if res.Group.LeaderID != userId {
 		h.log.Named("checkGroupLeader").Error("Forbidden: You are not the leader of this group")
 		c.ForbiddenError("You are not the leader of this group")
+		c.Abort()
+		return
+	}
+
+	c.Next()
+}
+
+func (h *handlerImpl) checkRegTime(c context.Ctx) {
+	if time.Now().Before(h.rpkmConf.RegStart) {
+		h.log.Named("checkRegTime").Error("Forbidden: Registration hasn't started")
+		c.ForbiddenError("Registration hasn't started")
 		c.Abort()
 		return
 	}

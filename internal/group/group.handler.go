@@ -3,6 +3,7 @@ package group
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/isd-sgcu/rpkm67-gateway/config"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
@@ -51,6 +52,8 @@ type handlerImpl struct {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/{userId} [get]
 func (h *handlerImpl) FindByUserId(c context.Ctx) {
+	h.checkRegTime(c)
+
 	userId := c.Param("userId")
 	if userId == "" {
 		c.BadRequestError("url parameter 'user_id' not found")
@@ -93,6 +96,8 @@ func (h *handlerImpl) FindByUserId(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/token [get]
 func (h *handlerImpl) FindByToken(c context.Ctx) {
+	h.checkRegTime(c)
+
 	token := c.Query("token")
 	if token == "" {
 		c.BadRequestError("url parameter 'token' not found")
@@ -132,6 +137,8 @@ func (h *handlerImpl) FindByToken(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/{userId} [put]
 func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
+	h.checkRegTime(c)
+
 	userId := c.Param("userId")
 	if userId == "" {
 		c.BadRequestError("url parameter 'user_id' not found")
@@ -182,6 +189,8 @@ func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/join [post]
 func (h *handlerImpl) Join(c context.Ctx) {
+	h.checkRegTime(c)
+
 	body := &dto.JoinGroupRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Join").Error("Bind: failed to bind request body", zap.Error(err))
@@ -227,6 +236,8 @@ func (h *handlerImpl) Join(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/leave [post]
 func (h *handlerImpl) Leave(c context.Ctx) {
+	h.checkRegTime(c)
+
 	body := &dto.LeaveGroupRequest{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Leave").Error("Bind: failed to bind request body", zap.Error(err))
@@ -271,6 +282,8 @@ func (h *handlerImpl) Leave(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/delete-member [delete]
 func (h *handlerImpl) DeleteMember(c context.Ctx) {
+	h.checkRegTime(c)
+
 	body := &dto.DeleteMemberGroupBody{}
 	if err := c.Bind(body); err != nil {
 		h.log.Named("DeleteMember").Error("Bind: failed to bind request body", zap.Error(err))
@@ -299,4 +312,15 @@ func (h *handlerImpl) DeleteMember(c context.Ctx) {
 	c.JSON(http.StatusOK, &dto.DeleteMemberGroupResponse{
 		Group: res.Group,
 	})
+}
+
+func (h *handlerImpl) checkRegTime(c context.Ctx) {
+	if time.Now().Before(h.rpkmConf.RegStart) {
+		h.log.Named("checkRegTime").Error("Forbidden: Registration hasn't started")
+		c.ForbiddenError("Registration hasn't started")
+		c.Abort()
+		return
+	}
+
+	c.Next()
 }
