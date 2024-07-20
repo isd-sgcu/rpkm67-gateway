@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -85,12 +86,20 @@ func LoadConfig() (*Config, error) {
 		CropHeight:    int(cropHeight),
 	}
 
-	regStart, err := time.Parse(time.RFC3339, os.Getenv("RPKM_REG_START"))
+	parsedTime, err := time.Parse(time.RFC3339, os.Getenv("RPKM_REG_START"))
 	if err != nil {
 		return nil, err
 	}
+
+	const gmtPlus7 = 7 * 60 * 60
+	gmtPlus7Location := time.FixedZone("GMT+7", gmtPlus7)
+	localTime := time.Date(
+		parsedTime.Year(), parsedTime.Month(), parsedTime.Day(),
+		parsedTime.Hour(), parsedTime.Minute(), parsedTime.Second(),
+		parsedTime.Nanosecond(), gmtPlus7Location)
+	fmt.Println("Local time (GMT+7):", localTime)
 	rpkmConfig := RpkmConfig{
-		RegStart: regStart,
+		RegStart: localTime,
 	}
 
 	serviceConfig := ServiceConfig{
