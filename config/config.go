@@ -19,6 +19,10 @@ type ImageConfig struct {
 	CropHeight    int
 }
 
+type RpkmConfig struct {
+	RegStart string
+}
+
 type ServiceConfig struct {
 	Auth    string
 	Backend string
@@ -41,6 +45,7 @@ type TracerConfig struct {
 type Config struct {
 	App    AppConfig
 	Img    ImageConfig
+	Rpkm   RpkmConfig
 	Svc    ServiceConfig
 	Cors   CorsConfig
 	Db     DbConfig
@@ -79,6 +84,10 @@ func LoadConfig() (*Config, error) {
 		CropHeight:    int(cropHeight),
 	}
 
+	rpkmConfig := RpkmConfig{
+		RegStart: os.Getenv("RPKM_REG_START"),
+	}
+
 	serviceConfig := ServiceConfig{
 		Auth:    os.Getenv("SERVICE_AUTH"),
 		Backend: os.Getenv("SERVICE_BACKEND"),
@@ -101,6 +110,7 @@ func LoadConfig() (*Config, error) {
 	return &Config{
 		App:    appConfig,
 		Img:    imageConfig,
+		Rpkm:   rpkmConfig,
 		Svc:    serviceConfig,
 		Cors:   corsConfig,
 		Db:     DbConfig,
