@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/isd-sgcu/rpkm67-gateway/config"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/validator"
@@ -19,10 +20,11 @@ type Handler interface {
 	DeleteMember(c context.Ctx)
 }
 
-func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) Handler {
+func NewHandler(svc Service, rpkmConf *config.RpkmConfig, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
 		svc:      svc,
 		validate: validate,
+		rpkmConf: rpkmConf,
 		log:      log,
 	}
 }
@@ -30,6 +32,7 @@ func NewHandler(svc Service, validate validator.DtoValidator, log *zap.Logger) H
 type handlerImpl struct {
 	svc      Service
 	validate validator.DtoValidator
+	rpkmConf *config.RpkmConfig
 	log      *zap.Logger
 }
 

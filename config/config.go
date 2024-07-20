@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -20,7 +21,7 @@ type ImageConfig struct {
 }
 
 type RpkmConfig struct {
-	RegStart string
+	RegStart time.Time
 }
 
 type ServiceConfig struct {
@@ -84,8 +85,12 @@ func LoadConfig() (*Config, error) {
 		CropHeight:    int(cropHeight),
 	}
 
+	regStart, err := time.Parse(time.RFC3339, os.Getenv("RPKM_REG_START"))
+	if err != nil {
+		return nil, err
+	}
 	rpkmConfig := RpkmConfig{
-		RegStart: os.Getenv("RPKM_REG_START"),
+		RegStart: regStart,
 	}
 
 	serviceConfig := ServiceConfig{

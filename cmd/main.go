@@ -110,11 +110,11 @@ func main() {
 
 	groupClient := groupProto.NewGroupServiceClient(backendConn)
 	groupSvc := group.NewService(groupClient, logger)
-	groupHdr := group.NewHandler(groupSvc, validate, logger)
+	groupHdr := group.NewHandler(groupSvc, &conf.Rpkm, validate, logger)
 
 	selectionClient := selectionProto.NewSelectionServiceClient(backendConn)
 	selectionSvc := selection.NewService(selectionClient, logger)
-	selectionHdr := selection.NewHandler(selectionSvc, groupSvc, validate, logger)
+	selectionHdr := selection.NewHandler(selectionSvc, groupSvc, &conf.Rpkm, validate, logger)
 
 	pinClient := pinProto.NewPinServiceClient(backendConn)
 	pinSvc := pin.NewService(pinClient, logger)
