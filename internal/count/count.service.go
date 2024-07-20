@@ -41,6 +41,7 @@ func (s *serviceImpl) Create(req *dto.CreateCountRequest) (*dto.CreateCountRespo
 
 	return &dto.CreateCountResponse{
 		Count: &dto.Count{
+			ID:   res.Count.Id,
 			Name: res.Count.Name,
 		},
 	}, nil
