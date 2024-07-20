@@ -326,7 +326,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.CountResponse"
+                            "$ref": "#/definitions/dto.CreateCountRequest"
                         }
                     },
                     "400": {
@@ -1477,14 +1477,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CountResponse": {
-            "type": "object",
-            "properties": {
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "dto.CreateCheckInRequest": {
             "type": "object",
             "properties": {
@@ -1509,6 +1501,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "lastname": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateCountRequest": {
+            "type": "object",
+            "properties": {
+                "name": {
                     "type": "string"
                 }
             }

@@ -33,7 +33,7 @@ func NewHandler(svc Service, countMetrics metrics.CountMetrics, log *zap.Logger)
 // @Accept json
 // @Produce json
 // @Param name path string true "Name of the count metric"
-// @Success 201 {object} dto.CountResponse
+// @Success 201 {object} dto.CreateCountRequest
 // @Failure 400 {object} apperror.AppError
 // @Router /count/{name} [post]
 func (h *handlerImpl) Count(c context.Ctx) {
