@@ -2,6 +2,10 @@ name: Send Messages
 
 on:
   workflow_call:
+    inputs:
+      IMAGE_TAG:
+        required: true
+        type: string
 
 jobs:
   send_message:
