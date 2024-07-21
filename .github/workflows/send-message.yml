@@ -2,6 +2,10 @@ name: Send Messages
 
 on:
   workflow_call:
+    inputs:
+      IMAGE_TAG:
+        required: true
+        type: string
 
 jobs:
   send_message:
@@ -20,10 +24,7 @@ jobs:
                     \"name\": \"${{ github.actor }}\",
                     \"icon_url\": \"https://github.com/${{ github.actor }}.png\"
                   },
-                  \"description\": \"**Service Name:** ${{ github.repository }}\n\n
-                  **Details:**\n
-                    ${{ github.event.pull_request.title || '' }}
-                  \",
+                  \"description\": \"**Service Name:** ${{ github.repository }}\n\n**Details:**\n${{ github.event.pull_request.title || github.event.head_commit.message }}\",
                   \"color\": 5814783
                 }
               ]
