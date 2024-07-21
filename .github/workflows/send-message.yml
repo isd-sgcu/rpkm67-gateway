@@ -20,7 +20,7 @@ jobs:
                     \"name\": \"${{ github.actor }}\",
                     \"icon_url\": \"https://github.com/${{ github.actor }}.png\"
                   },
-                  \"description\": \"**Service Name:** ${{ github.repository }}\n\n**Details:**\n${{ github.event.pull_request.title || github.head_ref }}\",
+                  \"description\": \"**Service Name:** ${{ github.repository }}\n\n**Details:**\n${{ github.event.pull_request.title || github.event.head_commit.message }}\",
                   \"color\": 5814783
                 }
               ]
