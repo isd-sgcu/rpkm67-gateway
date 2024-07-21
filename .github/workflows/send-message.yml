@@ -1,0 +1,42 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+      - dev
+  push:
+    branches:
+      - main
+      - dev
+      - send-message
+
+env:
+  SERVICE_NAME: rpkm67-gateway
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
+  IMAGE_TAG: <WILL_BE_SET>
+
+jobs:
+  send_message:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Send message to Discord
+      run: |
+        curl -X POST -H "Content-Type: application/json" \
+        -d "{
+              \"content\": \"A new push has been made to the main branch by ${{ github.actor }}!\",
+              \"embeds\": [
+                {
+                  \"author\": {
+                    \"name\": \"${{ github.actor }}\",
+                    \"icon_url\": \"https://github.com/${{ github.actor }}.png\"
+                  },
+                  \"description\": \"Commit message: ${{ github.event.head_commit.message }}\"
+                }
+              ]
+            }" \
+        ${{ secrets.DISCORD_WEBHOOK_URL }}
