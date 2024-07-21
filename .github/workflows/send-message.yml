@@ -2,15 +2,6 @@ name: Send Messages
 
 on:
   workflow_call:
-    inputs:
-      webhook_url:
-        description: 'The webhook URL of the Discord channel'
-        required: true
-        type: string
-      discord_api_key:
-        description: 'The API key of the Discord bot'
-        required: true
-        type: string
 
 jobs:
   send_message:
@@ -20,7 +11,7 @@ jobs:
     - name: Send message to Discord
       run: |
         curl -X POST -H "Content-Type: application/json" \
-        -H "Authorization: Bot ${{ inputs.discord_api_key }}" \
+        -H "Authorization: Bot ${{ secrets.DISCORD_API_KEY }}" \
         -d "{
               \"content\": \"A new push has been made to the **${{ github.event.pull_request.base.ref }}** branch by ${{ github.actor }}!\",
               \"embeds\": [
@@ -37,4 +28,4 @@ jobs:
                 }
               ]
             }" \
-        ${{ inputs.webhook_url }}
+        ${{ secrets.DISCORD_WEBHOOK_URL }}
