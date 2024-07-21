@@ -20,21 +20,9 @@ env:
 
 jobs:
   send_message:
-    # name: Send Messages
-    # runs-on: ubuntu-latest
-
-    # steps:
-    # - name: Check out repository
-    #   uses: actions/checkout@v4
-    # - name: Send message to Discord
     uses: ./.github/workflows/send-message.yml
     secrets: inherit
-      # DISCORD_WEBHOOK_URL: ${{ secrets.RPKM67_DISCORD_WEBHOOK_URL }}
-      # DISCORD_API_KEY: ${{ secrets.RPKM67_DISCORD_API_KEY }}
-    # with:
-    #     webhook_url: ${{ secrets.RPKM67_DISCORD_WEBHOOK_URL }}
-    #     discord_api_key: ${{ secrets.RPKM67_DISCORD_API_KEY }}
-
+    
   build:
     name: Build
     runs-on: ubuntu-latest
