@@ -20,7 +20,14 @@ env:
 
 jobs:
   send_message:
-    uses: ./.github/workflows/send-message.yml
+    name: Send Messages
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: ./.github/workflows/send-message.yml
+      with:
+          webhook_url: ${{ secrets.RPKM67_DISCORD_WEBHOOK_URL }}
+          discord_api_key: ${{ secrets.RPKM67_DISCORD_API_KEY }}
 
   build:
     name: Build
