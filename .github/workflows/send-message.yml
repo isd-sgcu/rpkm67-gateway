@@ -27,6 +27,7 @@ jobs:
     - name: Send message to Discord
       run: |
         curl -X POST -H "Content-Type: application/json" \
+        -H "Authorization: Bot ${{ secrets.RPKM67_DISCORD_API_KEY }}" \
         -d "{
               \"content\": \"A new push has been made to the main branch by ${{ github.actor }}!\",
               \"embeds\": [
@@ -39,4 +40,4 @@ jobs:
                 }
               ]
             }" \
-        ${{ secrets.DISCORD_WEBHOOK_URL }}
+        ${{ secrets.RPKM67_DISCORD_WEBHOOK_URL }}
