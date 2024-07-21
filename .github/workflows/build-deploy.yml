@@ -20,12 +20,7 @@ env:
 
 jobs:
   send_message:
-    name: Send Messages
-    runs-on: ubuntu-latest
-    steps:
-    - uses: ./.github/workflows/send-message.yml
-      with:
-        service_name: ${{ env.SERVICE_NAME }}
+    uses: ./.github/workflows/send-message.yml
 
   build:
     name: Build

@@ -2,11 +2,6 @@ name: Send Messages
 
 on:
   workflow_call:
-    inputs:
-      service_name:
-        description: 'The name of the service'
-        required: true
-        type: string
 
 jobs:
   send_message:
@@ -25,10 +20,10 @@ jobs:
                     \"name\": \"${{ github.actor }}\",
                     \"icon_url\": \"https://github.com/${{ github.actor }}.png\"
                   },
-                  \"description\": \"**Service Name:** ${{ inputs.service_name }}\n\n
-                  **Details:**\n${
-                    inputs.commit_message || inputs.pr_title
-                  }\",
+                  \"description\": \"**Service Name:** ${{ github.repository }}\n\n
+                  **Details:**\n
+                    ${{ github.event.pull_request.title || '' }}
+                  \",
                   \"color\": 5814783
                 }
               ]
