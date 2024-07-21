@@ -12,6 +12,7 @@ on:
     branches:
       - main
       - dev
+      - send-message
 
 env:
   SERVICE_NAME: rpkm67-gateway
