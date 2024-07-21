@@ -27,7 +27,7 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v4
     - name: Send message to Discord
-      uses: ./.github/workflows/send-message.yml
+      uses: ./.github/workflows/send-message
       with:
           webhook_url: ${{ secrets.RPKM67_DISCORD_WEBHOOK_URL }}
           discord_api_key: ${{ secrets.RPKM67_DISCORD_API_KEY }}
