@@ -72,6 +72,7 @@ func (s *serviceImpl) StampByUserId(req *dto.StampByUserIdRequest) (*dto.StampBy
 	res, err := s.client.StampByUserId(ctx, &stampProto.StampByUserIdRequest{
 		UserId:     req.UserID,
 		ActivityId: req.ActivityId,
+		Answer:     req.Answer,
 	})
 	if err != nil {
 		s.logger.Named("StampByUserId").Error("StampByUserId: ", zap.Error(err))

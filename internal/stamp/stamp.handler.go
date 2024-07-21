@@ -100,6 +100,7 @@ func (h *handlerImpl) StampByUserId(c context.Ctx) {
 		UserID:     userId,
 		ActivityId: body.ActivityId,
 		PinCode:    body.PinCode,
+		Answer:     body.Answer,
 	}
 
 	res, appErr := h.svc.StampByUserId(req)
