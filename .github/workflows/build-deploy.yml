@@ -21,10 +21,10 @@ env:
 jobs:
   send_message:
     uses: ./.github/workflows/send-message.yml
-    secrets:
-      inherit: true
     with:
       service_name: ${{ env.SERVICE_NAME }}
+    secrets:
+      inherit: true
 
   build:
     name: Build
