@@ -29,14 +29,14 @@ jobs:
         curl -X POST -H "Content-Type: application/json" \
         -H "Authorization: Bot ${{ secrets.RPKM67_DISCORD_API_KEY }}" \
         -d "{
-              \"content\": \"A new push has been made to the main branch by ${{ github.actor }}!\",
+              \"content\": \"A new push has been made to the ${{ github.ref_name }} branch by ${{ github.actor }}!\",
               \"embeds\": [
                 {
                   \"author\": {
                     \"name\": \"${{ github.actor }}\",
                     \"icon_url\": \"https://github.com/${{ github.actor }}.png\"
                   },
-                  \"description\": \"Commit message: ${{ github.event.head_commit.message }}\"
+                  \"description\": \"PR: ${{ github.event.pull_request.title }}\"
                 }
               ]
             }" \
