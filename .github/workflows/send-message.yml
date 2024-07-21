@@ -1,24 +1,7 @@
-name: Build
+name: Send Messages
 
 on:
-  workflow_dispatch:
-  pull_request:
-    types:
-      - closed
-    branches:
-      - main
-      - dev
-  push:
-    branches:
-      - main
-      - dev
-    tags:
-      - v*
-
-env:
-  SERVICE_NAME: rpkm67-gateway
-  IMAGE_NAME: ghcr.io/${{ github.repository }}
-  IMAGE_TAG: <WILL_BE_SET>
+  workflow_call:
 
 jobs:
   send_message:
@@ -30,14 +13,18 @@ jobs:
         curl -X POST -H "Content-Type: application/json" \
         -H "Authorization: Bot ${{ secrets.RPKM67_DISCORD_API_KEY }}" \
         -d "{
-              \"content\": \"A new push has been made to the ${{ github.event.pull_request.base.ref }} branch by ${{ github.actor }}!\",
+              \"content\": \"A new push has been made to the **${{ github.event.pull_request.base.ref }}** branch by ${{ github.actor }}!\",
               \"embeds\": [
                 {
                   \"author\": {
                     \"name\": \"${{ github.actor }}\",
                     \"icon_url\": \"https://github.com/${{ github.actor }}.png\"
                   },
-                  \"description\": \"PR: ${{ github.event.pull_request.title }}\"
+                  \"description\": \"**Service Name:** ${{ inputs.service_name }}\n\n
+                  **Details:**\n${
+                    inputs.commit_message || inputs.pr_title
+                  }\",
+                  \"color\": 5814783
                 }
               ]
             }" \

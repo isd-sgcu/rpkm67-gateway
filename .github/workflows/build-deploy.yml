@@ -15,6 +15,13 @@ env:
   IMAGE_TAG: <WILL_BE_SET>
 
 jobs:
+  send_message:
+    uses: ./.github/workflows/send-message.yml
+    secrets:
+      inherit: true
+    with:
+      service_name: ${{ env.SERVICE_NAME }}
+
   build:
     name: Build
     runs-on: ubuntu-latest
