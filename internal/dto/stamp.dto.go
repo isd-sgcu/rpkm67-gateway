@@ -22,11 +22,13 @@ type StampByUserIdRequest struct {
 	UserID     string `json:"user_id"`
 	ActivityId string `json:"activity_id"`
 	PinCode    string `json:"pin_code"`
+	Answer     string `json:"answer"`
 }
 
 type StampByUserIdBodyRequest struct {
 	ActivityId string `json:"activity_id"`
 	PinCode    string `json:"pin_code"`
+	Answer     string `json:"answer"`
 }
 
 type StampByUserIdResponse struct {
