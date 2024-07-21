@@ -8,6 +8,10 @@ on:
     branches:
       - main
       - dev
+  push:
+    branches:
+      - main
+      - dev
 
 env:
   SERVICE_NAME: rpkm67-gateway
