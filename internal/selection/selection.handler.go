@@ -283,6 +283,9 @@ func (h *handlerImpl) checkRegTime() bool {
 	if nowGMTPlus7.Before(h.regConf.RpkmStart) {
 		h.log.Named("checkRegTime").Warn("Forbidden: Registration hasn't started")
 		return false
+	} else if nowGMTPlus7.After(h.regConf.RpkmEnd) {
+		h.log.Named("checkRegTime").Warn("Forbidden: Registration has ended")
+		return false
 	}
 
 	return true
