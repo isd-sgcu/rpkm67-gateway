@@ -22,8 +22,9 @@ type ImageConfig struct {
 }
 
 type RegConfig struct {
-	RpkmStart    time.Time
 	CheckinStart time.Time
+	RpkmStart    time.Time
+	RpkmEnd      time.Time
 }
 
 type ServiceConfig struct {
@@ -87,33 +88,28 @@ func LoadConfig() (*Config, error) {
 		CropHeight:    int(cropHeight),
 	}
 
-	parsedRpkmTime, err := time.Parse(time.RFC3339, os.Getenv("REG_RPKM_START"))
+	parsedCheckinTime, err := parseLocalTime("REG_CHECKIN_START")
 	if err != nil {
 		return nil, err
 	}
-	parsedCheckinTime, err := time.Parse(time.RFC3339, os.Getenv("REG_CHECKIN_START"))
+	fmt.Printf("Parsed Checkin start time: %v", parsedCheckinTime)
+
+	parsedRpkmStartTime, err := parseLocalTime("REG_RPKM_START")
 	if err != nil {
 		return nil, err
 	}
+	fmt.Printf("Parsed RPKM start time: %v", parsedRpkmStartTime)
 
-	const gmtPlus7 = 7 * 60 * 60
-	gmtPlus7Location := time.FixedZone("GMT+7", gmtPlus7)
-
-	localRpkmTime := time.Date(
-		parsedRpkmTime.Year(), parsedRpkmTime.Month(), parsedRpkmTime.Day(),
-		parsedRpkmTime.Hour(), parsedRpkmTime.Minute(), parsedRpkmTime.Second(),
-		parsedRpkmTime.Nanosecond(), gmtPlus7Location)
-	fmt.Println("Local RPKM time (GMT+7):", localRpkmTime)
-
-	localCheckinTime := time.Date(
-		parsedCheckinTime.Year(), parsedCheckinTime.Month(), parsedCheckinTime.Day(),
-		parsedCheckinTime.Hour(), parsedCheckinTime.Minute(), parsedCheckinTime.Second(),
-		parsedCheckinTime.Nanosecond(), gmtPlus7Location)
-	fmt.Println("Local Firstdate time (GMT+7):", localCheckinTime)
+	parsedRpkmEndTime, err := parseLocalTime("REG_RPKM_END")
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("Parsed RPKM end time: %v", parsedRpkmEndTime)
 
 	regConfig := RegConfig{
-		RpkmStart:    localRpkmTime,
-		CheckinStart: localCheckinTime,
+		CheckinStart: parsedCheckinTime,
+		RpkmStart:    parsedRpkmStartTime,
+		RpkmEnd:      parsedRpkmEndTime,
 	}
 
 	serviceConfig := ServiceConfig{
@@ -148,4 +144,19 @@ func LoadConfig() (*Config, error) {
 
 func (ac *AppConfig) IsDevelopment() bool {
 	return ac.Env == "development"
+}
+
+func parseLocalTime(envName string) (time.Time, error) {
+	parsedTime, err := time.Parse(time.RFC3339, os.Getenv(envName))
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	const gmtPlus7 = 7 * 60 * 60
+	gmtPlus7Location := time.FixedZone("GMT+7", gmtPlus7)
+
+	return time.Date(
+		parsedTime.Year(), parsedTime.Month(), parsedTime.Day(),
+		parsedTime.Hour(), parsedTime.Minute(), parsedTime.Second(),
+		parsedTime.Nanosecond(), gmtPlus7Location), nil
 }
