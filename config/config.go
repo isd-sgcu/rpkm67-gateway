@@ -92,19 +92,19 @@ func LoadConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("Parsed Checkin start time: %v", parsedCheckinTime)
+	fmt.Printf("Parsed Checkin start time: %v\n", parsedCheckinTime)
 
 	parsedRpkmStartTime, err := parseLocalTime("REG_RPKM_START")
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("Parsed RPKM start time: %v", parsedRpkmStartTime)
+	fmt.Printf("Parsed RPKM start time: %v\n", parsedRpkmStartTime)
 
 	parsedRpkmEndTime, err := parseLocalTime("REG_RPKM_END")
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("Parsed RPKM end time: %v", parsedRpkmEndTime)
+	fmt.Printf("Parsed RPKM end time: %v\n", parsedRpkmEndTime)
 
 	regConfig := RegConfig{
 		CheckinStart: parsedCheckinTime,
