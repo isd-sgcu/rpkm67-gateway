@@ -52,11 +52,6 @@ type handlerImpl struct {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/{userId} [get]
 func (h *handlerImpl) FindByUserId(c context.Ctx) {
-	if !h.checkRegTime() {
-		c.ForbiddenError("Registration hasn't started")
-		return
-	}
-
 	userId := c.Param("userId")
 	if userId == "" {
 		c.BadRequestError("url parameter 'user_id' not found")
@@ -99,11 +94,6 @@ func (h *handlerImpl) FindByUserId(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/token [get]
 func (h *handlerImpl) FindByToken(c context.Ctx) {
-	if !h.checkRegTime() {
-		c.ForbiddenError("Registration hasn't started")
-		return
-	}
-
 	token := c.Query("token")
 	if token == "" {
 		c.BadRequestError("url parameter 'token' not found")
@@ -143,8 +133,9 @@ func (h *handlerImpl) FindByToken(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/{userId} [put]
 func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
-	if !h.checkRegTime() {
-		c.ForbiddenError("Registration hasn't started")
+	ok, msg := h.checkRegTime()
+	if !ok {
+		c.ForbiddenError(msg)
 		return
 	}
 
@@ -198,8 +189,9 @@ func (h *handlerImpl) UpdateConfirm(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/join [post]
 func (h *handlerImpl) Join(c context.Ctx) {
-	if !h.checkRegTime() {
-		c.ForbiddenError("Registration hasn't started")
+	ok, msg := h.checkRegTime()
+	if !ok {
+		c.ForbiddenError(msg)
 		return
 	}
 
@@ -248,8 +240,9 @@ func (h *handlerImpl) Join(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/leave [post]
 func (h *handlerImpl) Leave(c context.Ctx) {
-	if !h.checkRegTime() {
-		c.ForbiddenError("Registration hasn't started")
+	ok, msg := h.checkRegTime()
+	if !ok {
+		c.ForbiddenError(msg)
 		return
 	}
 
@@ -297,8 +290,9 @@ func (h *handlerImpl) Leave(c context.Ctx) {
 // @Failure 500 {object} apperror.AppError
 // @Router /group/delete-member [delete]
 func (h *handlerImpl) DeleteMember(c context.Ctx) {
-	if !h.checkRegTime() {
-		c.ForbiddenError("Registration hasn't started")
+	ok, msg := h.checkRegTime()
+	if !ok {
+		c.ForbiddenError(msg)
 		return
 	}
 
@@ -332,14 +326,17 @@ func (h *handlerImpl) DeleteMember(c context.Ctx) {
 	})
 }
 
-func (h *handlerImpl) checkRegTime() bool {
+func (h *handlerImpl) checkRegTime() (bool, string) {
 	nowUTC := time.Now().UTC()
 	gmtPlus7Location := time.FixedZone("GMT+7", 7*60*60)
 	nowGMTPlus7 := nowUTC.In(gmtPlus7Location)
 	if nowGMTPlus7.Before(h.regConf.RpkmStart) {
 		h.log.Named("checkRegTime").Warn("Forbidden: Registration hasn't started")
-		return false
+		return false, "Registration hasn't started"
+	} else if nowGMTPlus7.After(h.regConf.RpkmEnd) {
+		h.log.Named("checkRegTime").Warn("Forbidden: Registration has ended")
+		return false, "Registration has ended"
 	}
 
-	return true
+	return true, ""
 }

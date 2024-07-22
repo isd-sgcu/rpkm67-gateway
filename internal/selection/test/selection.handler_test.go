@@ -43,8 +43,13 @@ func (t *SelectionHandlerTest) SetupTest() {
 	if err != nil {
 		t.T().Fatal(err)
 	}
+	regEnd, err := time.Parse(time.RFC3339, "2030-08-01T00:00:00Z")
+	if err != nil {
+		t.T().Fatal(err)
+	}
 	t.regConf = &config.RegConfig{
 		RpkmStart: regStart,
+		RpkmEnd:   regEnd,
 	}
 
 	t.userId = faker.UUIDHyphenated()
