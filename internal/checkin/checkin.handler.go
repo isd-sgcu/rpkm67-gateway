@@ -22,20 +22,22 @@ type Handler interface {
 }
 
 type handlerImpl struct {
-	svc      Service
-	userSvc  user.Service
-	regConf  *config.RegConfig
-	validate validator.DtoValidator
-	log      *zap.Logger
+	svc              Service
+	userSvc          user.Service
+	regConf          *config.RegConfig
+	staffOnlyCheckin map[string]struct{}
+	validate         validator.DtoValidator
+	log              *zap.Logger
 }
 
-func NewHandler(svc Service, userSvc user.Service, regConf *config.RegConfig, validate validator.DtoValidator, log *zap.Logger) Handler {
+func NewHandler(svc Service, userSvc user.Service, regConf *config.RegConfig, staffOnlyCheckin map[string]struct{}, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
-		svc:      svc,
-		userSvc:  userSvc,
-		regConf:  regConf,
-		validate: validate,
-		log:      log,
+		svc:              svc,
+		userSvc:          userSvc,
+		regConf:          regConf,
+		staffOnlyCheckin: staffOnlyCheckin,
+		validate:         validate,
+		log:              log,
 	}
 }
 
@@ -57,11 +59,6 @@ func (h *handlerImpl) Create(c context.Ctx) {
 		return
 	}
 
-	if c.GetString("role") != "staff" {
-		c.ResponseError(apperror.ForbiddenError(fmt.Sprintf("only staff can create checkin for event %s", c.GetString("event"))))
-		return
-	}
-
 	tr := c.GetTracer()
 	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.Create")
 	defer span.End()
@@ -70,6 +67,12 @@ func (h *handlerImpl) Create(c context.Ctx) {
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Create").Error("Bind: failed to bind request body", zap.Error(err))
 		c.BadRequestError(err.Error())
+		return
+	}
+
+	_, isStaffOnlyCheckin := h.staffOnlyCheckin[body.Event]
+	if c.GetString("role") != "staff" && isStaffOnlyCheckin {
+		c.ResponseError(apperror.ForbiddenError(fmt.Sprintf("only staff can create checkin for event %s", body.Event)))
 		return
 	}
 
