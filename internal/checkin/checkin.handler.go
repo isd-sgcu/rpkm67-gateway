@@ -202,31 +202,31 @@ func (h *handlerImpl) checkRegTime(event string) (bool, string) {
 	switch event {
 	case constant.RPKM_CONFIRM:
 		if nowGMTPlus7.Before(h.regConf.RpkmConfirmStart) {
-			h.log.Named("checkRegTime").Warn("Forbidden: RPKM67 Confirmation Registration hasn't started")
-			return false, "RPKM67 Confirmation Registration hasn't started"
+			h.log.Named("checkRegTime").Warn(fmt.Sprintf("Forbidden: RPKM67 Confirmation Registration starts at %s", h.regConf.RpkmConfirmStart))
+			return false, fmt.Sprintf("RPKM67 Confirmation Registration starts at %s", h.regConf.RpkmConfirmStart)
 		}
 	case constant.RPKM_DAY_ONE:
 		if nowGMTPlus7.Before(h.regConf.RpkmDayOneStart) {
-			h.log.Named("checkRegTime").Warn("Forbidden: RPKM67 Day One Registration hasn't started")
-			return false, "RPKM67 Day One Registration hasn't started"
+			h.log.Named("checkRegTime").Warn(fmt.Sprintf("Forbidden: RPKM67 Day One Registration starts at %s", h.regConf.RpkmDayOneStart))
+			return false, fmt.Sprintf("RPKM67 Day One Registration starts at %s", h.regConf.RpkmDayOneStart)
 		}
 	case constant.RPKM_DAY_TWO:
 		if nowGMTPlus7.Before(h.regConf.RpkmDayTwoStart) {
-			h.log.Named("checkRegTime").Warn("Forbidden: RPKM67 Day Two Registration hasn't started")
-			return false, "RPKM67 Day Two Registration hasn't started"
+			h.log.Named("checkRegTime").Warn(fmt.Sprintf("Forbidden: RPKM67 Day Two Registration starts at %s", h.regConf.RpkmDayTwoStart))
+			return false, fmt.Sprintf("RPKM67 Day Two Registration starts at %s", h.regConf.RpkmDayTwoStart)
 		}
 	case constant.FRESHY_NIGHT_CONFIRM:
 		if nowGMTPlus7.Before(h.regConf.FreshyNightConfirmStart) {
-			h.log.Named("checkRegTime").Warn("Forbidden: Freshy Night Confirmation Registration hasn't started")
-			return false, "Freshy Night Confirmation Registration hasn't started"
+			h.log.Named("checkRegTime").Warn(fmt.Sprintf("Forbidden: Freshy Night Confirmation Registration starts at %s", h.regConf.FreshyNightConfirmStart))
+			return false, fmt.Sprintf("Freshy Night Confirmation Registration starts at %s", h.regConf.FreshyNightConfirmStart)
 		} else if nowGMTPlus7.After(h.regConf.FreshyNightConfirmEnd) {
-			h.log.Named("checkRegTime").Warn("Forbidden: Freshy Night Confirmation Registration has ended")
-			return false, "Freshy Night Confirmation Registration has ended"
+			h.log.Named("checkRegTime").Warn(fmt.Sprintf("Forbidden: Freshy Night Confirmation Registration ends at %s", h.regConf.FreshyNightConfirmEnd))
+			return false, fmt.Sprintf("Freshy Night Confirmation Registration ends at %s", h.regConf.FreshyNightConfirmEnd)
 		}
 	case constant.FRESHY_NIGHT:
 		if nowGMTPlus7.Before(h.regConf.FreshyNightStart) {
-			h.log.Named("checkRegTime").Warn("Forbidden: Freshy Night Registration hasn't started")
-			return false, "Freshy Night Registration hasn't started"
+			h.log.Named("checkRegTime").Warn(fmt.Sprintf("Forbidden: Freshy Night Registration starts at %s", h.regConf.FreshyNightStart))
+			return false, fmt.Sprintf("Freshy Night Registration starts at %s", h.regConf.FreshyNightStart)
 		}
 	}
 
