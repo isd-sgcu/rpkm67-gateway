@@ -1,6 +1,7 @@
 package checkin
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -50,15 +51,16 @@ func NewHandler(svc Service, userSvc user.Service, regConf *config.RegConfig, va
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin [post]
 func (h *handlerImpl) Create(c context.Ctx) {
-	if !h.checkRegTime() {
-		c.ForbiddenError("Registration hasn't started")
+	ok, msg := h.checkRegTime()
+	if !ok {
+		c.ForbiddenError(msg)
 		return
 	}
 
-	// if c.GetString("role") != "staff" {
-	// 	c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
-	// 	return
-	// }
+	if c.GetString("role") != "staff" {
+		c.ResponseError(apperror.ForbiddenError(fmt.Sprintf("only staff can create checkin for event %s", c.GetString("event"))))
+		return
+	}
 
 	tr := c.GetTracer()
 	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.Create")
@@ -123,16 +125,6 @@ func (h *handlerImpl) Create(c context.Ctx) {
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/email/{email} [get]
 func (h *handlerImpl) FindByEmail(c context.Ctx) {
-	if !h.checkRegTime() {
-		c.ForbiddenError("Registration hasn't started")
-		return
-	}
-
-	if c.GetString("role") != "staff" {
-		c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
-		return
-	}
-
 	tr := c.GetTracer()
 	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.FindByEmail")
 	defer span.End()
@@ -172,16 +164,6 @@ func (h *handlerImpl) FindByEmail(c context.Ctx) {
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/{userId} [get]
 func (h *handlerImpl) FindByUserID(c context.Ctx) {
-	if !h.checkRegTime() {
-		c.ForbiddenError("Registration hasn't started")
-		return
-	}
-
-	if c.GetString("role") != "staff" {
-		c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
-		return
-	}
-
 	tr := c.GetTracer()
 	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.FindByUserID")
 	defer span.End()
@@ -209,14 +191,17 @@ func (h *handlerImpl) FindByUserID(c context.Ctx) {
 	})
 }
 
-func (h *handlerImpl) checkRegTime() bool {
+func (h *handlerImpl) checkRegTime() (bool, string) {
 	nowUTC := time.Now().UTC()
 	gmtPlus7Location := time.FixedZone("GMT+7", 7*60*60)
 	nowGMTPlus7 := nowUTC.In(gmtPlus7Location)
-	if nowGMTPlus7.Before(h.regConf.CheckinStart) {
+	if nowGMTPlus7.Before(h.regConf.RpkmStart) {
 		h.log.Named("checkRegTime").Warn("Forbidden: Registration hasn't started")
-		return false
+		return false, "Registration hasn't started"
+	} else if nowGMTPlus7.After(h.regConf.RpkmEnd) {
+		h.log.Named("checkRegTime").Warn("Forbidden: Registration has ended")
+		return false, "Registration has ended"
 	}
 
-	return true
+	return true, ""
 }
