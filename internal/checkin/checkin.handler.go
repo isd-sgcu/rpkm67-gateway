@@ -8,6 +8,7 @@ import (
 
 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/config"
+	"github.com/isd-sgcu/rpkm67-gateway/constant"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/user"
@@ -53,12 +54,6 @@ func NewHandler(svc Service, userSvc user.Service, regConf *config.RegConfig, st
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin [post]
 func (h *handlerImpl) Create(c context.Ctx) {
-	ok, msg := h.checkRegTime()
-	if !ok {
-		c.ForbiddenError(msg)
-		return
-	}
-
 	tr := c.GetTracer()
 	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.Create")
 	defer span.End()
@@ -73,6 +68,12 @@ func (h *handlerImpl) Create(c context.Ctx) {
 	_, isStaffOnlyCheckin := h.staffOnlyCheckin[body.Event]
 	if c.GetString("role") != "staff" && isStaffOnlyCheckin {
 		c.ResponseError(apperror.ForbiddenError(fmt.Sprintf("only staff can create checkin for event %s", body.Event)))
+		return
+	}
+
+	ok, msg := h.checkRegTime(body.Event)
+	if !ok {
+		c.ForbiddenError(msg)
 		return
 	}
 
@@ -194,16 +195,39 @@ func (h *handlerImpl) FindByUserID(c context.Ctx) {
 	})
 }
 
-func (h *handlerImpl) checkRegTime() (bool, string) {
+func (h *handlerImpl) checkRegTime(event string) (bool, string) {
 	nowUTC := time.Now().UTC()
 	gmtPlus7Location := time.FixedZone("GMT+7", 7*60*60)
 	nowGMTPlus7 := nowUTC.In(gmtPlus7Location)
-	if nowGMTPlus7.Before(h.regConf.RpkmStart) {
-		h.log.Named("checkRegTime").Warn("Forbidden: Registration hasn't started")
-		return false, "Registration hasn't started"
-	} else if nowGMTPlus7.After(h.regConf.RpkmEnd) {
-		h.log.Named("checkRegTime").Warn("Forbidden: Registration has ended")
-		return false, "Registration has ended"
+	switch event {
+	case constant.RPKM_CONFIRM:
+		if nowGMTPlus7.Before(h.regConf.RpkmConfirmStart) {
+			h.log.Named("checkRegTime").Warn("Forbidden: RPKM67 Confirmation Registration hasn't started")
+			return false, "RPKM67 Confirmation Registration hasn't started"
+		}
+	case constant.RPKM_DAY_ONE:
+		if nowGMTPlus7.Before(h.regConf.RpkmDayOneStart) {
+			h.log.Named("checkRegTime").Warn("Forbidden: RPKM67 Day One Registration hasn't started")
+			return false, "RPKM67 Day One Registration hasn't started"
+		}
+	case constant.RPKM_DAY_TWO:
+		if nowGMTPlus7.Before(h.regConf.RpkmDayTwoStart) {
+			h.log.Named("checkRegTime").Warn("Forbidden: RPKM67 Day Two Registration hasn't started")
+			return false, "RPKM67 Day Two Registration hasn't started"
+		}
+	case constant.FRESHY_NIGHT_CONFIRM:
+		if nowGMTPlus7.Before(h.regConf.FreshyNightConfirmStart) {
+			h.log.Named("checkRegTime").Warn("Forbidden: Freshy Night Confirmation Registration hasn't started")
+			return false, "Freshy Night Confirmation Registration hasn't started"
+		} else if nowGMTPlus7.After(h.regConf.FreshyNightConfirmEnd) {
+			h.log.Named("checkRegTime").Warn("Forbidden: Freshy Night Confirmation Registration has ended")
+			return false, "Freshy Night Confirmation Registration has ended"
+		}
+	case constant.FRESHY_NIGHT:
+		if nowGMTPlus7.Before(h.regConf.FreshyNightStart) {
+			h.log.Named("checkRegTime").Warn("Forbidden: Freshy Night Registration hasn't started")
+			return false, "Freshy Night Registration hasn't started"
+		}
 	}
 
 	return true, ""
