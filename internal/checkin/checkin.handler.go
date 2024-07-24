@@ -55,10 +55,10 @@ func (h *handlerImpl) Create(c context.Ctx) {
 		return
 	}
 
-	if c.GetString("role") != "staff" {
-		c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
-		return
-	}
+	// if c.GetString("role") != "staff" {
+	// 	c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
+	// 	return
+	// }
 
 	tr := c.GetTracer()
 	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.Create")
