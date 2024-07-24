@@ -1,12 +1,14 @@
 package checkin
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/isd-sgcu/rpkm67-gateway/apperror"
 	"github.com/isd-sgcu/rpkm67-gateway/config"
+	"github.com/isd-sgcu/rpkm67-gateway/constant"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/dto"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/user"
@@ -21,20 +23,22 @@ type Handler interface {
 }
 
 type handlerImpl struct {
-	svc      Service
-	userSvc  user.Service
-	regConf  *config.RegConfig
-	validate validator.DtoValidator
-	log      *zap.Logger
+	svc              Service
+	userSvc          user.Service
+	regConf          *config.RegConfig
+	staffOnlyCheckin map[string]struct{}
+	validate         validator.DtoValidator
+	log              *zap.Logger
 }
 
-func NewHandler(svc Service, userSvc user.Service, regConf *config.RegConfig, validate validator.DtoValidator, log *zap.Logger) Handler {
+func NewHandler(svc Service, userSvc user.Service, regConf *config.RegConfig, staffOnlyCheckin map[string]struct{}, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
-		svc:      svc,
-		userSvc:  userSvc,
-		regConf:  regConf,
-		validate: validate,
-		log:      log,
+		svc:              svc,
+		userSvc:          userSvc,
+		regConf:          regConf,
+		staffOnlyCheckin: staffOnlyCheckin,
+		validate:         validate,
+		log:              log,
 	}
 }
 
@@ -50,16 +54,6 @@ func NewHandler(svc Service, userSvc user.Service, regConf *config.RegConfig, va
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin [post]
 func (h *handlerImpl) Create(c context.Ctx) {
-	if !h.checkRegTime() {
-		c.ForbiddenError("Registration hasn't started")
-		return
-	}
-
-	// if c.GetString("role") != "staff" {
-	// 	c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
-	// 	return
-	// }
-
 	tr := c.GetTracer()
 	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.Create")
 	defer span.End()
@@ -68,6 +62,18 @@ func (h *handlerImpl) Create(c context.Ctx) {
 	if err := c.Bind(body); err != nil {
 		h.log.Named("Create").Error("Bind: failed to bind request body", zap.Error(err))
 		c.BadRequestError(err.Error())
+		return
+	}
+
+	_, isStaffOnlyCheckin := h.staffOnlyCheckin[body.Event]
+	if c.GetString("role") != "staff" && isStaffOnlyCheckin {
+		c.ResponseError(apperror.ForbiddenError(fmt.Sprintf("only staff can create checkin for event %s", body.Event)))
+		return
+	}
+
+	ok, msg := h.checkRegTime(body.Event)
+	if !ok {
+		c.ForbiddenError(msg)
 		return
 	}
 
@@ -123,16 +129,6 @@ func (h *handlerImpl) Create(c context.Ctx) {
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/email/{email} [get]
 func (h *handlerImpl) FindByEmail(c context.Ctx) {
-	if !h.checkRegTime() {
-		c.ForbiddenError("Registration hasn't started")
-		return
-	}
-
-	if c.GetString("role") != "staff" {
-		c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
-		return
-	}
-
 	tr := c.GetTracer()
 	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.FindByEmail")
 	defer span.End()
@@ -172,16 +168,6 @@ func (h *handlerImpl) FindByEmail(c context.Ctx) {
 // @Failure 400 {object} apperror.AppError
 // @Router /checkin/{userId} [get]
 func (h *handlerImpl) FindByUserID(c context.Ctx) {
-	if !h.checkRegTime() {
-		c.ForbiddenError("Registration hasn't started")
-		return
-	}
-
-	if c.GetString("role") != "staff" {
-		c.ResponseError(apperror.ForbiddenError("only staff can access this endpoint"))
-		return
-	}
-
 	tr := c.GetTracer()
 	ctx, span := tr.Start(c.RequestContext(), "handler.checkin.FindByUserID")
 	defer span.End()
@@ -209,14 +195,40 @@ func (h *handlerImpl) FindByUserID(c context.Ctx) {
 	})
 }
 
-func (h *handlerImpl) checkRegTime() bool {
+func (h *handlerImpl) checkRegTime(event string) (bool, string) {
 	nowUTC := time.Now().UTC()
 	gmtPlus7Location := time.FixedZone("GMT+7", 7*60*60)
 	nowGMTPlus7 := nowUTC.In(gmtPlus7Location)
-	if nowGMTPlus7.Before(h.regConf.CheckinStart) {
-		h.log.Named("checkRegTime").Warn("Forbidden: Registration hasn't started")
-		return false
+	switch event {
+	case constant.RPKM_CONFIRM:
+		if nowGMTPlus7.Before(h.regConf.RpkmConfirmStart) {
+			h.log.Named("checkRegTime").Warn("Forbidden: RPKM67 Confirmation Registration hasn't started")
+			return false, "RPKM67 Confirmation Registration hasn't started"
+		}
+	case constant.RPKM_DAY_ONE:
+		if nowGMTPlus7.Before(h.regConf.RpkmDayOneStart) {
+			h.log.Named("checkRegTime").Warn("Forbidden: RPKM67 Day One Registration hasn't started")
+			return false, "RPKM67 Day One Registration hasn't started"
+		}
+	case constant.RPKM_DAY_TWO:
+		if nowGMTPlus7.Before(h.regConf.RpkmDayTwoStart) {
+			h.log.Named("checkRegTime").Warn("Forbidden: RPKM67 Day Two Registration hasn't started")
+			return false, "RPKM67 Day Two Registration hasn't started"
+		}
+	case constant.FRESHY_NIGHT_CONFIRM:
+		if nowGMTPlus7.Before(h.regConf.FreshyNightConfirmStart) {
+			h.log.Named("checkRegTime").Warn("Forbidden: Freshy Night Confirmation Registration hasn't started")
+			return false, "Freshy Night Confirmation Registration hasn't started"
+		} else if nowGMTPlus7.After(h.regConf.FreshyNightConfirmEnd) {
+			h.log.Named("checkRegTime").Warn("Forbidden: Freshy Night Confirmation Registration has ended")
+			return false, "Freshy Night Confirmation Registration has ended"
+		}
+	case constant.FRESHY_NIGHT:
+		if nowGMTPlus7.Before(h.regConf.FreshyNightStart) {
+			h.log.Named("checkRegTime").Warn("Forbidden: Freshy Night Registration hasn't started")
+			return false, "Freshy Night Registration hasn't started"
+		}
 	}
 
-	return true
+	return true, ""
 }

@@ -22,9 +22,14 @@ type ImageConfig struct {
 }
 
 type RegConfig struct {
-	CheckinStart time.Time
-	RpkmStart    time.Time
-	RpkmEnd      time.Time
+	RpkmConfirmStart        time.Time
+	RpkmDayOneStart         time.Time
+	RpkmDayTwoStart         time.Time
+	FreshyNightConfirmStart time.Time
+	FreshyNightConfirmEnd   time.Time
+	FreshyNightStart        time.Time
+	RpkmStart               time.Time
+	RpkmEnd                 time.Time
 }
 
 type ServiceConfig struct {
@@ -88,11 +93,41 @@ func LoadConfig() (*Config, error) {
 		CropHeight:    int(cropHeight),
 	}
 
-	parsedCheckinTime, err := parseLocalTime("REG_CHECKIN_START")
+	parsedRpkmConfirmStart, err := parseLocalTime("REG_RPKM_CONFIRM_START")
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("Parsed Checkin start time: %v\n", parsedCheckinTime)
+	fmt.Printf("Parsed RPKM confirm start time: %v\n", parsedRpkmConfirmStart)
+
+	parsedRpkmDayOneStart, err := parseLocalTime("REG_RPKM_DAY_ONE_START")
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("Parsed RPKM day one start time: %v\n", parsedRpkmDayOneStart)
+
+	parsedRpkmDayTwoStart, err := parseLocalTime("REG_RPKM_DAY_TWO_START")
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("Parsed RPKM day two start time: %v\n", parsedRpkmDayTwoStart)
+
+	parsedFreshyNightConfirmStart, err := parseLocalTime("REG_FRESHY_NIGHT_CONFIRM_START")
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("Parsed Freshy Night confirm start time: %v\n", parsedFreshyNightConfirmStart)
+
+	parsedFreshyNightConfirmEnd, err := parseLocalTime("REG_FRESHY_NIGHT_CONFIRM_END")
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("Parsed Freshy Night confirm end time: %v\n", parsedFreshyNightConfirmEnd)
+
+	parsedFreshyNightStart, err := parseLocalTime("REG_FRESHY_NIGHT_START")
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("Parsed Freshy Night start time: %v\n", parsedFreshyNightStart)
 
 	parsedRpkmStartTime, err := parseLocalTime("REG_RPKM_START")
 	if err != nil {
@@ -107,9 +142,14 @@ func LoadConfig() (*Config, error) {
 	fmt.Printf("Parsed RPKM end time: %v\n", parsedRpkmEndTime)
 
 	regConfig := RegConfig{
-		CheckinStart: parsedCheckinTime,
-		RpkmStart:    parsedRpkmStartTime,
-		RpkmEnd:      parsedRpkmEndTime,
+		RpkmConfirmStart:        parsedRpkmConfirmStart,
+		RpkmDayOneStart:         parsedRpkmDayOneStart,
+		RpkmDayTwoStart:         parsedRpkmDayTwoStart,
+		FreshyNightConfirmStart: parsedFreshyNightConfirmStart,
+		FreshyNightConfirmEnd:   parsedFreshyNightConfirmEnd,
+		FreshyNightStart:        parsedFreshyNightStart,
+		RpkmStart:               parsedRpkmStartTime,
+		RpkmEnd:                 parsedRpkmEndTime,
 	}
 
 	serviceConfig := ServiceConfig{
