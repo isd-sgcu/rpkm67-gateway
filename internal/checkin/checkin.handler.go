@@ -205,6 +205,11 @@ func (h *handlerImpl) checkRegTime(event string) (bool, string) {
 			h.log.Named("checkRegTime").Warn(fmt.Sprintf("Forbidden: RPKM67 Confirmation Registration starts at %s", h.regConf.RpkmConfirmStart))
 			return false, fmt.Sprintf("RPKM67 Confirmation Registration starts at %s", h.regConf.RpkmConfirmStart)
 		}
+	case constant.BAAN_RESULT:
+		if nowGMTPlus7.Before(h.regConf.BaanResultStart) {
+			h.log.Named("checkRegTime").Warn(fmt.Sprintf("Forbidden: Baan Selection Result starts at %s", h.regConf.BaanResultStart))
+			return false, fmt.Sprintf("Baan Selection Result starts at %s", h.regConf.BaanResultStart)
+		}
 	case constant.RPKM_DAY_ONE:
 		if nowGMTPlus7.Before(h.regConf.RpkmDayOneStart) {
 			h.log.Named("checkRegTime").Warn(fmt.Sprintf("Forbidden: RPKM67 Day One Registration starts at %s", h.regConf.RpkmDayOneStart))
