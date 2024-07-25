@@ -23,6 +23,7 @@ type ImageConfig struct {
 
 type RegConfig struct {
 	RpkmConfirmStart        time.Time
+	BaanResultStart         time.Time
 	RpkmDayOneStart         time.Time
 	RpkmDayTwoStart         time.Time
 	FreshyNightConfirmStart time.Time
@@ -99,6 +100,12 @@ func LoadConfig() (*Config, error) {
 	}
 	fmt.Printf("Parsed RPKM confirm start time: %v\n", parsedRpkmConfirmStart)
 
+	parsedBaanResultStart, err := parseLocalTime("REG_BAAN_RESULT_START")
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("Parsed Baan result start time: %v\n", parsedBaanResultStart)
+
 	parsedRpkmDayOneStart, err := parseLocalTime("REG_RPKM_DAY_ONE_START")
 	if err != nil {
 		return nil, err
@@ -143,6 +150,7 @@ func LoadConfig() (*Config, error) {
 
 	regConfig := RegConfig{
 		RpkmConfirmStart:        parsedRpkmConfirmStart,
+		BaanResultStart:         parsedBaanResultStart,
 		RpkmDayOneStart:         parsedRpkmDayOneStart,
 		RpkmDayTwoStart:         parsedRpkmDayTwoStart,
 		FreshyNightConfirmStart: parsedFreshyNightConfirmStart,
