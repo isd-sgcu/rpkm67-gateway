@@ -233,6 +233,9 @@ func (h *handlerImpl) checkRegTime(event string) (bool, string) {
 			h.log.Named("checkRegTime").Warn(fmt.Sprintf("Forbidden: Freshy Night Registration starts at %s", h.regConf.FreshyNightStart))
 			return false, fmt.Sprintf("Freshy Night Registration starts at %s", h.regConf.FreshyNightStart)
 		}
+	default:
+		h.log.Named("checkRegTime").Warn("Forbidden: Invalid event")
+		return false, "Invalid event name"
 	}
 
 	return true, ""
