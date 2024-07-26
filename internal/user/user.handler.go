@@ -116,6 +116,7 @@ func (h *handlerImpl) UpdateProfile(c context.Ctx) {
 		return
 	}
 
+	body.Baan = ""
 	req := h.createUpdateUserRequestDto(id, body)
 
 	res, appErr := h.svc.UpdateProfile(req)
