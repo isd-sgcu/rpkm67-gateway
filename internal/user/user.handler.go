@@ -3,6 +3,7 @@ package user
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/isd-sgcu/rpkm67-gateway/config"
 	"github.com/isd-sgcu/rpkm67-gateway/internal/context"
@@ -20,15 +21,17 @@ type Handler interface {
 type handlerImpl struct {
 	svc                Service
 	conf               *config.ImageConfig
+	regConf            *config.RegConfig
 	allowedContentType map[string]struct{}
 	validate           validator.DtoValidator
 	log                *zap.Logger
 }
 
-func NewHandler(svc Service, conf *config.ImageConfig, allowedContentType map[string]struct{}, validate validator.DtoValidator, log *zap.Logger) Handler {
+func NewHandler(svc Service, conf *config.ImageConfig, regConf *config.RegConfig, allowedContentType map[string]struct{}, validate validator.DtoValidator, log *zap.Logger) Handler {
 	return &handlerImpl{
 		svc:                svc,
 		conf:               conf,
+		regConf:            regConf,
 		allowedContentType: allowedContentType,
 		validate:           validate,
 		log:                log,
@@ -68,7 +71,13 @@ func (h *handlerImpl) FindOne(c context.Ctx) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &dto.FindOneUserResponse{User: res.User})
+	resUser := &dto.FindOneUserResponse{User: res.User}
+	ok, _ := h.checkRegTime()
+	if !ok {
+		resUser.User.Baan = ""
+	}
+
+	c.JSON(http.StatusOK, resUser)
 }
 
 // UpdateProfile godoc
@@ -107,6 +116,7 @@ func (h *handlerImpl) UpdateProfile(c context.Ctx) {
 		return
 	}
 
+	body.Baan = ""
 	req := h.createUpdateUserRequestDto(id, body)
 
 	res, appErr := h.svc.UpdateProfile(req)
@@ -183,4 +193,16 @@ func (h *handlerImpl) createUpdateUserRequestDto(id string, body *dto.UpdateUser
 		ReceiveGift: body.ReceiveGift,
 		GroupId:     body.GroupId,
 	}
+}
+
+func (h *handlerImpl) checkRegTime() (bool, string) {
+	nowUTC := time.Now().UTC()
+	gmtPlus7Location := time.FixedZone("GMT+7", 7*60*60)
+	nowGMTPlus7 := nowUTC.In(gmtPlus7Location)
+	if nowGMTPlus7.Before(h.regConf.BaanResultStart) {
+		h.log.Named("checkRegTime").Warn("Forbidden: Baan Selection Result starts at", zap.Time("time", h.regConf.BaanResultStart))
+		return false, "Baan Selection Result starts at " + h.regConf.BaanResultStart.String()
+	}
+
+	return true, ""
 }
