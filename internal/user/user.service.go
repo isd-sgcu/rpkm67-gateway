@@ -13,6 +13,7 @@ import (
 
 type Service interface {
 	FindOne(req *dto.FindOneUserRequest) (*dto.FindOneUserResponse, *apperror.AppError)
+	FindByEmail(req *dto.FindByEmailUserRequest) (*dto.FindByEmailUserResponse, *apperror.AppError)
 	UpdateProfile(req *dto.UpdateUserProfileRequest) (*dto.UpdateUserProfileResponse, *apperror.AppError)
 	UpdatePicture(req *dto.UpdateUserPictureRequest) (*dto.UpdateUserPictureResponse, *apperror.AppError)
 }
@@ -44,6 +45,23 @@ func (s *serviceImpl) FindOne(req *dto.FindOneUserRequest) (*dto.FindOneUserResp
 	}
 
 	return &dto.FindOneUserResponse{
+		User: ProtoToDto(res.User),
+	}, nil
+}
+
+func (s *serviceImpl) FindByEmail(req *dto.FindByEmailUserRequest) (*dto.FindByEmailUserResponse, *apperror.AppError) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := s.client.FindByEmail(ctx, &userProto.FindByEmailRequest{
+		Email: req.Email,
+	})
+	if err != nil {
+		s.log.Named("FindByEmail").Error("FindByEmail: ", zap.Error(err))
+		return nil, apperror.HandleServiceError(err)
+	}
+
+	return &dto.FindByEmailUserResponse{
 		User: ProtoToDto(res.User),
 	}, nil
 }

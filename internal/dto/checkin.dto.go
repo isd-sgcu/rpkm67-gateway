@@ -10,9 +10,10 @@ type CheckIn struct {
 }
 
 type CreateCheckInRequest struct {
-	UserID string `json:"user_id"`
-	Email  string `json:"email"`
-	Event  string `json:"event"`
+	UserID    string `json:"user_id"`
+	StudentID string `json:"student_id"`
+	Email     string `json:"email"`
+	Event     string `json:"event"`
 }
 
 type CreateCheckInResponse struct {

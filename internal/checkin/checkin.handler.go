@@ -83,6 +83,18 @@ func (h *handlerImpl) Create(c context.Ctx) {
 		return
 	}
 
+	if body.StudentID != "" {
+		req := &dto.FindByEmailUserRequest{Email: body.StudentID + "@student.chula.ac.th"}
+		res, appErr := h.userSvc.FindByEmail(req)
+		if appErr != nil {
+			h.log.Named("Create").Error("FindOne: ", zap.Error(appErr))
+			c.ResponseError(appErr)
+			return
+		}
+
+		body.UserID = res.User.Id
+	}
+
 	req := &dto.CreateCheckInRequest{
 		Email:  body.Email,
 		UserID: body.UserID,
