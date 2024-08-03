@@ -36,6 +36,14 @@ type FindOneUserResponse struct {
 	User *User `json:"user"`
 }
 
+type FindByEmailUserRequest struct {
+	Email string `json:"email" validate:"required,email"`
+}
+
+type FindByEmailUserResponse struct {
+	User *User `json:"user"`
+}
+
 type UpdateUserProfileBody struct {
 	Nickname    string `json:"nickname"`
 	Title       string `json:"title"`
